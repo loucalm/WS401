@@ -1,85 +1,88 @@
 # 🚀 Projet S4 - Architecture Découplée (Vue 3 + Symfony 7)
 
-Cet environnement de développement est entièrement dockerisé. **Vous n'avez pas besoin d'installer PHP, Node.js ou MySQL sur vos machines physiques**, seul Docker Desktop est requis
+Cet environnement de développement est entièrement dockerisé. **Vous n'avez pas besoin d'installer PHP, Node.js ou MySQL sur votre machine physique** — seul Docker Desktop est requis.
 
 ## 🛠 Prérequis
-- [Docker Desktop](https://www.docker.com/products/docker-desktop/) installé et lancé en arrière-plan.
+
+- Docker Desktop installé et lancé en arrière-plan.
 - Git.
 
 ---
 
-## ⚙️ Installation & Lancement (À faire lors du 1er clone)
+## ⚙️ Installation & lancement (premier clone)
 
-**1. Cloner le projet et entrer dans le dossier (FAITES UN GITCLONE ET NE TELECHARGER PAS POUR ETRE SYNCHRO AVEC LE GIT SUR VSCODE)**
+1. Cloner le dépôt et entrer dans le dossier :
+
 ```bash
 git clone git@github.com:loucalm/WS401.git
 cd WS401D
-2. Installer les dépendances (Backend & Frontend)
-Les dossiers vendor/ et node_modules/ sont ignorés par Git. Il faut les générer à l'intérieur de nos conteneurs Docker :
+```
 
-Bash
-# Pour Symfony (Backend)
+2. Installer les dépendances (backend & frontend)
+
+Les dossiers `vendor/` et `node_modules/` ne sont pas versionnés. Générez-les à l'intérieur des conteneurs Docker :
+
+```bash
+# Backend (Symfony)
 docker compose run --rm backend composer install
 
-# Pour Vue.js (Frontend)
+# Frontend (Vue.js)
 docker compose run --rm frontend npm install
-3. Lancer toute l'infrastructure (Build)
-Lors du premier lancement, Docker va télécharger les images et construire notre environnement :
+```
 
-Bash
+3. Lancer l'infrastructure (build)
+
+Lors du premier lancement Docker téléchargera les images et construira l'environnement :
+
+```bash
 docker compose up -d --build
-(Attendez une dizaine de secondes que MySQL s'initialise correctement en arrière-plan).
+# Attendre quelques secondes que MySQL s'initialise correctement
+```
 
-4. Initialiser la Base de données
-Puisque le dossier de base de données n'est pas versionné, il faut la recréer sur votre machine et envoyer les tables :
+4. Initialiser la base de données
 
-Bash
-# Créer la base 'app_db'
+Puisque le volume de la base n'est pas versionné, créez la base et exécutez les migrations :
+
+```bash
+# Créer la base 'app_db' si nécessaire
 docker compose exec -u 0 backend php bin/console doctrine:database:create --if-not-exists
 
-# Exécuter les migrations (Créer les tables) - Tapez 'yes' quand demandé
+# Exécuter les migrations (répondre 'yes' si demandé)
 docker compose exec -u 0 backend php bin/console doctrine:migrations:migrate
-🌍 URLs de l'application & Accès
-Une fois les conteneurs lancés (docker compose up -d), l'application est disponible sur ces adresses :
+```
 
-🎨 Frontend (Vue 3 / Vite) : http://localhost:5173
+🌍 URLs utiles
 
-⚙️ Backend (API Platform) : http://localhost:8000/api
+- Frontend (Vue 3 / Vite) : http://localhost:5173
+- Backend (API Platform) : http://localhost:8000/api
+- Back-office (EasyAdmin) : http://localhost:8000/admin
+- Gestion BDD (Adminer) : http://localhost:8080
 
-🛡️ Back-office (EasyAdmin) : http://localhost:8000/admin
+Identifiants de la base
 
-🗄️ Gestion BDD (Adminer) : http://localhost:8080
+- Système : MySQL
+- Serveur (service Docker) : `database`
+- Utilisateur : `user`
+- Mot de passe : `password`
+- Base : `app_db`
 
-Système : MySQL
+🧰 Commandes utiles
 
-Serveur : database
-
-Utilisateur : user
-
-Mot de passe : password
-
-Base de données : app_db
-
-🧰 Commandes Utiles au quotidien
-Arrêter le projet proprement à la fin de la journée :
-
-Bash
+```bash
+# Arrêter le projet
 docker compose down
-Relancer le projet le lendemain :
 
-Bash
+# Relancer
 docker compose up -d
-Créer une nouvelle entité / table (Backend) :
 
-Bash
+# Créer une nouvelle entité (backend)
 docker compose exec -u 0 backend php bin/console make:entity
 docker compose exec -u 0 backend php bin/console make:migration
 docker compose exec -u 0 backend php bin/console doctrine:migrations:migrate
-Installer un nouveau package Node (Frontend) :
 
-Bash
-docker compose exec frontend npm install le-nom-du-package
-Vider le cache de Symfony (en cas de bug d'affichage) :
+# Installer un package npm (frontend)
+docker compose exec frontend npm install <package-name>
 
-Bash
+# Vider le cache Symfony
 docker compose exec -u 0 backend php bin/console cache:clear
+```
