@@ -10,7 +10,7 @@ Cet environnement de développement est entièrement dockerisé. **Vous n'avez p
 
 ## ⚙️ Installation & Lancement (À faire lors du 1er clone)
 
-**1. Cloner le projet et entrer dans le dossier**
+**1. Cloner le projet et entrer dans le dossier (FAITES UN GITCLONE ET NE TELECHARGER PAS POUR ETRE SYNCHRO AVEC LE GIT SUR VSCODE)**
 ```bash
 git clone git@github.com:loucalm/WS401.git
 cd WS401D
