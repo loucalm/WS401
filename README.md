@@ -51,6 +51,56 @@ docker compose exec -u 0 backend php bin/console doctrine:database:create --if-n
 docker compose exec -u 0 backend php bin/console doctrine:migrations:migrate
 ```
 
+## 🔐 Procédure de synchronisation (Backend & Auth)
+
+Salut l'équipe — j'ai poussé toute la logique de connexion JWT. Pour que ça fonctionne chez vous, faites ces commandes depuis la racine du projet (dans un terminal) :
+
+1. Installer les nouvelles bibliothèques
+
+Récupère les paquets manquants (LexikJWT, MakerBundle, etc.) :
+
+```powershell
+docker compose exec -u 0 backend composer install
+```
+
+2. Générer vos clés de sécurité locales
+
+Les clés de cryptage ne sont pas versionnées. Générez vos propres clés locales :
+
+```powershell
+docker compose exec -u 0 backend php bin/console lexik:jwt:generate-keypair --skip-if-exists
+```
+
+3. Mettre à jour votre base de données
+
+Créez la table `User` et synchronisez votre base MySQL locale :
+
+```powershell
+docker compose exec -u 0 backend php bin/console doctrine:migrations:migrate
+```
+
+(Tapez `yes` quand on vous demande de confirmer.)
+
+4. Créer l'utilisateur de test
+
+Injecte l'utilisateur `admin@test.com` (mot de passe : `password123`) :
+
+```powershell
+docker compose exec -u 0 backend php bin/console doctrine:fixtures:load
+```
+
+(Tapez `yes` pour confirmer le remplissage.)
+
+✅ Comment tester ?
+
+- Ouvrez le frontend : http://localhost:5173
+- Ouvrez la console du navigateur (F12).
+- Connectez-vous avec `admin@test.com` / `password123`.
+
+Si vous voyez un long token s'afficher dans la console, vous êtes synchronisés.
+
+Merci — dites-moi si vous voulez que j'ajoute des instructions pour Windows PowerShell natif ou pour bash spécifique.
+
 🌍 URLs utiles
 
 - Frontend (Vue 3 / Vite) : http://localhost:5173
