@@ -1,7 +1,17 @@
+<template>
+  <div>
+    <h1>Bienvenue sur le projet S4</h1>
+    <Login />
+  </div>
+</template>
+
 <script setup>
-import HelloWorld from './components/HelloWorld.vue'
+import Login from './components/Login.vue';
 </script>
 
-<template>
-  <HelloWorld />
-</template>
+<style>
+body {
+  font-family: Arial, sans-serif;
+  text-align: center;
+}
+</style>
