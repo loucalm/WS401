@@ -101,6 +101,30 @@ Si vous voyez un long token s'afficher dans la console, vous êtes synchronisés
 
 Merci — dites-moi si vous voulez que j'ajoute des instructions pour Windows PowerShell natif ou pour bash spécifique.
 
+## 📣 Ce que votre équipe doit faire
+
+Prévenez votre équipe sur Discord/Slack. Une fois qu'ils auront fait un `git pull` pour récupérer votre code, ils devront lancer ces deux commandes depuis la racine du projet pour mettre à jour leur base de données locale — j'ai fini la BDD du projet et ajouté des données fictives, donc ces commandes sont nécessaires :
+
+PowerShell (Windows) :
+
+```powershell
+# 1. Mettre à jour les tables MySQL
+docker compose exec -u 0 backend php bin/console doctrine:migrations:migrate
+
+# 2. Remplir avec les fausses données
+docker compose exec -u 0 backend php bin/console doctrine:fixtures:load
+```
+
+macOS / Linux (bash / zsh) :
+
+```bash
+# 1. Mettre à jour les tables MySQL
+docker compose exec -u 0 backend php bin/console doctrine:migrations:migrate
+
+# 2. Remplir avec les fausses données
+docker compose exec -u 0 backend php bin/console doctrine:fixtures:load
+```
+
 🌍 URLs utiles
 
 - Frontend (Vue 3 / Vite) : http://localhost:5173
