@@ -159,3 +159,16 @@ docker compose exec frontend npm install <package-name>
 # Vider le cache Symfony
 docker compose exec -u 0 backend php bin/console cache:clear
 ```
+
+## 🧯 Dépannage rapide
+
+Si après un `git pull` vous avez des erreurs du type `Symfony Runtime is missing` (backend)
+ou `vite: not found` (frontend), lancez :
+
+```bash
+docker compose down
+docker compose up -d --build
+```
+
+Le `docker-compose.yml` est configuré pour réinstaller automatiquement les dépendances
+manquantes (`vendor/` et `node_modules/`) au démarrage si nécessaire.
