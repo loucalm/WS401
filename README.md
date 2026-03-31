@@ -15,7 +15,7 @@ Cet environnement de développement est entièrement dockerisé. **Vous n'avez p
 
 ```bash
 git clone git@github.com:loucalm/WS401.git
-cd WS401D
+cd WS401
 ```
 
 2. Installer les dépendances (backend & frontend)
