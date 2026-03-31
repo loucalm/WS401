@@ -1,23 +1,54 @@
 <template>
   <div class="login-box">
-    <h2>Connexion à l'API</h2>
-    
-    <form @submit.prevent="handleLogin">
-      <div>
-        <label>Email :</label>
-        <input type="email" v-model="email" placeholder="admin@test.com" required />
-      </div>
-      
-      <div>
-        <label>Mot de passe :</label>
-        <input type="password" v-model="password" placeholder="password123" required />
-      </div>
-      
-      <button type="submit">Se connecter</button>
-    </form>
+    <header>
+      <img src="../assets/img/logo.png" alt="Carbon Logo">
+      <h1>CONNECT TO YOUR<br>JOURNEY TO ZERO EMISSIONS</h1>
+    </header>
 
-    <p v-if="errorMessage" class="error">❌ {{ errorMessage }}</p>
-    <p v-if="successMessage" class="success">✅ {{ successMessage }}</p>
+    <div class="content-grid">
+      
+      <!-- colonne gauche -->
+      <div class="existing-users">
+        <div class="user-card">
+          <div class="user-info">
+            <img src="../assets/img/fabien.png" alt="Fabien">
+            <div>
+              <span>Fabien</span>
+              <span>pré-existant</span>
+            </div>
+          </div>
+          <button type="button">SE CONNECTER COMME FABIEN</button>
+        </div>
+
+        <div class="user-card">
+          <div class="user-info">
+            <img src="../assets/img/brice.png" alt="Brice">
+            <div>
+              <span>Brice</span>
+              <span>pré-existant</span>
+            </div>
+          </div>
+          <button type="button">SE CONNECTER COMME BRICE</button>
+        </div>
+      </div>
+
+      <!-- colonne formulaire -->
+      <div class="form-section">
+        <h2>NOUVEL UTILISATEUR OU AUTRE COMPTE</h2>
+        
+        <form @submit.prevent="handleLogin">
+          <input type="email" v-model="email" placeholder="Email" required />
+          <input type="password" v-model="password" placeholder="Mot de passe" required />
+          <button type="submit">SE CONNECTER</button>
+        </form>
+
+        <p v-if="errorMessage" class="error">❌ {{ errorMessage }}</p>
+        <p v-if="successMessage" class="success">✅ {{ successMessage }}</p>
+
+        <a href="#">S'INSCRIRE</a>
+      </div>
+
+    </div>
   </div>
 </template>
 
@@ -25,37 +56,37 @@
 import { ref } from 'vue';
 import axios from 'axios';
 
-// Nos variables réactives connectées aux inputs
+// variables
 const email = ref('');
 const password = ref('');
 const errorMessage = ref('');
 const successMessage = ref('');
 
 const handleLogin = async () => {
-  // On réinitialise les messages
+  // réinitialisation messages
   errorMessage.value = '';
   successMessage.value = '';
 
   try {
-    // 1. On envoie la requête à notre API Symfony
+    // envoie de requetes
     const response = await axios.post('http://localhost:8000/api/login_check', {
       email: email.value,
       password: password.value
     });
 
-    // 2. On récupère le fameux Token JWT !
+    // récupération token
     const token = response.data.token;
 
-    // 3. On le sauvegarde dans le coffre-fort du navigateur (localStorage)
+    // sauvegarde en local
     localStorage.setItem('jwt_token', token);
     
     successMessage.value = 'Connexion réussie ! Regardez la console.';
     console.log('Token récupéré avec succès :', token);
     
-    // Plus tard : on ajoutera une redirection vers le tableau de bord ici
+    // redirection a ajouter apres connexion effectué
 
   } catch (error) {
-    // Gestion des erreurs (mauvais mot de passe, etc.)
+    // debug infos erronées
     if (error.response && error.response.status === 401) {
       errorMessage.value = 'Identifiants incorrects.';
     } else {
@@ -64,29 +95,3 @@ const handleLogin = async () => {
   }
 };
 </script>
-
-<style scoped>
-.login-box {
-  max-width: 300px;
-  margin: 50px auto;
-  padding: 20px;
-  border: 1px solid #ccc;
-  border-radius: 8px;
-  background: #f9f9f9;
-}
-input {
-  width: 100%;
-  margin-bottom: 10px;
-  padding: 8px;
-}
-button {
-  width: 100%;
-  padding: 10px;
-  background-color: #4CAF50;
-  color: white;
-  border: none;
-  cursor: pointer;
-}
-.error { color: red; font-weight: bold; }
-.success { color: green; font-weight: bold; }
-</style>

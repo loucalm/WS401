@@ -1,6 +1,5 @@
 <template>
   <div>
-    <h1>Bienvenue sur le projet S4</h1>
     <Login />
   </div>
 </template>
