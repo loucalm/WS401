@@ -7,8 +7,6 @@ Cet environnement de développement est entièrement dockerisé. **Vous n'avez p
 - Docker Desktop installé et lancé en arrière-plan.
 - Git.
 
----
-
 ## ⚙️ Installation & lancement (premier clone)
 
 1. Cloner le dépôt et entrer dans le dossier :
@@ -28,6 +26,9 @@ docker compose run --rm backend composer install
 
 # Frontend (Vue.js)
 docker compose run --rm frontend npm install
+
+# Installer les assets des bundles Symfony (API Platform / EasyAdmin)
+docker compose exec -u 0 backend php bin/console assets:install public --symlink --relative
 ```
 
 3. Lancer l'infrastructure (build)
@@ -47,8 +48,8 @@ Puisque le volume de la base n'est pas versionné, créez la base et exécutez l
 # Créer la base 'app_db' si nécessaire
 docker compose exec -u 0 backend php bin/console doctrine:database:create --if-not-exists
 
-# Exécuter les migrations (répondre 'yes' si demandé)
-docker compose exec -u 0 backend php bin/console doctrine:migrations:migrate
+# Exécuter les migrations (sans prompt interactif)
+docker compose exec -u 0 backend php bin/console doctrine:migrations:migrate --no-interaction
 ```
 
 ## 🔐 Procédure de synchronisation (Backend & Auth)
@@ -76,10 +77,8 @@ docker compose exec -u 0 backend php bin/console lexik:jwt:generate-keypair --sk
 Créez la table `User` et synchronisez votre base MySQL locale :
 
 ```powershell
-docker compose exec -u 0 backend php bin/console doctrine:migrations:migrate
+docker compose exec -u 0 backend php bin/console doctrine:migrations:migrate --no-interaction
 ```
-
-(Tapez `yes` quand on vous demande de confirmer.)
 
 4. Créer l'utilisateur de test
 
@@ -109,7 +108,7 @@ PowerShell (Windows) :
 
 ```powershell
 # 1. Mettre à jour les tables MySQL
-docker compose exec -u 0 backend php bin/console doctrine:migrations:migrate
+docker compose exec -u 0 backend php bin/console doctrine:migrations:migrate --no-interaction
 
 # 2. Remplir avec les fausses données
 docker compose exec -u 0 backend php bin/console doctrine:fixtures:load
@@ -119,7 +118,7 @@ macOS / Linux (bash / zsh) :
 
 ```bash
 # 1. Mettre à jour les tables MySQL
-docker compose exec -u 0 backend php bin/console doctrine:migrations:migrate
+docker compose exec -u 0 backend php bin/console doctrine:migrations:migrate --no-interaction
 
 # 2. Remplir avec les fausses données
 docker compose exec -u 0 backend php bin/console doctrine:fixtures:load
@@ -152,7 +151,7 @@ docker compose up -d
 # Créer une nouvelle entité (backend)
 docker compose exec -u 0 backend php bin/console make:entity
 docker compose exec -u 0 backend php bin/console make:migration
-docker compose exec -u 0 backend php bin/console doctrine:migrations:migrate
+docker compose exec -u 0 backend php bin/console doctrine:migrations:migrate --no-interaction
 
 # Installer un package npm (frontend)
 docker compose exec frontend npm install <package-name>

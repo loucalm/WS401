@@ -17,22 +17,28 @@ services:
       dockerfile: Dockerfile
     volumes:
       - ./backend:/srv/app
+      - backend-vendor:/srv/app/vendor
+      - backend-var:/srv/app/var
     environment:
       DATABASE_URL: "mysql://user:password@database:3306/app_db?serverVersion=8.0&charset=utf8mb4"
+      APP_ENV: dev
+      APP_DEBUG: "0"
+      PHP_CLI_SERVER_WORKERS: "8"
     depends_on:
       - database
     ports:
       - "8000:8000"
-    command: php -S 0.0.0.0:8000 -t public
+    command: sh -lc "php bin/console lexik:jwt:generate-keypair --skip-if-exists && php -S 0.0.0.0:8000 -t public"
 
   frontend:
     image: node:22-alpine
     working_dir: /app
     volumes:
       - ./frontend:/app
+      - frontend-node-modules:/app/node_modules
     ports:
       - "5173:5173"
-    command: sh -c "npm install && npm run dev -- --host"
+    command: npm run dev -- --host
     depends_on:
       - backend
 
@@ -45,3 +51,6 @@ services:
 
 volumes:
   db-data:
+  backend-vendor:
+  backend-var:
+  frontend-node-modules:
