@@ -1,0 +1,322 @@
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  font-family: $font-main;
+  background-color: $color-bg-bottom;
+  color: $text-dark;
+  -webkit-font-smoothing: antialiased;
+}
+
+.dashboard-container {
+  width: 100vw;
+  min-height: 100vh;
+  margin: 0;
+  padding: 20px 40px 40px 40px; 
+  background-color: $white;
+
+  @media (max-width: 768px) {
+    padding: 0; 
+  }
+
+  .dashboard-header {
+    h1 {
+      font-size: 0.9rem;
+      font-weight: 500;
+      color: $text-muted;
+      margin-bottom: 10px;
+
+      @media (max-width: 768px) {
+        position: absolute;
+        top: 20px;
+        left: 20px;
+        z-index: 10;
+        margin-bottom: 0;
+      }
+    }
+  }
+
+  .summary-card {
+    width: 100%;
+    background: $color-header-bg;
+    border: 3px solid $color-border-blue;
+    border-radius: 35px;
+    padding: 40px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: 0 10px 30px rgba(110, 211, 223, 0.2);
+    margin-bottom: 40px;
+
+    @media (max-width: 768px) {
+      flex-direction: column;
+      background-color: $color-bg-top;
+      border: none;
+      border-radius: 0 0 40px 40px;
+      padding: 60px 20px 40px 20px;
+      box-shadow: none;
+      gap: 15px;
+      margin-bottom: 20px;
+    }
+
+    .points-badge {
+      background: $white;
+      padding: 20px 35px;
+      border-radius: 25px;
+      box-shadow: $shadow-light;
+      text-align: center;
+      
+      h3 { margin: 0; color: $color-primary-dark; font-size: 1.3rem; font-weight: 900; }
+      p { margin: 5px 0 0; color: $color-primary; font-size: 0.9rem; font-weight: 700; }
+
+      @media (max-width: 768px) {
+        order: 2; 
+        width: 100%;
+        max-width: 320px;
+        padding: 16px;
+        border-radius: $radius-md;
+      }
+    }
+
+    .central-gauge {
+      flex: 1;
+      display: flex;
+      justify-content: center;
+
+      @media (max-width: 768px) {
+        order: 1; 
+        flex: none;
+        margin-bottom: 10px;
+      }
+      
+      .gauge-container {
+        position: relative;
+        width: 220px;
+        height: 220px;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+
+        @media (max-width: 768px) {
+          width: 240px;
+          height: 240px;
+        }
+
+        .progress-ring {
+          position: absolute;
+          top: 0;
+          left: 0;
+          transform: rotate(-90deg);
+          circle {
+            stroke: $color-primary;
+            stroke-linecap: round;
+            stroke-dasharray: 400;
+            stroke-dashoffset: 80;
+          }
+        }
+
+        .character-mask {
+          z-index: 2;
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+
+          .character-img {
+            width: 100px;
+            margin-bottom: 10px;
+          }
+
+          .stats {
+            text-align: center;
+            .value { display: block; font-size: 2.5rem; font-weight: 800; color: $text-dark; line-height: 1; }
+            .label { font-size: 0.8rem; color: $text-muted; font-weight: 700; margin-top: 4px; display: block; }
+
+            @media (max-width: 768px) {
+              .value { font-size: 2.2rem; }
+            }
+          }
+        }
+      }
+    }
+
+    .leaderboard-card {
+      background: $white;
+      padding: 25px;
+      border-radius: 30px;
+      width: 320px;
+      box-shadow: $shadow-light;
+
+      @media (max-width: 768px) {
+        order: 3;
+        width: 100%;
+        padding: 12px 20px;
+        border-radius: $radius-lg;
+        text-align: center;
+      }
+
+      h3 { 
+        font-size: 1.1rem; 
+        font-weight: 800; 
+        margin-bottom: 20px;
+        color: $text-dark;
+
+        @media (max-width: 768px) {
+          font-size: 0.9rem;
+          margin-bottom: 0;
+        }
+      }
+
+      .leaderboard-list {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+
+        @media (max-width: 768px) {
+          display: none; 
+        }
+
+        .leaderboard-item {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          margin-bottom: 15px;
+
+          .user-info {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            .avatar { width: 45px; height: 45px; border-radius: 50%; object-fit: cover; }
+            .name { font-weight: 700; font-size: 1rem; }
+          }
+          .score { font-weight: 800; font-size: 0.9rem; &.rank-1 { color: $color-primary; } }
+        }
+      }
+      
+      .empty-msg {
+        @media (max-width: 768px) {
+          display: none;
+        }
+      }
+    }
+  }
+
+  .activities-section {
+    width: 100%;
+
+    @media (max-width: 768px) {
+      padding: 10px 20px 30px 20px;
+    }
+
+    .section-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 30px;
+
+      h2 { font-size: 1.6rem; font-weight: 800; color: $text-dark; margin: 0; }
+      
+      .btn-add {
+        background: $color-primary;
+        color: $white;
+        border: none;
+        padding: 12px 25px;
+        border-radius: 12px;
+        font-weight: 800;
+        font-family: $font-main;
+        cursor: pointer;
+      }
+
+      @media (max-width: 768px) {
+        margin-bottom: 20px;
+        h2 { font-size: 1.1rem; }
+        .btn-add { padding: 8px 16px; font-size: 0.75rem; border-radius: $radius-md; }
+      }
+    }
+
+    .activities-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr); 
+      gap: 30px;
+
+      @media (max-width: 768px) {
+        grid-template-columns: 1fr; 
+        gap: 15px;
+      }
+
+      .activity-card {
+        background: $white;
+        padding: 25px;
+        border-radius: 20px;
+        display: flex;
+        align-items: center;
+        gap: 20px;
+        box-shadow: $shadow-light;
+
+        @media (max-width: 768px) {
+          padding: 16px;
+          border-radius: $radius-md;
+        }
+
+        .activity-icon {
+          width: 60px;
+          height: 60px;
+          background: $color-bg;
+          border-radius: 15px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          font-size: 1.5rem;
+          color: $color-primary-dark;
+
+          @media (max-width: 768px) {
+            width: 50px;
+            height: 50px;
+            border-radius: 12px;
+          }
+        }
+
+        .activity-content {
+          flex: 1;
+          display: flex;
+          flex-direction: column;
+          gap: 5px;
+
+          .top-row, .bottom-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+          }
+
+          .title { font-weight: 800; font-size: 1.1rem; color: $text-dark; }
+          .amount { font-weight: 800; font-size: 1rem; color: $text-dark; }
+          
+          .points { color: $color-primary; font-weight: 700; font-size: 0.85rem; }
+          .impact { 
+            font-weight: 800; 
+            font-size: 0.85rem;
+            &.negative { color: $color-success; } 
+            &.positive { color: $color-danger; } 
+          }
+
+          @media (max-width: 768px) {
+            .title { font-size: 1rem; }
+            .amount { font-size: 0.95rem; }
+            .points, .impact { font-size: 0.8rem; }
+          }
+        }
+      }
+    }
+
+    .empty-msg {
+      text-align: center;
+      color: $text-muted;
+      padding: 40px;
+      font-weight: 500;
+    }
+  }
+}
