@@ -38,10 +38,9 @@ security:
             provider: app_user_provider
 
     access_control:
-        # On autorise tout le monde à tenter de se connecter
+        - { path: ^/api/register, roles: PUBLIC_ACCESS } # <-- AJOUTE CETTE LIGNE
         - { path: ^/api/login, roles: PUBLIC_ACCESS }
-        # On protège tout le reste de l'API (décommentez la ligne du bas plus tard si besoin)
-        # - { path: ^/api,       roles: IS_AUTHENTICATED_FULLY }
+        - { path: ^/api,       roles: IS_AUTHENTICATED_FULLY }
 
 when@test:
     security:

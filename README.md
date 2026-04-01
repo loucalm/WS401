@@ -1,5 +1,13 @@
 # 🚀 Projet S4 - Architecture Découplée (Vue 3 + Symfony 7)
 
+**Équipe**
+
+- Rafael Teixeira — Back-end
+- Rahman Turkmen — Fullstack
+- Lou Calmes — Fullstack
+- Marwan Bouchebbat — Front-end
+- Radouan Ouriri — Front-end
+
 Cet environnement de développement est entièrement dockerisé. **Vous n'avez pas besoin d'installer PHP, Node.js ou MySQL sur votre machine physique** — seul Docker Desktop est requis.
 
 ## 🛠 Prérequis
