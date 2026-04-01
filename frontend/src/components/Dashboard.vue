@@ -2,6 +2,7 @@
   <div class="dashboard-container">
     <header class="dashboard-header">
       <h1>Dashboard</h1>
+      <button class="btn-logout" @click="handleLogout">Logout</button>
     </header>
 
     <section class="summary-card">
@@ -77,10 +78,12 @@
 
 <script setup>
 import { ref, onMounted, computed } from 'vue';
+import { useRouter } from 'vue-router';
 
 // Données réactives (vides au départ)
 const friends = ref([]);
 const activities = ref([]);
+const router = useRouter();
 
 // Calcul automatique du total des points basé sur les activités
 const totalPoints = computed(() => {
@@ -101,5 +104,10 @@ onMounted(async () => {
 const openAddActivityModal = () => {
   console.log("Ouvrir le formulaire d'ajout");
   // Logique pour ouvrir ta modale ici
+};
+
+const handleLogout = () => {
+  localStorage.removeItem('jwt_token');
+  router.replace('/login');
 };
 </script>
