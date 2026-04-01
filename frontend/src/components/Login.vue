@@ -55,12 +55,14 @@
 <script setup>
 import { ref } from 'vue';
 import axios from 'axios';
+import { useRouter } from 'vue-router';
 
 // variables
 const email = ref('');
 const password = ref('');
 const errorMessage = ref('');
 const successMessage = ref('');
+const router = useRouter();
 
 const handleLogin = async () => {
   // réinitialisation messages
@@ -80,10 +82,11 @@ const handleLogin = async () => {
     // sauvegarde en local
     localStorage.setItem('jwt_token', token);
     
-    successMessage.value = 'Connexion réussie ! Regardez la console.';
+    successMessage.value = 'Connexion reussie !';
     console.log('Token récupéré avec succès :', token);
     
-    // redirection a ajouter apres connexion effectué
+    // redirection apres connexion
+    router.push('/dashboard');
 
   } catch (error) {
     // debug infos erronées

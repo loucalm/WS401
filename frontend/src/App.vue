@@ -1,16 +1,7 @@
 <template>
-  <div>
-    <Login />
-  </div>
+  <RouterView />
 </template>
 
 <script setup>
-import Login from './components/Login.vue';
+import { RouterView } from 'vue-router'
 </script>
-
-<style>
-body {
-  font-family: Arial, sans-serif;
-  text-align: center;
-}
-</style>
