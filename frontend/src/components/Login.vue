@@ -7,7 +7,6 @@
 
     <div class="content-grid">
       
-      <!-- colonne gauche -->
       <div class="existing-users">
         <div class="user-card">
           <div class="user-info">
@@ -32,7 +31,6 @@
         </div>
       </div>
 
-      <!-- colonne formulaire -->
       <div class="form-section">
         <h2>NOUVEL UTILISATEUR OU AUTRE COMPTE</h2>
         
@@ -45,7 +43,7 @@
         <p v-if="errorMessage" class="error">❌ {{ errorMessage }}</p>
         <p v-if="successMessage" class="success">✅ {{ successMessage }}</p>
 
-        <a href="#">S'INSCRIRE</a>
+        <a href="#" @click.prevent="goToRegister">S'INSCRIRE</a>
       </div>
 
     </div>
@@ -63,6 +61,11 @@ const password = ref('');
 const errorMessage = ref('');
 const successMessage = ref('');
 const router = useRouter();
+
+// LA NOUVELLE FONCTION DE REDIRECTION
+const goToRegister = () => {
+  window.location.href = '/register'; // Redirection propre et forcée
+};
 
 const handleLogin = async () => {
   // réinitialisation messages
@@ -85,7 +88,7 @@ const handleLogin = async () => {
     successMessage.value = 'Connexion reussie !';
     console.log('Token récupéré avec succès :', token);
     
-    // redirection apres connexion
+    // redirection apres connexion (Ici le router.push marche très bien car tu as un token valide)
     router.push('/dashboard');
 
   } catch (error) {

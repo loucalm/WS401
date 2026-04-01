@@ -2,6 +2,7 @@ import { createRouter, createWebHistory } from 'vue-router'
 import Login from './components/Login.vue'
 import Dashboard from './components/Dashboard.vue'
 import NotFound from './components/NotFound.vue'
+import Register from './components/Register.vue'
 
 const routes = [
   {
@@ -15,17 +16,23 @@ const routes = [
     meta: { requiresAuth: false }
   },
   {
+    path: '/register',
+    name: 'register',
+    component: Register,
+    meta: { requiresAuth: false }
+  },
+  {
     path: '/dashboard',
     name: 'dashboard',
     component: Dashboard,
     meta: { requiresAuth: true }
   },
+  // La route 404 en Dernier svp //
   {
     path: '/:pathMatch(.*)*',
     name: 'not-found',
     component: NotFound
-  },
-  
+  }
 ]
 
 const router = createRouter({
