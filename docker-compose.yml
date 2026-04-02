@@ -47,7 +47,7 @@ services:
       - "5173:5173"
     command: >-
       sh -lc "
-      if [ ! -x node_modules/.bin/vite ]; then
+      if [ ! -x node_modules/.bin/vite ] || [ ! -f node_modules/@tailwindcss/vite/package.json ]; then
         npm install;
       fi;
       npm run dev -- --host

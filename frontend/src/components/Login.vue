@@ -1,102 +1,184 @@
 <template>
-  <div class="login-box">
-    <header>
-      <img src="../assets/img/logo.png" alt="Carbon Logo">
-      <h1>CONNECT TO YOUR<br>JOURNEY TO ZERO EMISSIONS</h1>
-    </header>
+  <div
+    class="relative min-h-screen overflow-hidden bg-main-light px-3 py-3 sm:px-8 sm:py-10 lg:px-16 xl:px-24"
+  >
+    <img
+      :src="backgroundUrl"
+      alt=""
+      class="pointer-events-none absolute inset-x-0 bottom-0 h-full w-full max-w-none object-cover opacity-15"
+      aria-hidden="true"
+    />
 
-    <div class="content-grid">
-      
-      <div class="existing-users">
-        <div class="user-card">
-          <div class="user-info">
-            <img src="../assets/img/fabien.png" alt="Fabien">
-            <div>
-              <span>Fabien</span>
-              <span>pré-existant</span>
-            </div>
-          </div>
-          <button type="button">SE CONNECTER COMME FABIEN</button>
-        </div>
+    <div
+      class="relative mx-auto flex min-h-[calc(100vh-1.5rem)] w-full max-w-97.5 flex-col sm:min-h-[calc(100vh-5rem)] sm:max-w-160 lg:max-w-2xl"
+    >
+      <div class="flex flex-col items-center text-center">
+        <img :src="logoUrl" alt="Carbon logo" class="h-24 w-auto sm:h-36" />
 
-        <div class="user-card">
-          <div class="user-info">
-            <img src="../assets/img/brice.png" alt="Brice">
-            <div>
-              <span>Brice</span>
-              <span>pré-existant</span>
-            </div>
-          </div>
-          <button type="button">SE CONNECTER COMME BRICE</button>
-        </div>
+        <h1
+          class="font-title mt-4 max-w-[15ch] text-[1.45rem] uppercase leading-[1.05] text-main text-balance sm:mt-5 sm:max-w-none sm:text-title-h3"
+        >
+          CONNECT TO YOUR ZERO EMISSIONS JOURNEY
+        </h1>
+
+        <p
+          class="font-ui mt-5 max-w-[18ch] text-[0.95rem] font-bold uppercase leading-[1.18] tracking-[0.01em] text-black text-balance sm:mt-8 sm:max-w-none sm:text-body-24"
+        >
+          NEW USER OR ANOTHER ACCOUNT
+        </p>
       </div>
 
-      <div class="form-section">
-        <h2>NOUVEL UTILISATEUR OU AUTRE COMPTE</h2>
-        
-        <form @submit.prevent="handleLogin">
-          <input type="email" v-model="email" placeholder="Email" required />
-          <input type="password" v-model="password" placeholder="Mot de passe" required />
-          <button type="submit">SE CONNECTER</button>
-        </form>
+      <form
+        class="mt-4 space-y-3.5 sm:mt-8 sm:space-y-6"
+        @submit.prevent="handleLogin"
+      >
+        <input
+          v-model="email"
+          type="email"
+          placeholder="Email"
+          required
+          class="font-ui w-full rounded-3xl border border-main bg-white px-4 py-3 text-[0.95rem] text-black shadow-[0_8px_14px_rgba(17,125,111,0.16)] outline-none placeholder:text-grey focus:border-main focus:ring-2 focus:ring-main/20 sm:px-5 sm:py-4 sm:text-body-24"
+        />
+        <input
+          v-model="password"
+          type="password"
+          placeholder="Password"
+          required
+          class="font-ui w-full rounded-3xl border border-main bg-[#fff8c9] px-4 py-3 text-[0.95rem] text-black shadow-[0_8px_14px_rgba(17,125,111,0.16)] outline-none placeholder:text-grey focus:border-main focus:ring-2 focus:ring-main/20 sm:px-5 sm:py-4 sm:text-body-24"
+        />
 
-        <p v-if="errorMessage" class="error">❌ {{ errorMessage }}</p>
-        <p v-if="successMessage" class="success">✅ {{ successMessage }}</p>
+        <button
+          type="submit"
+          class="font-ui w-full rounded-[1.35rem] bg-main px-5 py-3 text-[0.98rem] font-bold uppercase tracking-[0.04em] text-white transition hover:brightness-105 sm:px-6 sm:py-4 sm:text-body-24"
+        >
+          SIGN IN
+        </button>
+      </form>
 
-        <a href="#" @click.prevent="goToRegister">S'INSCRIRE</a>
+      <p
+        v-if="errorMessage"
+        class="font-ui text-body-12 mt-4 rounded-2xl border border-systeme/25 bg-systeme/10 px-4 py-3 text-systeme sm:text-body-16"
+      >
+        {{ errorMessage }}
+      </p>
+      <p
+        v-if="successMessage"
+        class="font-ui text-body-12 mt-4 rounded-2xl border border-main/20 bg-main/10 px-4 py-3 text-main sm:text-body-16"
+      >
+        {{ successMessage }}
+      </p>
+
+      <button
+        type="button"
+        @click="goToRegister"
+        class="font-ui mt-4 block w-full text-center text-[0.95rem] font-bold uppercase text-main underline underline-offset-4 sm:mt-5 sm:text-body-24"
+      >
+        SIGN UP
+      </button>
+
+      <div class="mt-7 space-y-4 sm:mt-14 sm:space-y-7">
+        <article
+          class="rounded-[1.7rem] bg-white p-3.5 shadow-[0_10px_24px_rgba(0,0,0,0.16)] sm:p-5"
+        >
+          <div class="flex items-center gap-2.5 px-1 sm:gap-4 sm:px-2">
+            <img
+              :src="fabienUrl"
+              alt="Fabien"
+              class="h-14 w-14 rounded-full object-cover sm:h-20 sm:w-20"
+            />
+            <div>
+              <p
+                class="font-ui text-[1.05rem] font-bold text-black sm:text-body-32"
+              >
+                Fabien
+              </p>
+              <p class="font-ui text-body-12 text-grey sm:text-body-24">
+                pre-existing
+              </p>
+            </div>
+          </div>
+
+          <button
+            type="button"
+            class="font-ui mt-3.5 w-full rounded-[1.05rem] bg-main px-4 py-2.5 text-[0.9rem] font-bold uppercase tracking-[0.03em] text-white transition hover:brightness-105 sm:mt-5 sm:py-4 sm:text-body-24"
+          >
+            SIGN IN AS FABIEN
+          </button>
+        </article>
+
+        <article
+          class="rounded-[1.7rem] bg-white p-3.5 shadow-[0_10px_24px_rgba(0,0,0,0.16)] sm:p-5"
+        >
+          <div class="flex items-center gap-2.5 px-1 sm:gap-4 sm:px-2">
+            <img
+              :src="briceUrl"
+              alt="Brice"
+              class="h-14 w-14 rounded-full object-cover sm:h-20 sm:w-20"
+            />
+            <div>
+              <p
+                class="font-ui text-[1.05rem] font-bold text-black sm:text-body-32"
+              >
+                Brice
+              </p>
+              <p class="font-ui text-body-12 text-grey sm:text-body-24">
+                pre-existing
+              </p>
+            </div>
+          </div>
+
+          <button
+            type="button"
+            class="font-ui mt-3.5 w-full rounded-[1.05rem] bg-main px-4 py-2.5 text-[0.9rem] font-bold uppercase tracking-[0.03em] text-white transition hover:brightness-105 sm:mt-5 sm:py-4 sm:text-body-24"
+          >
+            SIGN IN AS BRICE
+          </button>
+        </article>
       </div>
-
     </div>
   </div>
 </template>
 
 <script setup>
-import { ref } from 'vue';
-import axios from 'axios';
-import { useRouter } from 'vue-router';
+import { ref } from "vue";
+import axios from "axios";
+import { useRouter } from "vue-router";
+import logoUrl from "../assets/logo.svg";
+import backgroundUrl from "../assets/img/background.png";
+import fabienUrl from "../assets/img/fabien.png";
+import briceUrl from "../assets/img/brice.png";
 
-// variables
-const email = ref('');
-const password = ref('');
-const errorMessage = ref('');
-const successMessage = ref('');
+const email = ref("");
+const password = ref("");
+const errorMessage = ref("");
+const successMessage = ref("");
 const router = useRouter();
 
-// LA NOUVELLE FONCTION DE REDIRECTION
 const goToRegister = () => {
-  window.location.href = '/register'; // Redirection propre et forcée
+  router.push("/register");
 };
 
 const handleLogin = async () => {
-  // réinitialisation messages
-  errorMessage.value = '';
-  successMessage.value = '';
+  errorMessage.value = "";
+  successMessage.value = "";
 
   try {
-    // envoie de requetes
-    const response = await axios.post('http://localhost:8000/api/login_check', {
+    const response = await axios.post("http://localhost:8000/api/login_check", {
       email: email.value,
-      password: password.value
+      password: password.value,
     });
 
-    // récupération token
     const token = response.data.token;
 
-    // sauvegarde en local
-    localStorage.setItem('jwt_token', token);
-    
-    successMessage.value = 'Connexion reussie !';
-    console.log('Token récupéré avec succès :', token);
-    
-    // redirection apres connexion (Ici le router.push marche très bien car tu as un token valide)
-    router.push('/dashboard');
+    localStorage.setItem("jwt_token", token);
+    successMessage.value = "Login successful!";
 
+    router.push("/dashboard");
   } catch (error) {
-    // debug infos erronées
     if (error.response && error.response.status === 401) {
-      errorMessage.value = 'Identifiants incorrects.';
+      errorMessage.value = "Invalid credentials.";
     } else {
-      errorMessage.value = 'Erreur de connexion au serveur.';
+      errorMessage.value = "Server connection error.";
     }
   }
 };

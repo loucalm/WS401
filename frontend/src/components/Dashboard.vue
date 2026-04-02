@@ -1,113 +1,181 @@
 <template>
-  <div class="dashboard-container">
-    <header class="dashboard-header">
-      <h1>Dashboard</h1>
-      <button class="btn-logout" @click="handleLogout">Logout</button>
-    </header>
+  <div class="min-h-screen bg-white text-black">
+    <main
+      class="mx-auto flex min-h-screen w-full max-w-105 flex-col bg-white pb-28 shadow-[0_0_0_1px_rgba(0,0,0,0.04)] lg:my-0 lg:rounded-none lg:px-10"
+    >
+      <section
+        class="relative overflow-hidden rounded-b-[36px] bg-main-light px-4 pb-6 pt-4"
+      >
+        <div
+          class="absolute inset-x-0 bottom-6 h-36 bg-[radial-gradient(circle_at_20%_40%,rgba(17,125,111,0.18),transparent_32%),radial-gradient(circle_at_80%_30%,rgba(17,125,111,0.12),transparent_28%)] opacity-80"
+        ></div>
 
-    <section class="summary-card">
-      <!-- Calcul dynamique des points totaux -->
-      <div class="points-badge">
-        <h3>MY POINTS</h3>
-        <p>+ {{ totalPoints }} n2e points</p>
-      </div>
+        <div class="relative flex flex-col items-center">
+          <div
+            class="relative flex h-64 w-64 items-center justify-center rounded-full border-8 border-main/85 bg-white shadow-[0_0_0_1px_rgba(17,125,111,0.12)]"
+          >
+            <div
+              class="absolute inset-4 rounded-full border border-dashed border-grey/50"
+            ></div>
+            <div
+              class="absolute -right-2 top-1/2 h-7 w-7 -translate-y-1/2 rounded-full border-4 border-main bg-white"
+            ></div>
 
-      <div class="central-gauge">
-        <div class="gauge-container">
-          <svg class="progress-ring" width="220" height="220">
-            <circle class="progress-ring__circle" stroke-width="8" fill="transparent" r="90" cx="110" cy="110"/>
-          </svg>
-          <div class="character-mask">
-            <!-- <img src="../assets/img/mascotte.png" alt="Eco Character" class="character-img" /> -->
-            <div class="stats">
-              <span class="value">{{ totalCo2 }} kg</span>
-              <span class="label">CO2 / Daily</span>
+            <div
+              class="relative z-10 flex flex-col items-center justify-center text-center"
+            >
+              <img
+                :src="mascotSrc"
+                alt="Mascot"
+                class="mb-2 h-24 w-24 object-contain"
+              />
+              <p class="font-title text-[38px] leading-none text-black">
+                30 kg
+              </p>
+              <p class="mt-2 text-[14px] text-grey">CO2 / Daily</p>
             </div>
           </div>
+
+          <div
+            class="relative z-10 mt-4 w-full rounded-2xl border border-grey/20 bg-white px-4 py-2 text-center shadow-[0_8px_18px_rgba(0,0,0,0.14)]"
+          >
+            <p class="font-title text-[28px] leading-none text-main">
+              MY POINTS
+            </p>
+            <p class="mt-1 font-ui text-[18px] font-bold text-main">
+              + 560 n2e points
+            </p>
+          </div>
+
+          <button
+            type="button"
+            class="mt-3 flex w-full items-center justify-center rounded-full border border-grey/20 bg-white px-4 py-2 text-[13px] font-medium text-black shadow-[0_8px_18px_rgba(0,0,0,0.14)]"
+          >
+            Friends Leaderboard (live)
+            <span class="ml-2 text-[18px] leading-none">⌄</span>
+          </button>
         </div>
-      </div>
+      </section>
 
-      <!-- Leaderboard vide au chargement -->
-      <div class="leaderboard-card">
-        <h3>Friends Leaderboard (live)</h3>
-        <ul v-if="friends.length > 0" class="leaderboard-list">
-          <li v-for="(friend, index) in friends" :key="friend.id" class="leaderboard-item">
-            <div class="user-info">
-              <img :src="friend.avatar" :alt="friend.name" class="avatar" />
-              <span class="name">{{ friend.name }}</span>
-            </div>
-            <span class="score" :class="'rank-' + (index + 1)">
-              {{ index + 1 }}{{ index === 0 ? 'st' : index === 1 ? 'nd' : 'rd' }} : {{ friend.score }}kg
-            </span>
-          </li>
-        </ul>
-        <p v-else class="empty-msg">No friends online...</p>
-      </div>
-    </section>
+      <section class="px-4 pt-5">
+        <h2 class="font-ui text-[18px] font-semibold text-black">
+          Latest Activities
+        </h2>
 
-    <section class="activities-section">
-      <div class="section-header">
-        <h2>Latest Activities</h2>
-        <button class="btn-add" @click="openAddActivityModal">Add Activities</button>
-      </div>
+        <div class="mt-4 space-y-4">
+          <article
+            v-for="activity in activities"
+            :key="activity.title"
+            class="flex items-center gap-4 rounded-2xl border border-grey/15 bg-white px-3 py-3 shadow-[0_6px_16px_rgba(0,0,0,0.14)]"
+          >
+            <div
+              class="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl bg-main-light text-main"
+            >
+              <component :is="activity.icon" class="h-8 w-8" />
+            </div>
 
-      <!-- Liste des activités filtrées (uniquement si non vides) -->
-      <div v-if="activities.length > 0" class="activities-grid">
-        <div v-for="activity in activities" :key="activity.id" class="activity-card">
-          <div class="activity-icon">
-            <i :class="activity.icon"></i>
-          </div>
-          <div class="activity-content">
-            <div class="top-row">
-              <span class="title">{{ activity.title }}</span>
-              <span class="amount">{{ activity.quantity }} {{ activity.unit }}</span>
+            <div class="min-w-0 flex-1">
+              <div class="flex items-start justify-between gap-3">
+                <div>
+                  <p class="font-ui text-body-16 font-medium text-black">
+                    {{ activity.title }}
+                  </p>
+                  <p
+                    class="mt-1 text-[14px] font-medium"
+                    :class="activity.pointsClass"
+                  >
+                    {{ activity.points }}
+                  </p>
+                </div>
+                <p class="shrink-0 font-ui text-[18px] font-medium text-black">
+                  {{ activity.distance }}
+                </p>
+              </div>
+
+              <p
+                class="mt-1 text-right text-[14px] font-medium"
+                :class="activity.co2Class"
+              >
+                {{ activity.co2 }}
+              </p>
             </div>
-            <div class="bottom-row">
-              <span class="points">+{{ activity.points }} n2e points</span>
-              <span class="impact" :class="activity.co2 >= 0 ? 'negative' : 'positive'">
-                {{ activity.co2 >= 0 ? '+' : '' }}{{ activity.co2 }} kg CO2
-              </span>
-            </div>
-          </div>
+          </article>
         </div>
-      </div>
-      <p v-else class="empty-msg">No activities yet. Start by adding one!</p>
-    </section>
+      </section>
+    </main>
+
+    <BottomNav active="home" />
   </div>
 </template>
 
 <script setup>
-import { ref, onMounted, computed } from 'vue';
-import { useRouter } from 'vue-router';
+import mascotSrc from "../assets/mascotte_neutre.svg";
+import BottomNav from "./BottomNav.vue";
 
-// Données réactives (vides au départ)
-const friends = ref([]);
-const activities = ref([]);
-const router = useRouter();
-
-// Calcul automatique du total des points basé sur les activités
-const totalPoints = computed(() => {
-  return activities.value.reduce((sum, act) => sum + act.points, 0);
-});
-
-// Calcul du CO2 total
-const totalCo2 = computed(() => {
-  return activities.value.reduce((sum, act) => sum + act.co2, 0).toFixed(1);
-});
-
-// Simulation de l'appel API 
-onMounted(async () => {
-  // friends.value = await api.getFriends()
-  // activities.value = await api.getActivities()
-});
-
-const openAddActivityModal = () => {
-  console.log("Ouvrir le formulaire d'ajout");
-  // Logique pour ouvrir ta modale ici
+const ElectricCarIcon = {
+  template: `
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+      <path d="M4 14.5h16l-1.2-4.1A2 2 0 0 0 16.9 9H7.1a2 2 0 0 0-1.9 1.4L4 14.5Z" />
+      <path d="M5 14.5v3" />
+      <path d="M19 14.5v3" />
+      <circle cx="7.5" cy="17.5" r="1.2" />
+      <circle cx="16.5" cy="17.5" r="1.2" />
+      <path d="M10.5 7.5 9 10h2l-1 2.5" />
+    </svg>
+  `,
 };
 
-const handleLogout = () => {
-  localStorage.removeItem('jwt_token');
-  router.replace('/login');
+const CarIcon = {
+  template: `
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+      <path d="M4 14.5h16l-1.2-4.1A2 2 0 0 0 16.9 9H7.1a2 2 0 0 0-1.9 1.4L4 14.5Z" />
+      <path d="M5 14.5v3" />
+      <path d="M19 14.5v3" />
+      <circle cx="7.5" cy="17.5" r="1.2" />
+      <circle cx="16.5" cy="17.5" r="1.2" />
+    </svg>
+  `,
 };
+
+const RunIcon = {
+  template: `
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+      <circle cx="15" cy="5" r="2" />
+      <path d="M9 21l2-5 3-2 2 3 3 1" />
+      <path d="M9 16l4-3 2-4" />
+      <path d="M7 20h3" />
+      <path d="M16 12l3-1" />
+    </svg>
+  `,
+};
+
+const activities = [
+  {
+    title: "Electric car",
+    points: "+150 n2e points",
+    pointsClass: "text-main",
+    distance: "25 km",
+    co2: "-3,5 kg CO2",
+    co2Class: "text-main",
+    icon: ElectricCarIcon,
+  },
+  {
+    title: "Car",
+    points: "+0 n2e points",
+    pointsClass: "text-grey",
+    distance: "16 km",
+    co2: "+4,2 kg CO2",
+    co2Class: "text-systeme",
+    icon: CarIcon,
+  },
+  {
+    title: "Run",
+    points: "+120 n2e points",
+    pointsClass: "text-main",
+    distance: "6 km",
+    co2: "0,00 kg CO2",
+    co2Class: "text-main",
+    icon: RunIcon,
+  },
+];
 </script>
