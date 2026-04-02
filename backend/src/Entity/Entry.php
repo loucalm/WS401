@@ -48,4 +48,53 @@ class Entry
     }
 
     // Getters et Setters...
+    public function getId(): ?int
+    {
+        return $this->id;
+    }
+
+    public function getTotalCo2(): ?float
+    {
+        return $this->totalCo2;
+    }
+
+    public function getCreatedAt(): ?\DateTimeImmutable
+    {
+        return $this->createdAt;
+    }
+    public function getValue(): ?float
+    {
+        return $this->value;
+    }
+
+    public function setValue(float $value): static
+    {
+        $this->value = $value;
+
+        return $this;
+    }
+
+    public function getOwner(): ?User
+    {
+        return $this->owner;
+    }
+
+    public function setOwner(?User $owner): static
+    {
+        $this->owner = $owner;
+
+        return $this;
+    }
+
+    public function getActivityType(): ?ActivityType
+    {
+        return $this->activityType;
+    }
+
+    public function setActivityType(?ActivityType $activityType): static
+    {
+        $this->activityType = $activityType;
+
+        return $this;
+    }
 }
