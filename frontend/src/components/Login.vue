@@ -73,7 +73,7 @@
         @click="goToRegister"
         class="font-ui mt-4 block w-full text-center text-[0.95rem] font-bold uppercase text-main underline underline-offset-4 sm:mt-5 sm:text-body-24"
       >
-        LOG IN
+        SIGN UP
       </button>
 
       <div class="mt-7 space-y-4 sm:mt-14 sm:space-y-7">
