@@ -51,7 +51,7 @@
           type="submit"
           class="font-ui w-full rounded-[1.35rem] bg-main px-5 py-3 text-[0.98rem] font-bold uppercase tracking-[0.04em] text-white transition hover:brightness-105 sm:px-6 sm:py-4 sm:text-body-24"
         >
-          SIGN IN
+          LOG IN
         </button>
       </form>
 

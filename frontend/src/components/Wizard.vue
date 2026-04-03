@@ -1204,6 +1204,12 @@ export default {
     const fetchTypes = async () => {
       try {
         const token = localStorage.getItem("jwt_token");
+        if (!token) {
+          loading.value = false;
+          router.push("/login");
+          return;
+        }
+
         const response = await axios.get(
           "http://localhost:8000/api/activity_types",
           {
@@ -1226,6 +1232,12 @@ export default {
 
         activityTypes.value = Array.isArray(response.data) ? response.data : [];
       } catch (error) {
+        if (error?.response?.status === 401) {
+          localStorage.removeItem("jwt_token");
+          router.push("/login");
+          return;
+        }
+
         console.error("Erreur lors de la recuperation des categories :", error);
       } finally {
         loading.value = false;
