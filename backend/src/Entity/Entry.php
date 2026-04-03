@@ -18,6 +18,9 @@ class Entry
     private ?int $id = null;
 
     #[ORM\Column]
+    private ?float $value = null;
+
+    #[ORM\Column]
     private ?float $totalCo2 = null;
 
     #[ORM\Column]
@@ -52,6 +55,7 @@ class Entry
                 $total += $item->getQuantity() * $item->getActivityType()->getCo2Factor();
             }
         }
+        $this->value = $total;
         $this->totalCo2 = $total;
     }
 
@@ -60,6 +64,17 @@ class Entry
     public function getId(): ?int
     {
         return $this->id;
+    }
+
+    public function getValue(): ?float
+    {
+        return $this->value;
+    }
+
+    public function setValue(?float $value): static
+    {
+        $this->value = $value;
+        return $this;
     }
 
     public function getTotalCo2(): ?float
