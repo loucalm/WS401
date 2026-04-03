@@ -659,182 +659,60 @@ import wizardStep1Svg from "../assets/img/svg/wizard_etape_1.svg?raw";
 import wizardStep2Svg from "../assets/img/svg/wizard_etape_2.svg?raw";
 import wizardStep3Svg from "../assets/img/svg/wizard_etape_3.svg?raw";
 
-function ChevronDownIcon() {
-  return null;
-}
-
-ChevronDownIcon.template = `
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-              <path d="m5 9 7 7 7-7" />
-            </svg>
-          `;
-
-function FoodMealIcon() {
-  return null;
-}
-
-FoodMealIcon.template = `
-            <svg viewBox="0 0 64 64" fill="none" aria-hidden="true">
-              <circle cx="32" cy="32" r="28" fill="#26c6da" />
-              <circle cx="28" cy="28" r="20" fill="#7b4f34" />
-              <circle cx="28" cy="28" r="16" fill="#b57a59" />
-              <path d="M18 30c2-7 10-12 18-12 4 0 8 1 11 3-2 10-12 18-21 18-4 0-7-1-10-3 0-2 1-4 2-6Z" fill="#fff0d4" />
-              <path d="M23 22c4 0 9 2 12 5-5 4-10 6-15 6-2 0-4 0-6-1 1-6 4-10 9-10Z" fill="#ffb703" />
-              <circle cx="20" cy="44" r="8" fill="#19c200" />
-              <path d="M20 39v10M15 44h10" stroke="#9e7d12" stroke-width="2.5" stroke-linecap="round" />
-              <path d="M26 18v4M20 22l2 3M33 20l-1 4" stroke="#14ae2b" stroke-width="3" stroke-linecap="round" />
-            </svg>
-          `;
-
-function FoodFreshPlateIcon() {
-  return null;
-}
-
-FoodFreshPlateIcon.template = `
-            <svg viewBox="0 0 64 64" fill="none" aria-hidden="true">
-              <circle cx="34" cy="33" r="24" fill="#0f52ba" />
-              <path d="M10 24c8 10 19 20 32 29l9-12c-11-4-23-12-34-24l-7 7Z" fill="#4fc3f7" opacity="0.9" />
-              <circle cx="31" cy="31" r="18" fill="#e8f0ff" />
-              <path d="M24 20c5 2 10 5 14 9-2 6-7 12-12 15-4-3-7-8-8-13 1-4 3-8 6-11Z" fill="#ff6b6b" />
-              <path d="M34 20c6 1 11 4 15 9-4 3-10 6-16 7-1-5-1-11 1-16Z" fill="#ff7f50" />
-              <circle cx="20" cy="26" r="5" fill="#ff6b6b" />
-              <circle cx="42" cy="18" r="4" fill="#ffd166" />
-              <circle cx="20" cy="43" r="5" fill="#06d6a0" />
-              <circle cx="25" cy="48" r="4" fill="#2ebd59" />
-              <circle cx="34" cy="36" r="3" fill="#ffa94d" />
-            </svg>
-          `;
-
-function FoodDishIcon() {
-  return null;
-}
-
-FoodDishIcon.template = `
-            <svg viewBox="0 0 64 64" fill="none" aria-hidden="true">
-              <path d="M10 15h44v34H10z" fill="#f2ebdc" rx="10" />
-              <path d="M14 48 36 16l14 20-18 12H14Z" fill="#0f52ba" />
-              <circle cx="34" cy="32" r="18" fill="#6ec6ff" />
-              <path d="M24 36c3-7 10-11 17-11 4 0 8 1 11 3-1 8-7 15-14 18-6-1-11-4-14-10Z" fill="#7b4f34" />
-              <circle cx="40" cy="20" r="5" fill="#ff595e" />
-              <circle cx="40" cy="20" r="2" fill="#2ebd59" />
-              <path d="M18 30c4 6 10 10 18 10" stroke="#ffb703" stroke-width="4" stroke-linecap="round" />
-              <path d="M53 19v24M58 19v24M48 20h12" stroke="#ffffff" stroke-width="3" stroke-linecap="round" />
-            </svg>
-          `;
-
-function RiceIcon() {
-  return null;
-}
+// --- SVG Components (inchangés) ---
+function ChevronDownIcon() { return null; }
+ChevronDownIcon.template = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5 9 7 7 7-7" /></svg>`;
+function FoodMealIcon() { return null; }
+FoodMealIcon.template = `<svg viewBox="0 0 64 64" fill="none" aria-hidden="true"><circle cx="32" cy="32" r="28" fill="#26c6da" /><circle cx="28" cy="28" r="20" fill="#7b4f34" /><circle cx="28" cy="28" r="16" fill="#b57a59" /><path d="M18 30c2-7 10-12 18-12 4 0 8 1 11 3-2 10-12 18-21 18-4 0-7-1-10-3 0-2 1-4 2-6Z" fill="#fff0d4" /><path d="M23 22c4 0 9 2 12 5-5 4-10 6-15 6-2 0-4 0-6-1 1-6 4-10 9-10Z" fill="#ffb703" /><circle cx="20" cy="44" r="8" fill="#19c200" /><path d="M20 39v10M15 44h10" stroke="#9e7d12" stroke-width="2.5" stroke-linecap="round" /><path d="M26 18v4M20 22l2 3M33 20l-1 4" stroke="#14ae2b" stroke-width="3" stroke-linecap="round" /></svg>`;
+function FoodFreshPlateIcon() { return null; }
+FoodFreshPlateIcon.template = `<svg viewBox="0 0 64 64" fill="none" aria-hidden="true"><circle cx="34" cy="33" r="24" fill="#0f52ba" /><path d="M10 24c8 10 19 20 32 29l9-12c-11-4-23-12-34-24l-7 7Z" fill="#4fc3f7" opacity="0.9" /><circle cx="31" cy="31" r="18" fill="#e8f0ff" /><path d="M24 20c5 2 10 5 14 9-2 6-7 12-12 15-4-3-7-8-8-13 1-4 3-8 6-11Z" fill="#ff6b6b" /><path d="M34 20c6 1 11 4 15 9-4 3-10 6-16 7-1-5-1-11 1-16Z" fill="#ff7f50" /><circle cx="20" cy="26" r="5" fill="#ff6b6b" /><circle cx="42" cy="18" r="4" fill="#ffd166" /><circle cx="20" cy="43" r="5" fill="#06d6a0" /><circle cx="25" cy="48" r="4" fill="#2ebd59" /><circle cx="34" cy="36" r="3" fill="#ffa94d" /></svg>`;
+function FoodDishIcon() { return null; }
+FoodDishIcon.template = `<svg viewBox="0 0 64 64" fill="none" aria-hidden="true"><path d="M10 15h44v34H10z" fill="#f2ebdc" rx="10" /><path d="M14 48 36 16l14 20-18 12H14Z" fill="#0f52ba" /><circle cx="34" cy="32" r="18" fill="#6ec6ff" /><path d="M24 36c3-7 10-11 17-11 4 0 8 1 11 3-1 8-7 15-14 18-6-1-11-4-14-10Z" fill="#7b4f34" /><circle cx="40" cy="20" r="5" fill="#ff595e" /><circle cx="40" cy="20" r="2" fill="#2ebd59" /><path d="M18 30c4 6 10 10 18 10" stroke="#ffb703" stroke-width="4" stroke-linecap="round" /><path d="M53 19v24M58 19v24M48 20h12" stroke="#ffffff" stroke-width="3" stroke-linecap="round" /></svg>`;
+function RiceIcon() { return null; }
 RiceIcon.template = `<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M5 14c0-4 3-7 7-7s7 3 7 7H5Z" /><path d="M6 16h12c-.7 2.3-3 4-6 4s-5.3-1.7-6-4Z" /><path d="M9 8c0-2 1-3 1-3M12 8c0-2 1-3 1-3M15 8c0-2 1-3 1-3M7 9c0-1.8 1-2.7 1-2.7" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" fill="none" /></svg>`;
-
-function PastaIcon() {
-  return null;
-}
+function PastaIcon() { return null; }
 PastaIcon.template = `<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M5 4h2v16H5zM9 4h2v16H9zM13 4h2v16h-2z" /><path d="M18 7c1.7 0 3 1.3 3 3v7h-2v-7c0-.6-.4-1-1-1V7Z" /><path d="M18 12c1.7 0 3 1.3 3 3v4h-2v-4c0-.6-.4-1-1-1v-2Z" /></svg>`;
-
-function VegetableIcon() {
-  return null;
-}
+function VegetableIcon() { return null; }
 VegetableIcon.template = `<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M4 10h16v8H4z" /><path d="M6 8c2-4 5-5 6-5 0 2-1 4-3 5H6Z" /><path d="M12 7c2-3 4-4 6-4 0 2-1 4-3 5h-3Z" /><path d="M8 14h8" stroke="#dfe7f2" stroke-width="2" stroke-linecap="round" /></svg>`;
-
-function WhiteMeatIcon() {
-  return null;
-}
+function WhiteMeatIcon() { return null; }
 WhiteMeatIcon.template = `<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 8c1-2 3-3 4-3s3 1 4 3c1 2 1 4 0 6-1 3-4 5-4 5s-3-2-4-5c-1-2-1-4 0-6Z" /><path d="M6 9c-2 0-3 1-3 3 0 2 1 3 3 3" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" /><path d="M18 9c2 0 3 1 3 3 0 2-1 3-3 3" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" /></svg>`;
-
-function FishIcon() {
-  return null;
-}
+function FishIcon() { return null; }
 FishIcon.template = `<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M3 12c3-4 7-6 11-6 3 0 5 1 7 3-2 2-3 4-3 6 0 1 0 2 1 4-2 0-4-1-5-3-1 .5-2 .8-3 .8-3 0-6-2-8-5Z" /><circle cx="9" cy="11" r="1" fill="#dfe7f2" /></svg>`;
-
-function EggsIcon() {
-  return null;
-}
+function EggsIcon() { return null; }
 EggsIcon.template = `<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M9 6c2 0 4 3 4 6 0 4-2 6-4 6s-4-2-4-6c0-3 2-6 4-6Z" /><path d="M16 5c2 0 4 3 4 6 0 4-2 6-4 6s-4-2-4-6c0-3 2-6 4-6Z" /></svg>`;
-
-function CheeseIcon() {
-  return null;
-}
+function CheeseIcon() { return null; }
 CheeseIcon.template = `<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M4 10c4-4 9-6 16-5v9H8c-2 0-4-2-4-4Z" /><circle cx="14" cy="9" r="1.2" fill="#dfe7f2" /><circle cx="17" cy="12" r="1.2" fill="#dfe7f2" /></svg>`;
-
-function YogurtIcon() {
-  return null;
-}
+function YogurtIcon() { return null; }
 YogurtIcon.template = `<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 6h8l-1 13a2 2 0 0 1-2 2h-2a2 2 0 0 1-2-2L8 6Z" /><path d="M14 4c0 2 1 3 2 4" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" /></svg>`;
-
-function SaladIcon() {
-  return null;
-}
+function SaladIcon() { return null; }
 SaladIcon.template = `<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M5 14c0-4 3-7 7-7s7 3 7 7H5Z" /><path d="M6 16h12c-.7 2.3-3 4-6 4s-5.3-1.7-6-4Z" /><path d="M8 10c1-2 2-3 4-3M12 10c1-2 2-3 4-3M10 12c0-1.5-1-2.8-2-3.6" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" /></svg>`;
-
-function CookedVegetablesIcon() {
-  return null;
-}
+function CookedVegetablesIcon() { return null; }
 CookedVegetablesIcon.template = `<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M5 14c0-4 3-7 7-7s7 3 7 7H5Z" /><path d="M6 16h12c-.7 2.3-3 4-6 4s-5.3-1.7-6-4Z" /><circle cx="9" cy="9" r="1.3" fill="#dfe7f2" /><circle cx="12" cy="8" r="1.3" fill="#dfe7f2" /><circle cx="15" cy="9.5" r="1.3" fill="#dfe7f2" /></svg>`;
-
-function ShoppingCartIcon() {
-  return null;
-}
+function ShoppingCartIcon() { return null; }
 ShoppingCartIcon.template = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="9" cy="20" r="1.5" fill="currentColor" stroke="none" /><circle cx="18" cy="20" r="1.5" fill="currentColor" stroke="none" /><path d="M3 4h2l2.3 10.2a1 1 0 0 0 1 .8h9.9a1 1 0 0 0 1-.8L21 7H7.4" /><path d="m14.5 15.5 4.5 4.5" /><path d="m19 15.5-4.5 4.5" /></svg>`;
-
-function EcoShirtIcon() {
-  return null;
-}
+function EcoShirtIcon() { return null; }
 EcoShirtIcon.template = `<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M7.8 4.5 12 6.8l4.2-2.3 3.8 3.1-1.8 3.8-1.7-.7V20H7.5v-9.3l-1.7.7L4 7.6l3.8-3.1Z" /><path d="M9 14c1.2-2 3.8-3.4 6.5-2.8-1.1 3-3.4 5.3-6.3 5.8-.7-1-.8-2-.2-3Z" fill="#f3d4f8" /></svg>`;
-
-function PoloIcon() {
-  return null;
-}
+function PoloIcon() { return null; }
 PoloIcon.template = `<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M7.5 4h9l3.2 3.1-1.5 3.1-1.7-.6V20H7.5V9.6l-1.7.6-1.5-3.1L7.5 4Z" /><path d="M10 4h4l-1.4 2.5H11.4L10 4Z" fill="#f3d4f8" /><path d="M12 9v6" stroke="#f3d4f8" stroke-width="1.7" stroke-linecap="round" /><circle cx="12" cy="8" r="0.8" fill="#f3d4f8" /><circle cx="12" cy="11" r="0.8" fill="#f3d4f8" /></svg>`;
-
-function TshirtIcon() {
-  return null;
-}
+function TshirtIcon() { return null; }
 TshirtIcon.template = `<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8.2 4.3 12 6.3l3.8-2 3.2 2.8-1.6 3-1.6-.6V20H8.2V9.5l-1.6.6-1.6-3 3.2-2.8Z" /></svg>`;
-
-function JacketIcon() {
-  return null;
-}
+function JacketIcon() { return null; }
 JacketIcon.template = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 4.5h8l3 3.2-1.4 3.3-2-.8V20H8.4v-9.8l-2 .8L5 7.7 8 4.5Z" /><path d="M12 4.8V20" /><path d="M10.2 9.5h3.6" /></svg>`;
-
-function CoatIcon() {
-  return null;
-}
+function CoatIcon() { return null; }
 CoatIcon.template = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8.5 3.8h7l2.6 3.1-1 3-1.8-.8L17.6 20H6.4L8.7 9.1l-1.8.8-1-3 2.6-3.1Z" /><path d="M12 4.2V20" /><path d="M10.5 8.8h3" /><path d="M10.5 12.5h3" /></svg>`;
-
-function ShortsIcon() {
-  return null;
-}
+function ShortsIcon() { return null; }
 ShortsIcon.template = `<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M6 5h12l-1 14h-4l-1-7-1 7H7L6 5Z" /><path d="M6.5 8h11" stroke="#f3d4f8" stroke-width="1.6" stroke-linecap="round" /></svg>`;
-
-function PantsIcon() {
-  return null;
-}
+function PantsIcon() { return null; }
 PantsIcon.template = `<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 4h8l-1 16h-3l-1-8-1 8H7L8 4Z" /><path d="M8.5 7h7" stroke="#f3d4f8" stroke-width="1.4" stroke-linecap="round" /></svg>`;
-
-function SweatpantsIcon() {
-  return null;
-}
+function SweatpantsIcon() { return null; }
 SweatpantsIcon.template = `<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 4.5h8l-.8 15h-3.2l-.8-7-.8 7H7.2L8 4.5Z" /><path d="M8.6 7.5c2.3 1 4.5 1 6.8 0" stroke="#f3d4f8" stroke-width="1.4" stroke-linecap="round" /></svg>`;
-
-function BraIcon() {
-  return null;
-}
+function BraIcon() { return null; }
 BraIcon.template = `<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8.5 7.5c1.3 0 2.5.7 3.2 1.9L12 10l.3-.6c.7-1.2 1.9-1.9 3.2-1.9 1.8 0 3.2 1.4 3.2 3.2 0 3.5-1.9 6.4-5.1 7.7l-1.6-2.6-1.6 2.6c-3.2-1.3-5.1-4.2-5.1-7.7 0-1.8 1.4-3.2 3.2-3.2Z" /><path d="M6 17c1.5-1 2.7-2.2 3.7-3.7M18 17c-1.5-1-2.7-2.2-3.7-3.7" stroke="#f3d4f8" stroke-width="1.3" stroke-linecap="round" /></svg>`;
-
-function BriefsIcon() {
-  return null;
-}
+function BriefsIcon() { return null; }
 BriefsIcon.template = `<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M6 5h12l1 5c0 5-2.5 8-7 8s-7-3-7-8l1-5Z" /><path d="M7 8h10" stroke="#f3d4f8" stroke-width="1.5" stroke-linecap="round" /><path d="M12 11v5" stroke="#f3d4f8" stroke-width="1.5" stroke-linecap="round" /></svg>`;
-
-function CapIcon() {
-  return null;
-}
+function CapIcon() { return null; }
 CapIcon.template = `<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 6c3.8 0 7 2.6 7 5.8V14H5v-2.2C5 8.6 8.2 6 12 6Z" /><path d="M12 14c3.6 0 6.8.9 8 2.4-1.5 1.1-4.2 1.8-8 1.8-2.6 0-5.2-.7-7-1.8.6-1.2 2.4-2.1 5-2.4h2Z" /><path d="M18 12c1.8.2 3 .9 3 2.1 0 1.1-.9 1.8-2.7 2" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" /></svg>`;
-
-function ScarfIcon() {
-  return null;
-}
+function ScarfIcon() { return null; }
 ScarfIcon.template = `<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M14 3c3.3 0 6 2.3 6 5.2 0 1.9-1.1 3.6-2.8 4.6L13 20h-3l2.8-5.5C10.1 13.5 8 11.1 8 8.2 8 5.3 10.7 3 14 3Z" /><path d="M12 11.5c1.6 0 3.4.6 5.1 1.7" fill="none" stroke="#f3d4f8" stroke-width="1.5" stroke-linecap="round" /><path d="M12.2 15.5 10 20" fill="none" stroke="#f3d4f8" stroke-width="1.5" stroke-linecap="round" /></svg>`;
 
 export default {
@@ -1087,16 +965,19 @@ export default {
       normalizeToCategory(selectedType.value?.name || "travel"),
     );
     const stepTitle = computed(() => selectedType.value?.name || "Travel");
+    
     const selectedFoodConsumptionLabel = computed(() => {
       const labels = { meal: "Meal", fresh: "Fresh food", dish: "Dish" };
       return labels[selectedFoodConsumption.value] || "Meal";
     });
+    
     const selectedClothingPurchaseLabel = computed(() => {
       const option = clothingPurchaseOptions.find(
         (item) => item.id === selectedClothingPurchase.value,
       );
       return option?.label || "Second hand";
     });
+    
     const co2Value = computed(() => {
       if (selectedCategory.value === "food") {
         return 1.35;
@@ -1128,7 +1009,9 @@ export default {
         transportFactors[selectedFuel.value] || transportFactors.Diesel;
       return distance.value * factor;
     });
+
     const formattedCo2 = computed(() => co2Value.value.toFixed(2));
+    
     const headerClass = computed(() => {
       if (currentStep.value > 1 && selectedCategory.value === "food")
         return "bg-tertiary-light";
@@ -1138,11 +1021,13 @@ export default {
         return "bg-cloth-light";
       return "bg-main-light";
     });
+    
     const stepIndicatorSvgMarkup = computed(() => {
       if (currentStep.value === 1) return wizardStep1Svg;
       if (currentStep.value === 2) return wizardStep2Svg;
       return wizardStep3Svg;
     });
+    
     const stepIndicatorColorClass = computed(() => {
       if (currentStep.value === 1) return "text-main";
       if (selectedCategory.value === "food") return "text-tertiary";
@@ -1150,11 +1035,13 @@ export default {
       if (selectedCategory.value === "clothing") return "text-cloth";
       return "text-main";
     });
+    
     const stepIndicatorContainerClass = computed(() => {
       if (currentStep.value === 1) return "w-full max-w-[216px] !ml-auto !mr-0";
       if (currentStep.value === 2) return "w-full max-w-[355px]";
       return "w-full max-w-[216px] !ml-0 !mr-auto";
     });
+    
     const actionBackClass = computed(() =>
       selectedCategory.value === "food"
         ? "flex h-14 items-center justify-center rounded-[18px] border-2 border-tertiary bg-white font-ui text-[24px] leading-none text-tertiary sm:h-16 sm:text-[30px]"
@@ -1164,6 +1051,7 @@ export default {
             ? "flex h-14 items-center justify-center rounded-[18px] border-2 border-cloth bg-white font-ui text-[24px] leading-none text-cloth sm:h-16 sm:text-[30px]"
             : "flex h-14 items-center justify-center rounded-[18px] border-2 border-main bg-white font-ui text-[24px] leading-none text-main sm:h-16 sm:text-[30px]",
     );
+    
     const actionNextClass = computed(() =>
       selectedCategory.value === "food"
         ? "flex h-14 items-center justify-center rounded-[18px] bg-tertiary font-ui text-[24px] leading-none text-white sm:h-16 sm:text-[30px]"
@@ -1173,32 +1061,17 @@ export default {
             ? "flex h-14 items-center justify-center rounded-[18px] bg-cloth font-ui text-[24px] leading-none text-white sm:h-16 sm:text-[30px]"
             : "flex h-14 items-center justify-center rounded-[18px] bg-main font-ui text-[24px] leading-none text-white sm:h-16 sm:text-[30px]",
     );
+    
     const step3GaugeFillClass = computed(() =>
-      selectedCategory.value === "food"
-        ? "bg-tertiary"
-        : selectedCategory.value === "consumption"
-          ? "bg-secondary"
-          : selectedCategory.value === "clothing"
-            ? "bg-cloth"
-            : "bg-main",
+      selectedCategory.value === "food" ? "bg-tertiary" : selectedCategory.value === "consumption" ? "bg-secondary" : selectedCategory.value === "clothing" ? "bg-cloth" : "bg-main",
     );
+    
     const step3GaugeRingClass = computed(() =>
-      selectedCategory.value === "food"
-        ? "border-tertiary"
-        : selectedCategory.value === "consumption"
-          ? "border-secondary"
-          : selectedCategory.value === "clothing"
-            ? "border-cloth"
-            : "border-main",
+      selectedCategory.value === "food" ? "border-tertiary" : selectedCategory.value === "consumption" ? "border-secondary" : selectedCategory.value === "clothing" ? "border-cloth" : "border-main",
     );
+    
     const step3TextAccentClass = computed(() =>
-      selectedCategory.value === "food"
-        ? "text-tertiary"
-        : selectedCategory.value === "consumption"
-          ? "text-secondary"
-          : selectedCategory.value === "clothing"
-            ? "text-cloth"
-            : "text-main",
+      selectedCategory.value === "food" ? "text-tertiary" : selectedCategory.value === "consumption" ? "text-secondary" : selectedCategory.value === "clothing" ? "text-cloth" : "text-main",
     );
 
     const fetchTypes = async () => {
@@ -1325,12 +1198,116 @@ export default {
       currentStep.value = step;
     };
 
-    const confirmWizard = () => {
+    const goBack = () => {
       router.push("/dashboard");
     };
 
-    const goBack = () => {
-      router.push("/dashboard");
+    // 🚀 LA NOUVELLE FONCTION MAGIQUE DE VALIDATION PANIER
+    const confirmWizard = async () => {
+      const token = localStorage.getItem("jwt_token");
+      if (!token) return;
+
+      let entryItems = [];
+      let details = {};
+
+      // Outil pour trouver l'ID exact dans le catalogue depuis tes libellés
+      const findActivityId = (nameMatch, subCategoryMatch = null, dietMatch = null) => {
+        const found = activityTypes.value.find(a => {
+          // On retire les tirets et espaces pour comparer proprement (ex: "Tshirt" = "T-shirt")
+          const cleanString = (str) => str ? str.toLowerCase().replace(/[-\s]/g, '') : '';
+          
+          const matchName = nameMatch ? cleanString(a.name).includes(cleanString(nameMatch)) : true;
+          const matchSub = subCategoryMatch ? a.subCategory === subCategoryMatch : true;
+          const matchDiet = dietMatch ? a.diet === dietMatch : true;
+          
+          return matchName && matchSub && matchDiet;
+        });
+        return found ? found['@id'] : null;
+      };
+
+      // --- 🚗 TRAVEL ---
+      if (selectedCategory.value === "travel") {
+        let searchName = transportMode.value;
+        if (transportMode.value === "Car") {
+          searchName = `Car (${selectedFuel.value})`;
+        }
+        const activityId = findActivityId(searchName, "Transport");
+        if (activityId) {
+          entryItems.push({ activityType: activityId, quantity: distance.value });
+        }
+        details = { transportMode: transportMode.value, fuel: selectedFuel.value, distance: distance.value };
+      } 
+      
+      // --- 🍔 FOOD ---
+      else if (selectedCategory.value === "food") {
+        const dietMap = { fresh: "Eco-Green", meal: "Eco-Mix", dish: "Eco-Boost" };
+        const selectedDiet = dietMap[selectedFoodConsumption.value] || "Eco-Mix";
+
+        const addFoodItem = (sectionId, subCat) => {
+          const name = getFoodLabel(sectionId);
+          const id = findActivityId(name, subCat, selectedDiet);
+          if (id) entryItems.push({ activityType: id, quantity: 1 });
+        };
+
+        addFoodItem("base", "Base");
+        addFoodItem("protein", "Protéines");
+        addFoodItem("vitamines", "Vitamines");
+        addFoodItem("bonus", "Bonus");
+
+        details = { diet: selectedDiet };
+      } 
+      
+      // --- ⚡ CONSUMPTION ---
+      else if (selectedCategory.value === "consumption") {
+        const activityId = findActivityId(consumptionSource.value, "Energy");
+        if (activityId) {
+          entryItems.push({ activityType: activityId, quantity: surface.value * duration.value });
+        }
+        details = { surface: surface.value, duration: duration.value, source: consumptionSource.value };
+      } 
+      
+      // --- 👕 CLOTHING ---
+      else if (selectedCategory.value === "clothing") {
+        const purchaseFactor = clothingPurchaseFactors[selectedClothingPurchase.value] || 1;
+
+        const addClothingItem = (sectionId, subCat) => {
+          const name = getClothingLabel(sectionId);
+          const id = findActivityId(name, subCat);
+          if (id) {
+            entryItems.push({ activityType: id, quantity: 1 * purchaseFactor });
+          }
+        };
+
+        addClothingItem("top", "Top");
+        addClothingItem("bottom", "Stocking");
+        addClothingItem("underwear", "Underwear");
+        addClothingItem("accessory", "Accessory");
+
+        details = { purchaseType: selectedClothingPurchaseLabel.value };
+      }
+
+      // 📦 Préparation du Payload JSON
+      const payload = {
+        owner: "/api/users/3", // A dynamiser plus tard avec le vrai utilisateur
+        details: details,
+        entryItems: entryItems
+      };
+
+      try {
+        await axios.post("http://localhost:8000/api/entries", payload, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/ld+json",
+          },
+        });
+        
+        alert("Félicitations ! Activité enregistrée. 🌱");
+        router.push("/dashboard");
+        
+      } catch (error) {
+        console.error("Erreur lors de l'envoi :", error.response?.data || error);
+        alert("Une erreur est survenue lors de la sauvegarde de l'empreinte.");
+      }
     };
 
     onMounted(fetchTypes);

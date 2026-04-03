@@ -3,11 +3,13 @@
 namespace App\Entity;
 
 use ApiPlatform\Metadata\ApiResource;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity]
 #[ApiResource]
-#[ORM\HasLifecycleCallbacks] // Permet d'exécuter du code automatiquement
+#[ORM\HasLifecycleCallbacks]
 class Entry
 {
     #[ORM\Id]
@@ -16,38 +18,45 @@ class Entry
     private ?int $id = null;
 
     #[ORM\Column]
-    private ?float $value = null; // La distance ou la quantité saisie
-
-    #[ORM\Column]
-    private ?float $totalCo2 = null; // Le résultat final
+    private ?float $totalCo2 = null;
 
     #[ORM\Column]
     private ?\DateTimeImmutable $createdAt = null;
 
-    #[ORM\ManyToOne]
-    #[ORM\JoinColumn(nullable: false)]
-    private ?User $owner = null; // A qui appartient cette saisie ?
+    // NOUVEAU : Le champ JSON pour stocker { "distance": 15, "origin": "thrift" }
+    #[ORM\Column(type: 'json', nullable: true)]
+    private ?array $details = null;
 
     #[ORM\ManyToOne]
     #[ORM\JoinColumn(nullable: false)]
-    private ?ActivityType $activityType = null;
+    private ?User $owner = null;
+
+    // NOUVEAU : La relation vers le contenu du panier (EntryItem)
+    #[ORM\OneToMany(mappedBy: 'entry', targetEntity: EntryItem::class, cascade: ['persist', 'remove'])]
+    private Collection $entryItems;
 
     public function __construct()
     {
         $this->createdAt = new \DateTimeImmutable();
+        $this->entryItems = new ArrayCollection(); // On initialise la collection
     }
 
-    // ASTUCE MAGIQUE : Avant de sauvegarder en base, on calcule le CO2 automatiquement !
+    // NOUVEAU CALCUL MAGIQUE : On boucle sur tous les items du panier !
     #[ORM\PrePersist]
     #[ORM\PreUpdate]
     public function calculateTotalCo2(): void
     {
-        if ($this->value !== null && $this->activityType !== null) {
-            $this->totalCo2 = $this->value * $this->activityType->getCo2Factor();
+        $total = 0;
+        foreach ($this->entryItems as $item) {
+            if ($item->getQuantity() !== null && $item->getActivityType() !== null) {
+                $total += $item->getQuantity() * $item->getActivityType()->getCo2Factor();
+            }
         }
+        $this->totalCo2 = $total;
     }
 
-    // Getters et Setters...
+    // --- GETTERS & SETTERS ---
+
     public function getId(): ?int
     {
         return $this->id;
@@ -62,15 +71,15 @@ class Entry
     {
         return $this->createdAt;
     }
-    public function getValue(): ?float
+
+    public function getDetails(): ?array
     {
-        return $this->value;
+        return $this->details;
     }
 
-    public function setValue(float $value): static
+    public function setDetails(?array $details): static
     {
-        $this->value = $value;
-
+        $this->details = $details;
         return $this;
     }
 
@@ -82,19 +91,34 @@ class Entry
     public function setOwner(?User $owner): static
     {
         $this->owner = $owner;
-
         return $this;
     }
 
-    public function getActivityType(): ?ActivityType
+    /**
+     * @return Collection<int, EntryItem>
+     */
+    public function getEntryItems(): Collection
     {
-        return $this->activityType;
+        return $this->entryItems;
     }
 
-    public function setActivityType(?ActivityType $activityType): static
+    public function addEntryItem(EntryItem $entryItem): static
     {
-        $this->activityType = $activityType;
+        if (!$this->entryItems->contains($entryItem)) {
+            $this->entryItems->add($entryItem);
+            $entryItem->setEntry($this);
+        }
+        return $this;
+    }
 
+    public function removeEntryItem(EntryItem $entryItem): static
+    {
+        if ($this->entryItems->removeElement($entryItem)) {
+            // set the owning side to null (unless already changed)
+            if ($entryItem->getEntry() === $this) {
+                $entryItem->setEntry(null);
+            }
+        }
         return $this;
     }
 }

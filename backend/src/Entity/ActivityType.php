@@ -23,6 +23,14 @@ class ActivityType
     #[ORM\Column(length: 50)]
     private ?string $unitLabel = null;
 
+    // 👇 La colonne pour "Top", "Base", "Protéines"...
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $subCategory = null;
+
+    // 👇 LA NOUVELLE COLONNE POUR "Eco-Green", "Eco-Mix"... 👇
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $diet = null;
+
     #[ORM\ManyToOne]
     #[ORM\JoinColumn(nullable: false)]
     private ?Category $category = null;
@@ -62,6 +70,29 @@ class ActivityType
     public function setUnitLabel(string $unitLabel): static
     {
         $this->unitLabel = $unitLabel;
+        return $this;
+    }
+
+    public function getSubCategory(): ?string
+    {
+        return $this->subCategory;
+    }
+
+    public function setSubCategory(?string $subCategory): static
+    {
+        $this->subCategory = $subCategory;
+        return $this;
+    }
+
+    // 👇 NOUVEAUX GETTER / SETTER POUR LE RÉGIME 👇
+    public function getDiet(): ?string
+    {
+        return $this->diet;
+    }
+
+    public function setDiet(?string $diet): static
+    {
+        $this->diet = $diet;
         return $this;
     }
 
