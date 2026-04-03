@@ -71,7 +71,7 @@
             <div
               class="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl bg-main-light text-main"
             >
-              <component :is="activity.icon" class="h-8 w-8" />
+              <Icon :icon="activity.icon" class="h-10 w-10" />
             </div>
 
             <div class="min-w-0 flex-1">
@@ -109,45 +109,9 @@
 </template>
 
 <script setup>
+import { Icon } from "@iconify/vue";
 import mascotSrc from "../assets/mascotte_neutre.svg";
 import BottomNav from "./BottomNav.vue";
-
-const ElectricCarIcon = {
-  template: `
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-      <path d="M4 14.5h16l-1.2-4.1A2 2 0 0 0 16.9 9H7.1a2 2 0 0 0-1.9 1.4L4 14.5Z" />
-      <path d="M5 14.5v3" />
-      <path d="M19 14.5v3" />
-      <circle cx="7.5" cy="17.5" r="1.2" />
-      <circle cx="16.5" cy="17.5" r="1.2" />
-      <path d="M10.5 7.5 9 10h2l-1 2.5" />
-    </svg>
-  `,
-};
-
-const CarIcon = {
-  template: `
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-      <path d="M4 14.5h16l-1.2-4.1A2 2 0 0 0 16.9 9H7.1a2 2 0 0 0-1.9 1.4L4 14.5Z" />
-      <path d="M5 14.5v3" />
-      <path d="M19 14.5v3" />
-      <circle cx="7.5" cy="17.5" r="1.2" />
-      <circle cx="16.5" cy="17.5" r="1.2" />
-    </svg>
-  `,
-};
-
-const RunIcon = {
-  template: `
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-      <circle cx="15" cy="5" r="2" />
-      <path d="M9 21l2-5 3-2 2 3 3 1" />
-      <path d="M9 16l4-3 2-4" />
-      <path d="M7 20h3" />
-      <path d="M16 12l3-1" />
-    </svg>
-  `,
-};
 
 const activities = [
   {
@@ -157,7 +121,7 @@ const activities = [
     distance: "25 km",
     co2: "-3,5 kg CO2",
     co2Class: "text-main",
-    icon: ElectricCarIcon,
+    icon: "boxicons:car-bolt-filled",
   },
   {
     title: "Car",
@@ -166,7 +130,7 @@ const activities = [
     distance: "16 km",
     co2: "+4,2 kg CO2",
     co2Class: "text-systeme",
-    icon: CarIcon,
+    icon: "boxicons:car-filled",
   },
   {
     title: "Run",
@@ -175,7 +139,7 @@ const activities = [
     distance: "6 km",
     co2: "0,00 kg CO2",
     co2Class: "text-main",
-    icon: RunIcon,
+    icon: "tabler:run",
   },
 ];
 </script>

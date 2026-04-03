@@ -24,7 +24,7 @@
         <p
           class="font-ui mt-5 max-w-[18ch] text-[0.95rem] font-bold uppercase leading-[1.18] tracking-[0.01em] text-black text-balance sm:mt-8 sm:max-w-none sm:text-body-24"
         >
-          NEW USER OR ANOTHER ACCOUNT
+          LOG INTO YOUR ACCOUNT
         </p>
       </div>
 
@@ -73,7 +73,7 @@
         @click="goToRegister"
         class="font-ui mt-4 block w-full text-center text-[0.95rem] font-bold uppercase text-main underline underline-offset-4 sm:mt-5 sm:text-body-24"
       >
-        SIGN UP
+        LOG IN
       </button>
 
       <div class="mt-7 space-y-4 sm:mt-14 sm:space-y-7">
