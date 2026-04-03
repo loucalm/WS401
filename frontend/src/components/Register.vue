@@ -1,137 +1,94 @@
 <template>
-  <div class="min-h-screen px-4 py-8 sm:px-6 lg:px-8">
+  <div
+    class="relative min-h-screen overflow-hidden bg-main-light px-3 py-3 sm:px-8 sm:py-8 lg:px-16 xl:px-24"
+  >
+    <img
+      :src="backgroundUrl"
+      alt=""
+      class="pointer-events-none absolute inset-x-0 bottom-0 h-full w-full max-w-none object-cover opacity-15"
+      aria-hidden="true"
+    />
+
     <div
-      class="mx-auto flex min-h-[calc(100vh-4rem)] max-w-6xl items-center justify-center"
+      class="relative mx-auto flex min-h-[calc(100vh-1.5rem)] w-full max-w-97.5 flex-col sm:min-h-[calc(100vh-4rem)] sm:max-w-160 lg:max-w-2xl"
     >
-      <div
-        class="grid w-full overflow-hidden rounded-[2rem] border border-white/10 bg-slate-950/70 shadow-2xl shadow-black/40 backdrop-blur-xl lg:grid-cols-[0.9fr_1.1fr]"
-      >
-        <section
-          class="flex items-center justify-center bg-slate-900/80 p-8 sm:p-10 lg:p-14"
+      <div class="flex flex-col items-center text-center">
+        <img :src="logoUrl" alt="Carbon logo" class="h-24 w-auto sm:h-36" />
+
+        <h1
+          class="font-title mt-4 max-w-[15ch] text-[1.45rem] uppercase leading-[1.05] text-main text-balance sm:mt-5 sm:max-w-none sm:text-title-h3"
         >
-          <div
-            class="w-full max-w-md rounded-[1.75rem] border border-white/10 bg-slate-950/90 p-6 shadow-xl shadow-black/30 sm:p-8"
-          >
-            <div class="mb-8 flex items-center gap-4">
-              <img
-                :src="logoUrl"
-                alt="Carbon Logo"
-                class="h-14 w-14 rounded-2xl bg-white/90 p-2 shadow-lg shadow-emerald-500/20"
-              />
-              <div>
-                <p
-                  class="text-xs font-semibold uppercase tracking-[0.3em] text-sky-300/80"
-                >
-                  Création
-                </p>
-                <h2 class="mt-2 text-2xl font-bold text-white">
-                  Rejoindre l'application
-                </h2>
-              </div>
-            </div>
+          CREATE YOUR ACCOUNT
+        </h1>
 
-            <div class="space-y-4">
-              <div class="rounded-2xl border border-white/10 bg-white/5 p-4">
-                <p class="text-sm font-semibold text-emerald-300">
-                  Suivez votre impact
-                </p>
-                <p class="mt-1 text-sm leading-6 text-slate-400">
-                  Gardez vos émissions sous contrôle avec des mesures claires et
-                  visuelles.
-                </p>
-              </div>
-              <div class="rounded-2xl border border-white/10 bg-white/5 p-4">
-                <p class="text-sm font-semibold text-sky-300">
-                  Relevez des défis
-                </p>
-                <p class="mt-1 text-sm leading-6 text-slate-400">
-                  Comparez vos performances et progressez avec vos amis.
-                </p>
-              </div>
-            </div>
-          </div>
-        </section>
-
-        <section class="flex items-center justify-center p-8 sm:p-10 lg:p-14">
-          <div
-            class="w-full max-w-md rounded-[1.75rem] border border-white/10 bg-slate-950/90 p-6 shadow-xl shadow-black/30 sm:p-8"
-          >
-            <div class="mb-8">
-              <p
-                class="text-xs font-semibold uppercase tracking-[0.3em] text-sky-300/80"
-              >
-                Inscription
-              </p>
-              <h1 class="mt-3 text-2xl font-bold text-white">
-                Créer un nouveau compte
-              </h1>
-              <p class="mt-2 text-sm leading-6 text-slate-400">
-                Remplissez les champs ci-dessous pour accéder à votre espace
-                personnel.
-              </p>
-            </div>
-
-            <form class="space-y-4" @submit.prevent="handleRegister">
-              <input
-                v-model="username"
-                type="text"
-                placeholder="Pseudo"
-                required
-                class="w-full rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-sm text-white placeholder:text-slate-500 outline-none transition focus:border-sky-400 focus:bg-white/10"
-              />
-              <input
-                v-model="email"
-                type="email"
-                placeholder="Email"
-                required
-                class="w-full rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-sm text-white placeholder:text-slate-500 outline-none transition focus:border-sky-400 focus:bg-white/10"
-              />
-              <input
-                v-model="password"
-                type="password"
-                placeholder="Mot de passe"
-                required
-                class="w-full rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-sm text-white placeholder:text-slate-500 outline-none transition focus:border-sky-400 focus:bg-white/10"
-              />
-              <input
-                v-model="confirmPassword"
-                type="password"
-                placeholder="Confirmer le mot de passe"
-                required
-                class="w-full rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-sm text-white placeholder:text-slate-500 outline-none transition focus:border-sky-400 focus:bg-white/10"
-              />
-
-              <button
-                type="submit"
-                class="flex w-full items-center justify-center rounded-2xl bg-sky-400 px-4 py-3 font-semibold text-slate-950 transition hover:bg-sky-300"
-              >
-                S'inscrire
-              </button>
-            </form>
-
-            <p
-              v-if="errorMessage"
-              class="mt-4 rounded-2xl border border-rose-400/20 bg-rose-400/10 px-4 py-3 text-sm text-rose-200"
-            >
-              {{ errorMessage }}
-            </p>
-            <p
-              v-if="successMessage"
-              class="mt-4 rounded-2xl border border-emerald-400/20 bg-emerald-400/10 px-4 py-3 text-sm text-emerald-100"
-            >
-              {{ successMessage }}
-            </p>
-
-            <button
-              type="button"
-              @click="retourAulogin"
-              class="mt-8 w-full rounded-2xl border border-white/10 px-4 py-3 text-sm font-semibold text-white transition hover:border-white/20 hover:bg-white/5"
-            >
-              Déjà un compte ? Se connecter
-            </button>
-          </div>
-        </section>
+        <p
+          class="font-ui mt-5 max-w-[18ch] text-[0.95rem] font-bold uppercase leading-[1.18] tracking-[0.01em] text-black text-balance sm:mt-8 sm:max-w-none sm:text-body-24"
+        >
+          JOIN THE COMMUNITY
+        </p>
       </div>
+
+      <form
+        class="mt-4 space-y-3.5 sm:mt-8 sm:space-y-5"
+        @submit.prevent="handleRegister"
+      >
+        <input
+          v-model="username"
+          type="text"
+          placeholder="Username"
+          required
+          class="font-ui w-full rounded-3xl border border-main bg-white px-4 py-3 text-[0.95rem] text-black shadow-[0_8px_14px_rgba(17,125,111,0.16)] outline-none placeholder:text-grey focus:border-main focus:ring-2 focus:ring-main/20 sm:px-5 sm:py-4 sm:text-body-24"
+        />
+        <input
+          v-model="email"
+          type="email"
+          placeholder="Email"
+          required
+          class="font-ui w-full rounded-3xl border border-main bg-white px-4 py-3 text-[0.95rem] text-black shadow-[0_8px_14px_rgba(17,125,111,0.16)] outline-none placeholder:text-grey focus:border-main focus:ring-2 focus:ring-main/20 sm:px-5 sm:py-4 sm:text-body-24"
+        />
+        <input
+          v-model="password"
+          type="password"
+          placeholder="Password"
+          required
+          class="font-ui w-full rounded-3xl border border-main bg-[#fff8c9] px-4 py-3 text-[0.95rem] text-black shadow-[0_8px_14px_rgba(17,125,111,0.16)] outline-none placeholder:text-grey focus:border-main focus:ring-2 focus:ring-main/20 sm:px-5 sm:py-4 sm:text-body-24"
+        />
+        <input
+          v-model="confirmPassword"
+          type="password"
+          placeholder="Confirm password"
+          required
+          class="font-ui w-full rounded-3xl border border-main bg-white px-4 py-3 text-[0.95rem] text-black shadow-[0_8px_14px_rgba(17,125,111,0.16)] outline-none placeholder:text-grey focus:border-main focus:ring-2 focus:ring-main/20 sm:px-5 sm:py-4 sm:text-body-24"
+        />
+
+        <button
+          type="submit"
+          class="font-ui w-full rounded-[1.35rem] bg-main px-5 py-3 text-[0.98rem] font-bold uppercase tracking-[0.04em] text-white transition hover:brightness-105 sm:px-6 sm:py-4 sm:text-body-24"
+        >
+          SIGN UP
+        </button>
+      </form>
+
+      <p
+        v-if="errorMessage"
+        class="font-ui text-body-12 mt-4 rounded-2xl border border-systeme/25 bg-systeme/10 px-4 py-3 text-systeme sm:text-body-16"
+      >
+        {{ errorMessage }}
+      </p>
+      <p
+        v-if="successMessage"
+        class="font-ui text-body-12 mt-4 rounded-2xl border border-main/20 bg-main/10 px-4 py-3 text-main sm:text-body-16"
+      >
+        {{ successMessage }}
+      </p>
+
+      <button
+        type="button"
+        @click="retourAulogin"
+        class="font-ui mt-4 block w-full text-center text-[0.95rem] font-bold uppercase text-main underline underline-offset-4 sm:mt-5 sm:text-body-24"
+      >
+        ALREADY HAVE AN ACCOUNT? LOG IN
+      </button>
     </div>
   </div>
 </template>
@@ -141,6 +98,7 @@ import { ref } from "vue";
 import axios from "axios";
 import { useRouter } from "vue-router";
 import logoUrl from "../assets/logo.svg";
+import backgroundUrl from "../assets/img/background.png";
 
 const username = ref("");
 const email = ref("");
@@ -160,7 +118,7 @@ const handleRegister = async () => {
   successMessage.value = "";
 
   if (password.value !== confirmPassword.value) {
-    errorMessage.value = "Les mots de passe ne correspondent pas.";
+    errorMessage.value = "Passwords do not match.";
     return;
   }
 
@@ -171,16 +129,16 @@ const handleRegister = async () => {
       password: password.value,
     });
 
-    successMessage.value = "Compte créé avec succès ! Redirection...";
+    successMessage.value = "Account created successfully! Redirecting...";
 
     setTimeout(() => {
       router.push("/login");
     }, 2000);
   } catch (error) {
     if (error.response && error.response.status === 409) {
-      errorMessage.value = "Cet email est déjà utilisé.";
+      errorMessage.value = "This email is already used.";
     } else {
-      errorMessage.value = "Erreur lors de la création du compte.";
+      errorMessage.value = "Error while creating the account.";
     }
   }
 };

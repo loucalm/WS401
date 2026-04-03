@@ -1,45 +1,55 @@
 <template>
-  <div class="min-h-screen px-4 py-8 sm:px-6 lg:px-8">
-    <div
-      class="mx-auto flex min-h-[calc(100vh-4rem)] max-w-4xl items-center justify-center"
+  <div
+    class="relative min-h-screen overflow-hidden bg-main-light px-3 py-3 sm:px-8 sm:py-8 lg:px-16 xl:px-24"
+  >
+    <img
+      :src="backgroundUrl"
+      alt=""
+      class="pointer-events-none absolute inset-x-0 bottom-0 h-full w-full max-w-none object-cover opacity-15"
+      aria-hidden="true"
+    />
+
+    <main
+      class="relative mx-auto flex min-h-[calc(100vh-1.5rem)] w-full max-w-97.5 flex-col items-center justify-center sm:min-h-[calc(100vh-4rem)] sm:max-w-160 lg:max-w-2xl"
     >
-      <div
-        class="grid w-full gap-8 overflow-hidden rounded-[2rem] border border-white/10 bg-slate-950/70 p-8 shadow-2xl shadow-black/40 backdrop-blur-xl lg:grid-cols-[0.95fr_1.05fr] lg:p-10"
-      >
-        <div
-          class="flex items-center justify-center rounded-[1.75rem] border border-white/10 bg-white/5 p-6"
+      <div class="flex flex-col items-center text-center">
+        <p
+          class="font-title text-[2.2rem] uppercase leading-none text-main sm:text-title-h2"
         >
-          <img
-            src="../assets/img/404.png"
-            alt="Page introuvable"
-            class="max-h-80 w-full max-w-sm object-contain"
-          />
-        </div>
-
-        <div class="flex flex-col justify-center">
-          <p
-            class="text-xs font-semibold uppercase tracking-[0.3em] text-rose-300/80"
-          >
-            Erreur 404
-          </p>
-          <h1 class="mt-3 text-4xl font-bold text-white sm:text-5xl">
-            Oups ! Page introuvable
-          </h1>
-          <p class="mt-4 max-w-xl text-base leading-7 text-slate-400">
-            Il semble que vous ayez pris un chemin qui n'existe pas encore sur
-            notre carte écologique.
-          </p>
-
-          <router-link
-            to="/dashboard"
-            class="mt-8 inline-flex w-fit items-center justify-center rounded-2xl bg-emerald-400 px-5 py-3 font-semibold text-slate-950 transition hover:bg-emerald-300"
-          >
-            Retour au Dashboard
-          </router-link>
-        </div>
+          404
+        </p>
+        <h1
+          class="font-title mt-2 max-w-[14ch] text-[1.45rem] uppercase leading-[1.05] text-main text-balance sm:mt-4 sm:max-w-none sm:text-title-h3"
+        >
+          PAGE NOT FOUND
+        </h1>
+        <p
+          class="font-ui mt-4 max-w-[20ch] text-[0.95rem] font-bold uppercase leading-[1.18] tracking-[0.01em] text-black text-balance sm:mt-6 sm:max-w-none sm:text-body-24"
+        >
+          THIS ROUTE DOES NOT EXIST
+        </p>
       </div>
-    </div>
+
+      <div
+        class="mt-6 w-full rounded-4xl bg-white px-4 py-5 shadow-[0_12px_28px_rgba(0,0,0,0.14)] sm:mt-10 sm:px-6 sm:py-6"
+      >
+        <img
+          src="../assets/img/404.png"
+          alt="Page introuvable"
+          class="mx-auto w-full max-w-[18rem] object-contain sm:max-w-88"
+        />
+      </div>
+
+      <router-link
+        to="/login"
+        class="font-ui mt-6 inline-flex w-full items-center justify-center rounded-[1.35rem] bg-main px-5 py-3 text-[0.98rem] font-bold uppercase tracking-[0.04em] text-white transition hover:brightness-105 sm:mt-8 sm:w-auto sm:px-8 sm:py-4 sm:text-body-24"
+      >
+        GO BACK TO LOGIN
+      </router-link>
+    </main>
   </div>
 </template>
 
-<script setup></script>
+<script setup>
+import backgroundUrl from "../assets/img/background.png";
+</script>
