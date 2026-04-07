@@ -77,38 +77,38 @@ class AppFixtures extends Fixture
             ['Travel', 'Transport', null, 'Bicycle', 0.0, 'km'],
 
             // Food : Eco-Green
-            ['Food', 'Base', 'Eco-Green', 'Starchy foods (Potatoes)', 0.2, 'portion'],
-            ['Food', 'Base', 'Eco-Green', 'Cereals (Rice, Pasta, Quinoa)', 0.3, 'portion'],
-            ['Food', 'Protéines', 'Eco-Green', 'Tofu', 0.2, 'portion'],
-            ['Food', 'Protéines', 'Eco-Green', 'Seitan', 0.2, 'portion'],
-            ['Food', 'Protéines', 'Eco-Green', 'Legumin', 0.1, 'portion'],
-            ['Food', 'Vitamines', 'Eco-Green', 'Seasonal vegetables fresh', 0.1, 'portion'],
-            ['Food', 'Vitamines', 'Eco-Green', 'Seasonal vegetables frozen', 0.3, 'portion'],
-            ['Food', 'Bonus', 'Eco-Green', 'Seeds', 0.05, 'portion'],
-            ['Food', 'Bonus', 'Eco-Green', 'Oleaginous', 0.05, 'portion'],
+            ['Food', 'Base', 'Eco-Green', 'Starchy foods (Potatoes)', 0.2, 'portion', 'mdi:potato'],
+            ['Food', 'Base', 'Eco-Green', 'Cereals (Rice, Pasta, Quinoa)', 0.3, 'portion', 'mdi:wheat'],
+            ['Food', 'Protéines', 'Eco-Green', 'Tofu', 0.2, 'portion', 'mdi:square-rounded'],
+            ['Food', 'Protéines', 'Eco-Green', 'Seitan', 0.2, 'portion', 'mdi:bread-slice'],
+            ['Food', 'Protéines', 'Eco-Green', 'Legumin', 0.1, 'portion', 'mdi:sprout'],
+            ['Food', 'Vitamines', 'Eco-Green', 'Seasonal vegetables fresh', 0.1, 'portion', 'mdi:carrot'],
+            ['Food', 'Vitamines', 'Eco-Green', 'Seasonal vegetables frozen', 0.3, 'portion', 'mdi:carrot'],
+            ['Food', 'Bonus', 'Eco-Green', 'Seeds', 0.05, 'portion', 'mdi:sunflower'],
+            ['Food', 'Bonus', 'Eco-Green', 'Oleaginous', 0.05, 'portion', 'mdi:sunflower'],
 
             // Food : Eco-Mix
-            ['Food', 'Base', 'Eco-Mix', 'Rice', 0.8, 'portion'],
-            ['Food', 'Base', 'Eco-Mix', 'Pasta', 0.5, 'portion'],
-            ['Food', 'Base', 'Eco-Mix', 'Vegetables', 0.2, 'portion'],
-            ['Food', 'Protéines', 'Eco-Mix', 'White meat', 1.5, 'portion'],
-            ['Food', 'Protéines', 'Eco-Mix', 'Fish', 1.2, 'portion'],
-            ['Food', 'Protéines', 'Eco-Mix', 'Eggs', 0.5, 'portion'],
-            ['Food', 'Vitamines', 'Eco-Mix', 'Hard cheese', 1.0, 'portion'],
-            ['Food', 'Vitamines', 'Eco-Mix', 'Yaourt', 0.4, 'portion'],
-            ['Food', 'Bonus', 'Eco-Mix', 'Salad', 0.1, 'portion'],
-            ['Food', 'Bonus', 'Eco-Mix', 'Cooked vegetables', 0.2, 'portion'],
+            ['Food', 'Base', 'Eco-Mix', 'Rice', 0.8, 'portion', 'mdi:rice'],
+            ['Food', 'Base', 'Eco-Mix', 'Pasta', 0.5, 'portion', 'mdi:food-spaghetti'],
+            ['Food', 'Base', 'Eco-Mix', 'Vegetables', 0.2, 'portion', 'mdi:carrot'],
+            ['Food', 'Protéines', 'Eco-Mix', 'White meat', 1.5, 'portion', 'mdi:drumstick'],
+            ['Food', 'Protéines', 'Eco-Mix', 'Fish', 1.2, 'portion', 'mdi:fish'],
+            ['Food', 'Protéines', 'Eco-Mix', 'Eggs', 0.5, 'portion', 'mdi:egg'],
+            ['Food', 'Vitamines', 'Eco-Mix', 'Hard cheese', 1.0, 'portion', 'mdi:cheese'],
+            ['Food', 'Vitamines', 'Eco-Mix', 'Yaourt', 0.4, 'portion', 'mdi:cup'],
+            ['Food', 'Bonus', 'Eco-Mix', 'Salad', 0.1, 'portion', 'mdi:salad'],
+            ['Food', 'Bonus', 'Eco-Mix', 'Cooked vegetables', 0.2, 'portion', 'mdi:carrot'],
 
             // Food : Eco-Boost
-            ['Food', 'Base', 'Eco-Boost', 'Fries', 0.5, 'portion'],
-            ['Food', 'Base', 'Eco-Boost', 'Puree', 0.4, 'portion'],
-            ['Food', 'Base', 'Eco-Boost', 'Pasta', 0.5, 'portion'],
-            ['Food', 'Protéines', 'Eco-Boost', 'Red meat (Beef, Lamb)', 7.0, 'portion'],
-            ['Food', 'Protéines', 'Eco-Boost', 'Charcuterie', 4.0, 'portion'],
-            ['Food', 'Vitamines', 'Eco-Boost', 'Hard cheese', 1.0, 'portion'],
-            ['Food', 'Vitamines', 'Eco-Boost', 'Yaourt', 0.4, 'portion'],
-            ['Food', 'Bonus', 'Eco-Boost', 'Fastfood', 3.5, 'portion'],
-            ['Food', 'Bonus', 'Eco-Boost', 'Processed dish', 2.5, 'portion'],
+            ['Food', 'Base', 'Eco-Boost', 'Fries', 0.5, 'portion', 'mdi:fries'],
+            ['Food', 'Base', 'Eco-Boost', 'Puree', 0.4, 'portion', 'mdi:bowl-mix'],
+            ['Food', 'Base', 'Eco-Boost', 'Pasta', 0.5, 'portion', 'mdi:food-spaghetti'],
+            ['Food', 'Protéines', 'Eco-Boost', 'Red meat (Beef, Lamb)', 7.0, 'portion', 'mdi:cow'],
+            ['Food', 'Protéines', 'Eco-Boost', 'Charcuterie', 4.0, 'portion', 'mdi:sausage'],
+            ['Food', 'Vitamines', 'Eco-Boost', 'Hard cheese', 1.0, 'portion', 'mdi:cheese'],
+            ['Food', 'Vitamines', 'Eco-Boost', 'Yaourt', 0.4, 'portion', 'mdi:cup'],
+            ['Food', 'Bonus', 'Eco-Boost', 'Fastfood', 3.5, 'portion', 'mdi:hamburger'],
+            ['Food', 'Bonus', 'Eco-Boost', 'Processed dish', 2.5, 'portion', 'mdi:food'],
 
             // Consumption
             ['Consumption', 'Energy', null, 'Electricity', 0.1, 'kWh'],
@@ -119,19 +119,19 @@ class AppFixtures extends Fixture
             ['Consumption', 'Energy', null, 'Wind', 0.0, 'kWh'],
 
             // Clothing
-            ['Clothing', 'Top', null, 'T-shirt', 5.0, 'item'],
-            ['Clothing', 'Top', null, 'Hoodie', 15.0, 'item'],
-            ['Clothing', 'Top', null, 'Coat', 25.0, 'item'],
-            ['Clothing', 'Stocking', null, 'Pants', 10.0, 'item'],
-            ['Clothing', 'Stocking', null, 'Shorts', 6.0, 'item'],
-            ['Clothing', 'Stocking', null, 'Sweatpant', 8.0, 'item'],
-            ['Clothing', 'Stocking', null, 'Socks', 1.0, 'pair'],
-            ['Clothing', 'Shoes', null, 'Shoes', 12.0, 'pair'],
-            ['Clothing', 'Underwear', null, 'Underwear', 2.0, 'item'],
-            ['Clothing', 'Underwear', null, 'Bra', 4.0, 'item'],
-            ['Clothing', 'Accessory', null, 'Cap / Hat', 3.0, 'item'],
-            ['Clothing', 'Accessory', null, 'Glasses', 2.0, 'item'],
-            ['Clothing', 'Accessory', null, 'Scarf', 3.0, 'item'],
+            ['Clothing', 'Top', null, 'T-shirt', 5.0, 'item', 'tabler:shirt-filled'],
+            ['Clothing', 'Top', null, 'Hoodie', 15.0, 'item', 'mdi:hoodie'],
+            ['Clothing', 'Top', null, 'Coat', 25.0, 'item', 'mdi:coat-rack'],
+            ['Clothing', 'Stocking', null, 'Pants', 10.0, 'item', 'mdi:pants'],
+            ['Clothing', 'Stocking', null, 'Shorts', 6.0, 'item', 'mdi:shorts'],
+            ['Clothing', 'Stocking', null, 'Sweatpant', 8.0, 'item', 'mdi:pants'],
+            ['Clothing', 'Stocking', null, 'Socks', 1.0, 'pair', 'mdi:socks'],
+            ['Clothing', 'Shoes', null, 'Shoes', 12.0, 'pair', 'mdi:shoe-sneaker'],
+            ['Clothing', 'Underwear', null, 'Underwear', 2.0, 'item', 'mdi:briefs-outline'],
+            ['Clothing', 'Underwear', null, 'Bra', 4.0, 'item', 'mdi:shirt-outline'],
+            ['Clothing', 'Accessory', null, 'Cap / Hat', 3.0, 'item', 'mdi:cap'],
+            ['Clothing', 'Accessory', null, 'Glasses', 2.0, 'item', 'mdi:eyeglasses'],
+            ['Clothing', 'Accessory', null, 'Scarf', 3.0, 'item', 'mdi:scarf'],
         ];
 
         foreach ($activities as $act) {
@@ -142,6 +142,7 @@ class AppFixtures extends Fixture
             $activityType->setName($act[3]);
             $activityType->setCo2Factor($act[4]);
             $activityType->setUnitLabel($act[5]);
+            $activityType->setIcon($act[6] ?? null);
             $manager->persist($activityType);
         }
 

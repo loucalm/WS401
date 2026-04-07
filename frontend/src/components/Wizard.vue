@@ -36,7 +36,7 @@
         v-if="currentStep === 1"
         class="flex-1 overflow-y-auto px-4 pt-6"
       >
-        <div class="mx-auto w-full max-w-[700px] px-1">
+        <div class="mx-auto w-full max-w-175 px-1">
           <div
             class="mx-auto [&>svg]:h-auto [&>svg]:w-full"
             :class="[stepIndicatorColorClass, stepIndicatorContainerClass]"
@@ -69,7 +69,7 @@
             >
               <Icon
                 :icon="activity.icon"
-                class="h-10 w-10"
+                class="h-12 w-12"
                 :class="activity.iconColorClass"
                 :style="activity.iconColorStyle"
               />
@@ -150,7 +150,7 @@
         v-else
         class="flex flex-1 flex-col overflow-y-auto px-4 pb-40 pt-3"
       >
-        <div class="mx-auto w-full max-w-[700px] px-1">
+        <div class="mx-auto w-full max-w-175 px-1">
           <div
             class="mx-auto [&>svg]:h-auto [&>svg]:w-full"
             :class="[stepIndicatorColorClass, stepIndicatorContainerClass]"
@@ -174,13 +174,7 @@
           >
             <p class="font-ui text-[25px] leading-none text-black">
               {{ section.label }} :
-              {{
-                selectedFoodOptions[section.id]
-                  ? section.options.find(
-                      (opt) => opt.id === selectedFoodOptions[section.id],
-                    )?.label || "-"
-                  : "-"
-              }}
+              {{ getFoodSelectionLabels(section.id) }}
             </p>
           </template>
         </div>
@@ -310,13 +304,7 @@ export default {
     const duration = ref(8);
     const durationMarks = [0, 4, 8, 12, 16, 20, 24];
     const selectedClothingPurchase = ref("second-hand");
-    const selectedClothingOptions = ref({
-      top: "tshirt",
-      stocking: "pants",
-      shoes: "shoes",
-      underwear: "underwear",
-      accessory: "cap-hat",
-    });
+    const selectedClothingOptions = ref({});
 
     const clothingPurchaseFactors = {
       online: 1,
@@ -520,6 +508,7 @@ export default {
         groups.get(subCategory).push({
           id: activity["@id"],
           label: activity.name,
+          icon: activity.icon,
         });
       }
 
@@ -552,6 +541,7 @@ export default {
         groups.get(subCategory).push({
           id: activity["@id"],
           label: activity.name,
+          icon: activity.icon,
         });
       }
 
@@ -607,6 +597,36 @@ export default {
       return selectedFoodConsumption.value || "-";
     });
 
+    const getFoodSelectionLabels = (sectionId) => {
+      const section = foodSectionsFromApi.value.find(
+        (item) => item.id === sectionId,
+      );
+      const labels =
+        section?.options
+          .filter((option) =>
+            (selectedFoodOptions.value[sectionId] || []).includes(option.id),
+          )
+          .map((option) => option.label) || [];
+
+      return labels.length ? labels.join(", ") : "-";
+    };
+
+    const getClothingSelectionLabels = (sectionId) => {
+      const section = clothingSectionsFromApi.value.find(
+        (item) => item.id === sectionId,
+      );
+      const labels =
+        section?.options
+          .filter((option) =>
+            (selectedClothingOptions.value[sectionId] || []).includes(
+              option.id,
+            ),
+          )
+          .map((option) => option.label) || [];
+
+      return labels.length ? labels.join(", ") : "-";
+    };
+
     const selectedClothingPurchaseLabel = computed(() => {
       const option = clothingPurchaseOptions.find(
         (item) => item.id === selectedClothingPurchase.value,
@@ -616,10 +636,12 @@ export default {
 
     const co2Value = computed(() => {
       if (selectedCategory.value === "food") {
-        return Object.values(selectedFoodOptions.value).reduce((total, iri) => {
-          const factor = activityByIri.value.get(iri)?.co2Factor || 0;
-          return total + factor;
-        }, 0);
+        return Object.values(selectedFoodOptions.value)
+          .flat()
+          .reduce((total, iri) => {
+            const factor = activityByIri.value.get(iri)?.co2Factor || 0;
+            return total + factor;
+          }, 0);
       }
 
       if (selectedCategory.value === "consumption") {
@@ -633,12 +655,12 @@ export default {
         const purchaseFactor =
           clothingPurchaseFactors[selectedClothingPurchase.value] ||
           clothingPurchaseFactors["second-hand"];
-        const selectionTotal = Object.values(
-          selectedClothingOptions.value,
-        ).reduce((total, iri) => {
-          const factor = activityByIri.value.get(iri)?.co2Factor || 0;
-          return total + factor;
-        }, 0);
+        const selectionTotal = Object.values(selectedClothingOptions.value)
+          .flat()
+          .reduce((total, iri) => {
+            const factor = activityByIri.value.get(iri)?.co2Factor || 0;
+            return total + factor;
+          }, 0);
         return selectionTotal * purchaseFactor;
       }
 
@@ -804,7 +826,7 @@ export default {
       const sections = foodSectionsFromApi.value;
       const next = {};
       for (const section of sections) {
-        next[section.id] = section.options[0]?.id || null;
+        next[section.id] = [];
       }
       selectedFoodOptions.value = next;
     };
@@ -813,7 +835,7 @@ export default {
       const sections = clothingSectionsFromApi.value;
       const next = {};
       for (const section of sections) {
-        next[section.id] = section.options[0]?.id || null;
+        next[section.id] = [];
       }
       selectedClothingOptions.value = next;
     };
@@ -861,26 +883,30 @@ export default {
     };
 
     const selectClothingOption = (sectionId, optionId) => {
+      const currentSelection = selectedClothingOptions.value[sectionId] || [];
+      const nextSelection = currentSelection.includes(optionId)
+        ? currentSelection.filter((selectedId) => selectedId !== optionId)
+        : [...currentSelection, optionId];
+
       selectedClothingOptions.value = {
         ...selectedClothingOptions.value,
-        [sectionId]: optionId,
+        [sectionId]: nextSelection,
       };
     };
 
     const getClothingLabel = (sectionId) => {
-      const section = clothingSectionsFromApi.value.find(
-        (item) => item.id === sectionId,
-      );
-      const option = section?.options.find(
-        (item) => item.id === selectedClothingOptions.value[sectionId],
-      );
-      return option?.label || "-";
+      return getClothingSelectionLabels(sectionId);
     };
 
     const selectFoodOption = (sectionId, optionId) => {
+      const currentSelection = selectedFoodOptions.value[sectionId] || [];
+      const nextSelection = currentSelection.includes(optionId)
+        ? currentSelection.filter((selectedId) => selectedId !== optionId)
+        : [...currentSelection, optionId];
+
       selectedFoodOptions.value = {
         ...selectedFoodOptions.value,
-        [sectionId]: optionId,
+        [sectionId]: nextSelection,
       };
     };
 
@@ -907,30 +933,6 @@ export default {
       let entryItems = [];
       let details = {};
 
-      // Outil pour trouver l'ID exact dans le catalogue depuis tes libellés
-      const findActivityId = (
-        nameMatch,
-        subCategoryMatch = null,
-        dietMatch = null,
-      ) => {
-        const found = activityTypes.value.find((a) => {
-          // On retire les tirets et espaces pour comparer proprement (ex: "Tshirt" = "T-shirt")
-          const cleanString = (str) =>
-            str ? str.toLowerCase().replace(/[-\s]/g, "") : "";
-
-          const matchName = nameMatch
-            ? cleanString(a.name).includes(cleanString(nameMatch))
-            : true;
-          const matchSub = subCategoryMatch
-            ? a.subCategory === subCategoryMatch
-            : true;
-          const matchDiet = dietMatch ? a.diet === dietMatch : true;
-
-          return matchName && matchSub && matchDiet;
-        });
-        return found ? found["@id"] : null;
-      };
-
       // --- 🚗 TRAVEL ---
       if (selectedCategory.value === "travel") {
         const activityId = selectedTravelActivity.value?.["@id"] || null;
@@ -948,7 +950,9 @@ export default {
 
       // --- 🍔 FOOD ---
       else if (selectedCategory.value === "food") {
-        for (const activityId of Object.values(selectedFoodOptions.value)) {
+        for (const activityId of Object.values(
+          selectedFoodOptions.value,
+        ).flat()) {
           if (
             typeof activityId === "string" &&
             activityId.startsWith("/api/")
@@ -981,7 +985,9 @@ export default {
         const purchaseFactor =
           clothingPurchaseFactors[selectedClothingPurchase.value] || 1;
 
-        for (const activityId of Object.values(selectedClothingOptions.value)) {
+        for (const activityId of Object.values(
+          selectedClothingOptions.value,
+        ).flat()) {
           if (
             typeof activityId === "string" &&
             activityId.startsWith("/api/")
@@ -1070,6 +1076,7 @@ export default {
       selectFoodOption,
       selectFoodConsumption,
       selectClothingOption,
+      getFoodSelectionLabels,
       getClothingLabel,
       goToStep,
       confirmWizard,

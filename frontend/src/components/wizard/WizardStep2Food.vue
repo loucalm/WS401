@@ -1,6 +1,6 @@
 <template>
   <section class="flex-1 overflow-y-auto px-4 pb-30 pt-3">
-    <div class="mx-auto w-full max-w-[700px] px-1">
+    <div class="mx-auto w-full max-w-175 px-1">
       <div
         class="mx-auto [&>svg]:h-auto [&>svg]:w-full"
         :class="[stepIndicatorColorClass, stepIndicatorContainerClass]"
@@ -53,19 +53,23 @@
             v-for="option in section.options"
             :key="option.id"
             type="button"
-            class="text-center"
+            class="text-left"
             @click="$emit('select-food-option', section.id, option.id)"
           >
             <div
-              class="flex h-26 items-center justify-center rounded-[18px] border-2 bg-secondary-light"
+              class="flex min-h-31 flex-col items-center justify-center rounded-[18px] border-2 bg-secondary-light px-2 py-3 transition-transform"
               :class="
-                selectedFoodOptions[section.id] === option.id
-                  ? 'border-secondary'
+                (selectedFoodOptions[section.id] || []).includes(option.id)
+                  ? 'border-secondary bg-white'
                   : 'border-transparent'
               "
             >
+              <Icon
+                :icon="option.icon || 'lucide:circle-help'"
+                class="h-12 w-12 text-black"
+              />
               <p
-                class="px-2 text-center font-ui text-[18px] leading-none text-black"
+                class="mt-3 text-center font-ui text-body-16 leading-none text-black"
               >
                 {{ option.label }}
               </p>
@@ -78,7 +82,10 @@
 </template>
 
 <script>
+import { Icon } from "@iconify/vue";
+
 export default {
+  components: { Icon },
   emits: ["select-food-consumption", "select-food-option"],
   props: {
     stepIndicatorSvgMarkup: {
