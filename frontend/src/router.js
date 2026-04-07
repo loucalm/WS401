@@ -4,6 +4,7 @@ import Dashboard from './components/Dashboard.vue'
 import NotFound from './components/NotFound.vue'
 import Register from './components/Register.vue'
 import Wizard from './components/Wizard.vue'
+import Profile from './components/Profile.vue'
 
 const routes = [
   {
@@ -32,6 +33,12 @@ const routes = [
   path: '/activities',
   name: 'activities',
   component: Wizard,
+  meta: { requiresAuth: true }
+},
+ {
+  path: '/profile',
+  name: 'profile',
+  component: Profile,
   meta: { requiresAuth: true }
 },
   // La route 404 en Dernier svp //
