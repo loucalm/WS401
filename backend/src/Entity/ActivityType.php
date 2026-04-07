@@ -31,6 +31,9 @@ class ActivityType
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $diet = null;
 
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $icon = null;
+
     #[ORM\ManyToOne]
     #[ORM\JoinColumn(nullable: false)]
     private ?Category $category = null;
@@ -93,6 +96,17 @@ class ActivityType
     public function setDiet(?string $diet): static
     {
         $this->diet = $diet;
+        return $this;
+    }
+
+    public function getIcon(): ?string
+    {
+        return $this->icon;
+    }
+
+    public function setIcon(?string $icon): static
+    {
+        $this->icon = $icon;
         return $this;
     }
 

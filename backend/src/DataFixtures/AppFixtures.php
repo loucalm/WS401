@@ -43,10 +43,10 @@ class AppFixtures extends Fixture
 
         // 2. CRÉATION DES CATÉGORIES PRINCIPALES
         $catData = [
-            'Travel' => ['car', '#3B82F6'],
-            'Food' => ['utensils', '#10B981'],
-            'Consumption' => ['home', '#4B6481'],
-            'Clothing' => ['tshirt', '#831297'],
+            'Travel' => ['mdi:travel', '--color-main'],
+            'Food' => ['mdi:food', '--color-tertiary'],
+            'Consumption' => ['material-symbols:home-rounded', '--color-secondary'],
+            'Clothing' => ['tabler:shirt-filled', '--color-cloth'],
         ];
 
         $categories = [];

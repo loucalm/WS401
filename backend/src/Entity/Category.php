@@ -20,7 +20,7 @@ class Category
     #[ORM\Column(length: 255)]
     private ?string $icon = null;
 
-    #[ORM\Column(length: 7)]
+    #[ORM\Column(length: 255)]
     private ?string $color = null;
 
     public function getId(): ?int
