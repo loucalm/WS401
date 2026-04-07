@@ -1,11 +1,13 @@
 <template>
   <section class="flex-1 overflow-y-auto px-4 pb-30 pt-3">
-    <div class="mx-auto w-full max-w-[700px] px-1">
-      <div
-        class="mx-auto [&>svg]:h-auto [&>svg]:w-full"
-        :class="[stepIndicatorColorClass, stepIndicatorContainerClass]"
-        v-html="stepIndicatorSvgMarkup"
-      ></div>
+    <div class="mx-auto w-full px-1">
+      <div class="flex w-full" :class="stepIndicatorContainerClass">
+        <div
+          class="[&>svg]:h-20 [&>svg]:w-auto [&>svg]:max-w-full"
+          :class="stepIndicatorColorClass"
+          v-html="stepIndicatorSvgMarkup"
+        ></div>
+      </div>
     </div>
 
     <h2 class="mt-5 text-center font-ui text-[34px] leading-none text-black">
@@ -15,7 +17,7 @@
     <div class="relative mt-7">
       <button
         type="button"
-        class="flex w-full items-center justify-between rounded-[18px] border border-secondary bg-white px-4 py-4 text-left shadow-[0_10px_16px_rgba(0,0,0,0.14)]"
+        class="flex w-full items-center justify-between rounded-[18px] border-4 border-secondary bg-white px-4 py-4 text-left shadow-[0_10px_16px_rgba(0,0,0,0.14)]"
         @click="$emit('toggle-consumption-menu')"
       >
         <span class="font-ui text-[26px] leading-none text-black">{{
@@ -38,13 +40,13 @@
 
       <div
         v-if="isConsumptionMenuOpen"
-        class="absolute left-0 right-0 top-[calc(100%+10px)] z-10 overflow-hidden rounded-[18px] border border-secondary bg-white shadow-[0_10px_16px_rgba(0,0,0,0.14)]"
+        class="absolute left-0 right-0 top-[calc(100%+10px)] z-10 overflow-hidden rounded-[18px] border-4 border-secondary bg-white shadow-[0_10px_16px_rgba(0,0,0,0.14)]"
       >
         <button
           v-for="option in consumptionSources"
           :key="option"
           type="button"
-          class="flex w-full items-center justify-between border-b border-secondary-light px-4 py-3 text-left last:border-b-0"
+          class="flex w-full items-center justify-between border-b-4 border-secondary-light px-4 py-3 text-left last:border-b-0"
           @click="$emit('select-consumption-source', option)"
         >
           <span class="font-ui text-[22px] leading-none text-black">{{
@@ -59,16 +61,8 @@
       </div>
     </div>
 
-    <div class="mt-8 flex items-center justify-between gap-3">
+    <div class="mt-8 flex items-center gap-3">
       <h3 class="font-ui text-[28px] leading-none text-black">Surface</h3>
-      <button
-        type="button"
-        class="flex h-10 w-10 items-center justify-center rounded-full bg-secondary-light text-secondary"
-        aria-label="Modifier la surface"
-        @click="toggleManualSurface"
-      >
-        <Icon icon="lucide:edit" class="h-5 w-5" />
-      </button>
     </div>
 
     <div class="mt-8 flex justify-center">
@@ -103,14 +97,14 @@
         class="rounded-[18px] bg-secondary px-4 py-2 font-ui text-[18px] leading-none text-white"
         @click="applyManualSurface"
       >
-        Valider
+        Confirm
       </button>
       <button
         type="button"
         class="rounded-[18px] border border-secondary bg-white px-4 py-2 font-ui text-[18px] leading-none text-secondary"
         @click="cancelManualSurface"
       >
-        Annuler
+        Cancel
       </button>
     </div>
 
@@ -128,6 +122,14 @@
         @click="$emit('adjust-surface', -1)"
       >
         -
+      </button>
+      <button
+        type="button"
+        class="flex h-14 w-14 items-center justify-center rounded-full bg-secondary-light text-secondary"
+        aria-label="Edit surface area"
+        @click="toggleManualSurface"
+      >
+        <Icon icon="lucide:edit" class="h-6 w-6" />
       </button>
       <button
         type="button"
@@ -150,7 +152,7 @@
       <button
         type="button"
         class="flex h-10 w-10 items-center justify-center rounded-full bg-secondary-light text-secondary"
-        aria-label="Modifier la durée"
+        aria-label="Edit duration"
         @click="toggleManualDuration"
       >
         <Icon icon="lucide:edit" class="h-5 w-5" />
@@ -199,14 +201,14 @@
         class="rounded-[18px] bg-secondary px-4 py-2 font-ui text-[18px] leading-none text-white"
         @click="applyManualDuration"
       >
-        Valider
+        Confirm
       </button>
       <button
         type="button"
         class="rounded-[18px] border border-secondary bg-white px-4 py-2 font-ui text-[18px] leading-none text-secondary"
         @click="cancelManualDuration"
       >
-        Annuler
+        Cancel
       </button>
     </div>
   </section>
