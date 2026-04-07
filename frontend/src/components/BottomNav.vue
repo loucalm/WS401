@@ -5,7 +5,7 @@
     >
       <button
         type="button"
-        class="flex h-10 w-10 items-center justify-center rounded-full text-white/95 transition-colors hover:text-white"
+        class="flex h-10 w-10 items-center justify-center rounded-full text-white/95 transition-transform duration-150 hover:scale-110 hover:cursor-pointer hover:text-white"
         :class="active === 'home' ? 'text-white' : ''"
         @click="handleNav('home')"
       >
@@ -14,7 +14,7 @@
 
       <button
         type="button"
-        class="flex h-10 w-10 items-center justify-center rounded-full text-white/95 transition-colors hover:text-white"
+        class="flex h-10 w-10 items-center justify-center rounded-full text-white/95 transition-transform duration-150 hover:scale-110 hover:cursor-pointer hover:text-white"
         :class="active === 'pulse' ? 'text-white' : ''"
         @click="$emit('select', 'pulse')"
       >
@@ -23,7 +23,7 @@
 
       <button
         type="button"
-        class="-mt-10 flex h-20 w-20 items-center justify-center rounded-full border-4 border-white bg-main text-white transition-transform hover:scale-[1.03]"
+        class="-mt-10 flex h-20 w-20 items-center justify-center rounded-full border-4 border-white bg-main text-white transition-transform duration-150 hover:scale-[1.08] hover:cursor-pointer"
         :class="active === 'add' ? 'ring-2 ring-white/40' : ''"
         @click="handleNav('add')"
       >
@@ -32,16 +32,16 @@
 
       <button
         type="button"
-        class="flex h-10 w-10 items-center justify-center rounded-full text-white/95 transition-colors hover:text-white"
+        class="flex h-10 w-10 items-center justify-center rounded-full text-white/95 transition-transform duration-150 hover:scale-110 hover:cursor-pointer hover:text-white"
         :class="active === 'map' ? 'text-white' : ''"
-        @click="$emit('select', 'map')"
+        @click="handleNav('map')"
       >
         <Icon icon="material-symbols:map-outline" class="h-8 w-8" />
       </button>
 
       <button
         type="button"
-        class="flex h-10 w-10 items-center justify-center rounded-full text-white/95 transition-colors hover:text-white"
+        class="flex h-10 w-10 items-center justify-center rounded-full text-white/95 transition-transform duration-150 hover:scale-110 hover:cursor-pointer hover:text-white"
         :class="active === 'profile' ? 'text-white' : ''"
         @click="handleLogout"
       >
@@ -73,6 +73,11 @@ function handleNav(target) {
 
   if (target === "add") {
     router.push({ name: "activities" });
+    return;
+  }
+
+  if (target === "map") {
+    router.push("/map");
     return;
   }
 

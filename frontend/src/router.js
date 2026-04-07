@@ -4,7 +4,11 @@ import Dashboard from './components/Dashboard.vue'
 import NotFound from './components/NotFound.vue'
 import Register from './components/Register.vue'
 import Wizard from './components/Wizard.vue'
+ HEAD
 import Profile from './components/Profile.vue'
+
+import Map from './components/Map.vue'
+ d06d9df3f7f935e92822277a502f23ba233c52eb
 
 const routes = [
   {
@@ -35,6 +39,7 @@ const routes = [
   component: Wizard,
   meta: { requiresAuth: true }
 },
+<<<<<<< HEAD
  {
   path: '/profile',
   name: 'profile',
@@ -42,6 +47,14 @@ const routes = [
   meta: { requiresAuth: true }
 },
   // La route 404 en Dernier svp //
+=======
+  {
+    path: '/map',
+    name: 'map',
+    component: Map,
+    meta: { requiresAuth: true }
+  },
+d06d9df3f7f935e92822277a502f23ba233c52eb
   {
     path: '/:pathMatch(.*)*',
     name: 'not-found',
