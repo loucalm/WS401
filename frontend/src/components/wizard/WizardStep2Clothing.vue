@@ -25,7 +25,7 @@
         @click="$emit('select-clothing-purchase', option.id)"
       >
         <div
-          class="flex aspect-square items-center justify-center rounded-[20px] border-2 bg-cloth-light"
+          class="flex aspect-square items-center justify-center rounded-[20px] border-4 bg-cloth-light"
           :class="
             selectedClothingPurchase === option.id
               ? 'border-cloth bg-white'
@@ -59,7 +59,7 @@
             @click="$emit('select-clothing-option', section.id, option.id)"
           >
             <div
-              class="flex min-h-31 flex-col items-center justify-center rounded-[18px] border-2 bg-cloth-light px-2 py-3 transition-transform"
+              class="flex min-h-31 flex-col items-center justify-center rounded-[18px] border-4 bg-cloth-light px-2 py-3 transition-transform"
               :class="
                 (selectedClothingOptions[section.id] || []).includes(option.id)
                   ? 'border-cloth bg-white'
@@ -67,11 +67,11 @@
               "
             >
               <Icon
-                :icon="option.icon || 'lucide:circle-help'"
-                class="h-12 w-12 text-black"
+                :icon="resolveIcon(option.icon)"
+                class="h-12 w-12 text-cloth"
               />
               <p
-                class="mt-3 text-center font-ui text-body-16 leading-none text-black"
+                class="mt-3 text-center font-ui text-body-16 leading-none text-cloth"
               >
                 {{ option.label }}
               </p>
@@ -121,6 +121,16 @@ export default {
     selectedClothingOptions: {
       type: Object,
       required: true,
+    },
+  },
+  methods: {
+    resolveIcon(rawIcon) {
+      const value = (rawIcon || "").toString().trim().toLowerCase();
+      if (!value) return "lucide:circle-help";
+
+      if (value.includes(":")) return value;
+
+      return `mdi:${value.replace(/\s+/g, "-")}`;
     },
   },
 };

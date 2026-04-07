@@ -15,7 +15,7 @@
     <div class="relative mt-7">
       <button
         type="button"
-        class="flex w-full items-center justify-between rounded-[18px] border border-secondary bg-white px-4 py-4 text-left shadow-[0_10px_16px_rgba(0,0,0,0.14)]"
+        class="flex w-full items-center justify-between rounded-[18px] border-4 border-secondary bg-white px-4 py-4 text-left shadow-[0_10px_16px_rgba(0,0,0,0.14)]"
         @click="$emit('toggle-consumption-menu')"
       >
         <span class="font-ui text-[26px] leading-none text-black">{{
@@ -38,13 +38,13 @@
 
       <div
         v-if="isConsumptionMenuOpen"
-        class="absolute left-0 right-0 top-[calc(100%+10px)] z-10 overflow-hidden rounded-[18px] border border-secondary bg-white shadow-[0_10px_16px_rgba(0,0,0,0.14)]"
+        class="absolute left-0 right-0 top-[calc(100%+10px)] z-10 overflow-hidden rounded-[18px] border-4 border-secondary bg-white shadow-[0_10px_16px_rgba(0,0,0,0.14)]"
       >
         <button
           v-for="option in consumptionSources"
           :key="option"
           type="button"
-          class="flex w-full items-center justify-between border-b border-secondary-light px-4 py-3 text-left last:border-b-0"
+          class="flex w-full items-center justify-between border-b-4 border-secondary-light px-4 py-3 text-left last:border-b-0"
           @click="$emit('select-consumption-source', option)"
         >
           <span class="font-ui text-[22px] leading-none text-black">{{

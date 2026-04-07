@@ -3,13 +3,13 @@
 /* Shared design tokens (Figma -> Tailwind). */
 @theme {
   --color-main: #117d6f;
-  --color-main-light: #d6ecec;
+  --color-main-light: #EAF6F6;
   --color-secondary: #4b6481;
-  --color-secondary-light: #dfe7f2;
-  --color-tertiary: #c1a573;
-  --color-tertiary-light: #e9e3d7;
-  --color-cloth: #8f24b7;
-  --color-cloth-light: #d9c0e8;
+  --color-secondary-light: #E0EAF6;
+  --color-tertiary: #816736;
+  --color-tertiary-light: #F4EEE1;
+  --color-cloth: #831297;
+  --color-cloth-light: #E5C5EB;
   --color-systeme: #d40a17;
   --color-grey: #a1a1aa;
   --color-black: #000000;

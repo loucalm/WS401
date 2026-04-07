@@ -242,7 +242,8 @@
         class="pointer-events-none fixed inset-x-0 bottom-0 z-20 px-4 pb-4"
       >
         <div
-          class="mx-auto grid w-full max-w-105 grid-cols-2 gap-4 bg-white pt-3 pointer-events-auto"
+          :class="currentStep === 2 ? '' : 'bg-white'"
+          class="mx-auto grid w-full max-w-105 grid-cols-2 gap-4 pt-3 pointer-events-auto"
         >
           <button
             type="button"
@@ -254,7 +255,8 @@
           <button
             type="button"
             :class="actionNextClass"
-            @click="currentStep === 2 ? goToStep(3) : confirmWizard()"
+            :disabled="currentStep === 2 && !canProceedToRecap"
+            @click="currentStep === 2 ? goNextStep() : confirmWizard()"
           >
             {{ currentStep === 2 ? "Next" : "Confirm" }}
           </button>
@@ -720,6 +722,25 @@ export default {
             : "flex h-14 items-center justify-center rounded-[18px] bg-main font-ui text-[24px] leading-none text-white",
     );
 
+    const hasFoodSelection = computed(() =>
+      Object.values(selectedFoodOptions.value).some(
+        (selection) => Array.isArray(selection) && selection.length > 0,
+      ),
+    );
+
+    const hasClothingSelection = computed(() =>
+      Object.values(selectedClothingOptions.value).some(
+        (selection) => Array.isArray(selection) && selection.length > 0,
+      ),
+    );
+
+    const canProceedToRecap = computed(() => {
+      if (selectedCategory.value === "food") return hasFoodSelection.value;
+      if (selectedCategory.value === "clothing")
+        return hasClothingSelection.value;
+      return true;
+    });
+
     const step3GaugeFillClass = computed(() =>
       selectedCategory.value === "food"
         ? "bg-tertiary"
@@ -921,6 +942,19 @@ export default {
       currentStep.value = step;
     };
 
+    const goNextStep = () => {
+      if (!canProceedToRecap.value) {
+        alert(
+          selectedCategory.value === "food"
+            ? "Veuillez selectionner au moins un aliment avant de continuer."
+            : "Veuillez selectionner au moins un habit avant de continuer.",
+        );
+        return;
+      }
+
+      goToStep(3);
+    };
+
     const goBack = () => {
       router.push("/dashboard");
     };
@@ -1078,7 +1112,9 @@ export default {
       selectClothingOption,
       getFoodSelectionLabels,
       getClothingLabel,
+      canProceedToRecap,
       goToStep,
+      goNextStep,
       confirmWizard,
       goBack,
     };

@@ -26,7 +26,7 @@
           class="flex aspect-square items-center justify-center rounded-[20px] border-2 bg-white"
           :class="
             selectedFoodConsumption === option.id
-              ? 'border-secondary bg-white'
+              ? 'border-tertiary bg-white'
               : option.cardClass
           "
         >
@@ -57,19 +57,19 @@
             @click="$emit('select-food-option', section.id, option.id)"
           >
             <div
-              class="flex min-h-31 flex-col items-center justify-center rounded-[18px] border-2 bg-secondary-light px-2 py-3 transition-transform"
+              class="flex min-h-31 flex-col items-center justify-center rounded-[18px] border-4 bg-tertiary-light px-2 py-3 transition-transform"
               :class="
                 (selectedFoodOptions[section.id] || []).includes(option.id)
-                  ? 'border-secondary bg-white'
+                  ? 'border-tertiary bg-white'
                   : 'border-transparent'
               "
             >
               <Icon
-                :icon="option.icon || 'lucide:circle-help'"
-                class="h-12 w-12 text-black"
+                :icon="resolveIcon(option.icon)"
+                class="h-12 w-12 text-tertiary"
               />
               <p
-                class="mt-3 text-center font-ui text-body-16 leading-none text-black"
+                class="mt-3 text-center font-ui text-body-16 leading-none text-tertiary"
               >
                 {{ option.label }}
               </p>
@@ -119,6 +119,16 @@ export default {
     selectedFoodOptions: {
       type: Object,
       required: true,
+    },
+  },
+  methods: {
+    resolveIcon(rawIcon) {
+      const value = (rawIcon || "").toString().trim().toLowerCase();
+      if (!value) return "lucide:circle-help";
+
+      if (value.includes(":")) return value;
+
+      return `mdi:${value.replace(/\s+/g, "-")}`;
     },
   },
 };
