@@ -97,14 +97,14 @@
         class="rounded-[18px] bg-main px-4 py-2 font-ui text-[18px] leading-none text-white"
         @click="applyManualDistance"
       >
-        Valider
+        Confirm
       </button>
       <button
         type="button"
         class="rounded-[18px] border border-main bg-white px-4 py-2 font-ui text-[18px] leading-none text-main"
         @click="cancelManualDistance"
       >
-        Annuler
+        Cancel
       </button>
     </div>
 
@@ -126,7 +126,7 @@
       <button
         type="button"
         class="flex h-14 w-14 items-center justify-center rounded-full bg-main-light text-main"
-        aria-label="Modifier la distance"
+        aria-label="Edit distance"
         @click="toggleManualDistance"
       >
         <Icon icon="lucide:edit" class="h-6 w-6" />

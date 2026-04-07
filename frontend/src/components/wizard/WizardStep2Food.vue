@@ -57,7 +57,7 @@
         class="rounded-[14px] border-2 border-tertiary bg-white px-3 py-2 font-ui text-body-16 leading-none text-tertiary transition-all duration-200 hover:bg-tertiary-light"
         @click="$emit('reset-food-selection')"
       >
-        Tout deselectionner
+        Deselect all
       </button>
     </div>
 

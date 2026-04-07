@@ -13,7 +13,7 @@
           <button
             type="button"
             class="absolute left-0 top-1/2 flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full text-black transition hover:bg-white/45"
-            aria-label="Fermer"
+            aria-label="Close"
             @click="goBack"
           >
             <svg
@@ -68,7 +68,7 @@
           <Spinner
             v-if="loading"
             class="mt-6"
-            label="Chargement des activites..."
+            label="Loading activities..."
             color-class="text-main"
             text-class="text-grey"
           />
@@ -296,6 +296,13 @@
           </button>
         </div>
       </div>
+
+      <ActivityAddedPopup
+        :visible="showSuccessPopup"
+        :co2-label="lastAddedCo2Label"
+        @add-new="startNewActivity"
+        @go-dashboard="goToDashboardFromPopup"
+      />
     </main>
   </div>
 </template>
@@ -310,6 +317,7 @@ import WizardStep2Travel from "./wizard/WizardStep2Travel.vue";
 import WizardStep2Food from "./wizard/WizardStep2Food.vue";
 import WizardStep2Consumption from "./wizard/WizardStep2Consumption.vue";
 import WizardStep2Clothing from "./wizard/WizardStep2Clothing.vue";
+import ActivityAddedPopup from "./wizard/ActivityAddedPopup.vue";
 import wizardStep1Svg from "../assets/img/svg/wizard_etape_1.svg?raw";
 import wizardStep2Svg from "../assets/img/svg/wizard_etape_2.svg?raw";
 import wizardStep3Svg from "../assets/img/svg/wizard_etape_3.svg?raw";
@@ -328,6 +336,7 @@ export default {
     WizardStep2Food,
     WizardStep2Consumption,
     WizardStep2Clothing,
+    ActivityAddedPopup,
   },
   setup() {
     const router = useRouter();
@@ -349,6 +358,8 @@ export default {
     const durationMarks = [0, 4, 8, 12, 16, 20, 24];
     const selectedClothingPurchase = ref("second-hand");
     const selectedClothingOptions = ref({});
+    const showSuccessPopup = ref(false);
+    const lastAddedCo2Label = ref("");
 
     const clothingPurchaseFactors = {
       online: 1,
@@ -837,6 +848,31 @@ export default {
       return Array.isArray(responseData) ? responseData : [];
     };
 
+    const parseJwtPayload = (token) => {
+      try {
+        const payload = token.split(".")[1];
+        if (!payload) return null;
+        const normalized = payload.replace(/-/g, "+").replace(/_/g, "/");
+        const padded = normalized + "=".repeat((4 - (normalized.length % 4)) % 4);
+        return JSON.parse(atob(padded));
+      } catch {
+        return null;
+      }
+    };
+
+    const resolveCurrentUserIri = async (headers, token) => {
+      const payload = parseJwtPayload(token);
+      const currentEmail = payload?.username || "";
+      if (!currentEmail) return null;
+
+      const usersResponse = await axios.get("http://localhost:8000/api/users", {
+        headers,
+      });
+      const users = extractCollection(usersResponse.data);
+      const currentUser = users.find((user) => user.email === currentEmail);
+      return currentUser?.["@id"] || null;
+    };
+
     const fetchAllActivityTypes = async (headers) => {
       const all = [];
       const seen = new Set();
@@ -1014,8 +1050,8 @@ export default {
       if (!canProceedToRecap.value) {
         alert(
           selectedCategory.value === "food"
-            ? "Veuillez selectionner au moins un aliment avant de continuer."
-            : "Veuillez selectionner au moins un habit avant de continuer.",
+            ? "Please select at least one food item before continuing."
+            : "Please select at least one clothing item before continuing.",
         );
         return;
       }
@@ -1027,10 +1063,51 @@ export default {
       router.push("/dashboard");
     };
 
+    const resetWizardState = () => {
+      selectedType.value = null;
+      currentStep.value = 1;
+      transportMode.value = transportOptionsFromApi.value[0] || "Car";
+      isTransportMenuOpen.value = false;
+      distance.value = 7;
+      selectedFoodConsumption.value = foodDietsFromApi.value[0] || "";
+      initializeFoodSelection();
+      consumptionSource.value = consumptionSourcesFromApi.value[0] || "";
+      selectedConsumptionActivityId.value =
+        activitiesByCategory.value.consumption.find(
+          (item) => item.name === consumptionSource.value,
+        )?.["@id"] || null;
+      isConsumptionMenuOpen.value = false;
+      surface.value = 130;
+      duration.value = 8;
+      selectedClothingPurchase.value = "second-hand";
+      initializeClothingSelection();
+    };
+
+    const startNewActivity = () => {
+      showSuccessPopup.value = false;
+      resetWizardState();
+    };
+
+    const goToDashboardFromPopup = () => {
+      showSuccessPopup.value = false;
+      router.push("/dashboard");
+    };
+
     // 🚀 LA NOUVELLE FONCTION MAGIQUE DE VALIDATION PANIER
     const confirmWizard = async () => {
       const token = localStorage.getItem("jwt_token");
       if (!token) return;
+
+      const headers = {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/ld+json",
+      };
+
+      const ownerIri = await resolveCurrentUserIri(headers, token);
+      if (!ownerIri) {
+        alert("Unable to identify the current user.");
+        return;
+      }
 
       let entryItems = [];
       let details = {};
@@ -1105,28 +1182,47 @@ export default {
       }
 
       // 📦 Préparation du Payload JSON
-      const payload = {
-        owner: "/api/users/3", // A dynamiser plus tard avec le vrai utilisateur
+      const entryPayload = {
+        owner: ownerIri,
         details: details,
-        entryItems: entryItems,
       };
 
       try {
-        await axios.post("http://localhost:8000/api/entries", payload, {
-          headers: {
-            Authorization: `Bearer ${token}`,
-            "Content-Type": "application/ld+json",
+        const entryResponse = await axios.post(
+          "http://localhost:8000/api/entries",
+          entryPayload,
+          {
+            headers,
           },
-        });
+        );
 
-        alert("Félicitations ! Activité enregistrée. 🌱");
-        router.push("/dashboard");
+        const entryIri = entryResponse.data?.["@id"];
+        if (!entryIri) {
+          throw new Error("Entry IRI missing after creation");
+        }
+
+        await Promise.all(
+          entryItems.map((item) =>
+            axios.post(
+              "http://localhost:8000/api/entry_items",
+              {
+                entry: entryIri,
+                activityType: item.activityType,
+                quantity: item.quantity,
+              },
+              { headers },
+            ),
+          ),
+        );
+
+        lastAddedCo2Label.value = formattedCo2.value;
+        showSuccessPopup.value = true;
       } catch (error) {
         console.error(
-          "Erreur lors de l'envoi :",
+          "Submission error:",
           error.response?.data || error,
         );
-        alert("Une erreur est survenue lors de la sauvegarde de l'empreinte.");
+        alert("An error occurred while saving your footprint.");
       }
     };
 
@@ -1160,6 +1256,8 @@ export default {
       selectedClothingPurchase,
       selectedClothingPurchaseLabel,
       selectedClothingOptions,
+      showSuccessPopup,
+      lastAddedCo2Label,
       formattedCo2,
       headerClass,
       stepIndicatorSvgMarkup,
@@ -1186,6 +1284,8 @@ export default {
       goToStep,
       goNextStep,
       confirmWizard,
+      startNewActivity,
+      goToDashboardFromPopup,
       goBack,
     };
   },

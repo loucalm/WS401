@@ -58,7 +58,7 @@
         class="rounded-[14px] border-2 border-cloth bg-white px-3 py-2 font-ui text-body-16 leading-none text-cloth transition-all duration-200 hover:bg-cloth-light"
         @click="$emit('reset-clothing-selection')"
       >
-        Tout deselectionner
+        Deselect all
       </button>
     </div>
 

@@ -97,14 +97,14 @@
         class="rounded-[18px] bg-secondary px-4 py-2 font-ui text-[18px] leading-none text-white"
         @click="applyManualSurface"
       >
-        Valider
+        Confirm
       </button>
       <button
         type="button"
         class="rounded-[18px] border border-secondary bg-white px-4 py-2 font-ui text-[18px] leading-none text-secondary"
         @click="cancelManualSurface"
       >
-        Annuler
+        Cancel
       </button>
     </div>
 
@@ -126,7 +126,7 @@
       <button
         type="button"
         class="flex h-14 w-14 items-center justify-center rounded-full bg-secondary-light text-secondary"
-        aria-label="Modifier la surface"
+        aria-label="Edit surface area"
         @click="toggleManualSurface"
       >
         <Icon icon="lucide:edit" class="h-6 w-6" />
@@ -152,7 +152,7 @@
       <button
         type="button"
         class="flex h-10 w-10 items-center justify-center rounded-full bg-secondary-light text-secondary"
-        aria-label="Modifier la durée"
+        aria-label="Edit duration"
         @click="toggleManualDuration"
       >
         <Icon icon="lucide:edit" class="h-5 w-5" />
@@ -201,14 +201,14 @@
         class="rounded-[18px] bg-secondary px-4 py-2 font-ui text-[18px] leading-none text-white"
         @click="applyManualDuration"
       >
-        Valider
+        Confirm
       </button>
       <button
         type="button"
         class="rounded-[18px] border border-secondary bg-white px-4 py-2 font-ui text-[18px] leading-none text-secondary"
         @click="cancelManualDuration"
       >
-        Annuler
+        Cancel
       </button>
     </div>
   </section>
