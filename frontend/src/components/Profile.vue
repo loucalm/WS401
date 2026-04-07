@@ -1,118 +1,113 @@
 <template>
   <div class="min-h-screen bg-white text-black">
     <main
-        class="mx-auto flex min-h-screen w-full max-w-105 flex-col bg-white pb-28"
+        class="mx-auto flex min-h-screen w-full max-w-125 flex-col bg-white pb-24"
     >
-
-      <!-- Header row -->
-      <div class="flex items-start justify-between px-4 pt-3">
-
-        <!-- My Points : petite bulle compacte -->
-        <div class="rounded-xl border border-grey/20 bg-white px-3 py-1.5 shadow-[0_2px_8px_rgba(0,0,0,0.10)]">
-          <p class="font-ui text-[10px] font-bold text-main leading-none">My Points</p>
-          <p class="mt-0.5 font-ui text-[10px] font-bold text-main leading-none">+ 560 points</p>
+      <div class="flex items-start justify-between px-7 pt-7">
+        <div class="rounded-xl border border-grey/20 bg-white px-4 py-2.5 shadow-[0_3px_8px_rgba(0,0,0,0.08)]">
+          <p class="font-ui text-[14px] font-bold text-main leading-none uppercase tracking-wide">My Points</p>
+          <p class="mt-1 font-ui text-[15px] font-bold text-main leading-none">+ 560 points</p>
         </div>
 
-        <!-- Icons -->
-        <div class="flex gap-2">
-          <div class="flex h-8 w-8 items-center justify-center rounded-full bg-main-light text-main">
-            <Icon icon="ph:share-network" class="h-4 w-4" />
+        <div class="flex gap-3.5">
+          <div class="flex h-10 w-10 items-center justify-center rounded-full bg-main-light text-main cursor-pointer">
+            <Icon icon="ph:share-network" class="h-5.5 w-5.5" />
           </div>
-          <div class="flex h-8 w-8 items-center justify-center rounded-full bg-[#F4F4F4] text-grey">
-            <Icon icon="ph:bell" class="h-4 w-4" />
+          <div class="flex h-10 w-10 items-center justify-center rounded-full bg-[#F4F4F4] text-grey cursor-pointer">
+            <Icon icon="ph:bell" class="h-5.5 w-5.5" />
           </div>
         </div>
       </div>
 
-      <!-- Avatar -->
-      <div class="flex justify-center mt-2">
-        <div class="h-24 w-24 rounded-full border-4 border-main/85 bg-white shadow-md overflow-hidden">
+      <div class="flex justify-center mt-6">
+        <div class="h-36 w-36 rounded-full border-4 border-main/85 bg-white shadow-md overflow-hidden flex items-center justify-center">
           <img
-              src="https://i.pravatar.cc/256?u=rafamaru"
+              :src="personaSrc"
               alt="Profile Avatar"
-              class="h-full w-full object-cover"
+              class="h-full w-full object-cover scale-125 grayscale"
           />
         </div>
       </div>
 
-      <!-- Name card -->
-      <section class="px-4 mt-3">
-        <div class="rounded-2xl border border-grey/15 bg-white px-4 py-3 text-center shadow-[0_4px_12px_rgba(0,0,0,0.08)]">
-          <h1 class="font-title text-[20px] leading-none text-black">Rafamaru Teixeira</h1>
-          <p class="font-ui text-[12px] font-medium text-main mt-1">Climate Protector - Lvl 12</p>
-          <div class="mt-2 flex items-center justify-around border-t border-grey/10 pt-2">
-            <p class="font-ui text-[11px] text-black"><span class="font-bold">Friends :</span> 25</p>
-            <div class="h-5 w-px bg-grey/20"></div>
-            <p class="font-ui text-[11px] text-black"><span class="font-bold">Saved :</span> +120kg CO2</p>
+      <section class="px-7 mt-6">
+        <div class="rounded-2xl border border-grey/15 bg-white px-7 py-6 text-center shadow-[0_4px_12px_rgba(0,0,0,0.06)]">
+          <h1 class="font-title text-[40px] leading-tight text-black tracking-tight">Rafamaru Teixeira</h1>
+          <p class="font-ui text-[16px] font-medium text-main mt-1.5">Climate Protector - Lvl 12</p>
+
+          <div class="mt-5 flex items-center justify-around border-t border-grey/10 pt-5">
+            <p class="font-ui text-[15px] text-black">
+              <span class="font-bold">Friends :</span> 25
+            </p>
+            <div class="h-7 w-px bg-grey/20"></div>
+            <p class="font-ui text-[15px] text-black">
+              <span class="font-bold">Saved :</span> +120kg CO2
+            </p>
           </div>
         </div>
       </section>
 
-      <!-- Menu items -->
-      <section class="flex flex-col gap-2 px-4 mt-3">
+      <section class="flex flex-col gap-4 px-7 mt-7">
         <router-link
             to="/profile/edit"
-            class="flex items-center rounded-xl border border-grey/15 bg-white px-3 py-2.5 shadow-[0_2px_8px_rgba(0,0,0,0.07)] transition-transform active:scale-[0.98]"
+            class="flex items-center rounded-xl border border-grey/15 bg-white px-4.5 py-4 shadow-[0_4px_10px_rgba(0,0,0,0.05)] transition-transform active:scale-[0.98]"
         >
-          <div class="flex h-9 w-9 items-center justify-center rounded-lg bg-main-light text-main">
-            <Icon icon="ph:gear" class="h-4 w-4" />
+          <div class="flex h-11 w-11 items-center justify-center rounded-lg bg-main-light text-main">
+            <Icon icon="ph:gear" class="h-6 w-6" />
           </div>
-          <span class="ml-3 flex-1 font-ui text-[13px] font-semibold text-black underline underline-offset-2 italic">
-            {{ $t('profile.personal_info') }}
+          <span class="ml-4.5 flex-1 font-ui text-[18px] font-semibold text-black underline underline-offset-2 italic">
+            My personal information
           </span>
-          <Icon icon="ph:caret-right" class="text-grey h-4 w-4" />
+          <Icon icon="ph:caret-right" class="text-grey h-5 w-5" />
         </router-link>
 
         <router-link
             to="/profile/location"
-            class="flex items-center rounded-xl border border-grey/15 bg-white px-3 py-2.5 shadow-[0_2px_8px_rgba(0,0,0,0.07)] transition-transform active:scale-[0.98]"
+            class="flex items-center rounded-xl border border-grey/15 bg-white px-4.5 py-4 shadow-[0_4px_10px_rgba(0,0,0,0.05)] transition-transform active:scale-[0.98]"
         >
-          <div class="flex h-9 w-9 items-center justify-center rounded-lg bg-[#EFEFEF] text-main">
-            <Icon icon="ph:map-pin" class="h-4 w-4" />
+          <div class="flex h-11 w-11 items-center justify-center rounded-lg bg-[#EFEFEF] text-main">
+            <Icon icon="ph:map-pin" class="h-6 w-6" />
           </div>
-          <span class="ml-3 flex-1 font-ui text-[13px] font-semibold text-black underline underline-offset-2 italic">
-            {{ $t('profile.location') }}
+          <span class="ml-4.5 flex-1 font-ui text-[18px] font-semibold text-black underline underline-offset-2 italic">
+            Location
           </span>
-          <Icon icon="ph:caret-right" class="text-grey h-4 w-4" />
+          <Icon icon="ph:caret-right" class="text-grey h-5 w-5" />
         </router-link>
 
         <router-link
             to="/profile/security"
-            class="flex items-center rounded-xl border border-grey/15 bg-white px-3 py-2.5 shadow-[0_2px_8px_rgba(0,0,0,0.07)] transition-transform active:scale-[0.98]"
+            class="flex items-center rounded-xl border border-grey/15 bg-white px-4.5 py-4 shadow-[0_4px_10px_rgba(0,0,0,0.05)] transition-transform active:scale-[0.98]"
         >
-          <div class="flex h-9 w-9 items-center justify-center rounded-lg bg-[#EFEFEF] text-main">
-            <Icon icon="ph:shield-check" class="h-4 w-4" />
+          <div class="flex h-11 w-11 items-center justify-center rounded-lg bg-[#EFEFEF] text-main">
+            <Icon icon="ph:shield-check" class="h-6 w-6" />
           </div>
-          <span class="ml-3 flex-1 font-ui text-[13px] font-semibold text-black underline underline-offset-2 italic">
-            {{ $t('profile.security_privacy') }}
+          <span class="ml-4.5 flex-1 font-ui text-[18px] font-semibold text-black underline underline-offset-2 italic">
+            Security and privacy
           </span>
-          <Icon icon="ph:caret-right" class="text-grey h-4 w-4" />
+          <Icon icon="ph:caret-right" class="text-grey h-5 w-5" />
         </router-link>
 
         <router-link
             to="/friends"
-            class="flex items-center rounded-xl border border-grey/15 bg-white px-3 py-2.5 shadow-[0_2px_8px_rgba(0,0,0,0.07)] transition-transform active:scale-[0.98]"
+            class="flex items-center rounded-xl border border-grey/15 bg-white px-4.5 py-4 shadow-[0_4px_10px_rgba(0,0,0,0.05)] transition-transform active:scale-[0.98]"
         >
-          <div class="flex h-9 w-9 items-center justify-center rounded-lg bg-[#EFEFEF] text-main">
-            <Icon icon="ph:user-plus" class="h-4 w-4" />
+          <div class="flex h-11 w-11 items-center justify-center rounded-lg bg-[#EFEFEF] text-main">
+            <Icon icon="ph:user-plus" class="h-6 w-6" />
           </div>
-          <span class="ml-3 flex-1 font-ui text-[13px] font-semibold text-black underline underline-offset-2 italic">
-            {{ $t('profile.friends') }}
+          <span class="ml-4.5 flex-1 font-ui text-[18px] font-semibold text-black underline underline-offset-2 italic">
+            Friends
           </span>
-          <Icon icon="ph:caret-right" class="text-grey h-4 w-4" />
+          <Icon icon="ph:caret-right" class="text-grey h-5 w-5" />
         </router-link>
       </section>
 
-      <!-- Logout -->
-      <section class="px-4 mt-4">
+      <section class="px-7 mt-8 mb-4">
         <button
             @click="handleLogout"
-            class="w-full rounded-xl border-2 border-systeme py-2.5 font-ui text-[13px] font-bold uppercase tracking-wider text-systeme transition-colors active:bg-systeme/10"
+            class="w-full rounded-2xl border-2 border-systeme py-4 font-ui text-[18px] font-bold uppercase tracking-wider text-systeme transition-colors active:bg-systeme/10"
         >
-          {{ $t('profile.logout') }}
+          Logout
         </button>
       </section>
-
     </main>
 
     <BottomNav active="profile" />
@@ -123,6 +118,7 @@
 import { Icon } from "@iconify/vue";
 import BottomNav from "./BottomNav.vue";
 import { useRouter } from "vue-router";
+import personaSrc from "../assets/img/persona.jpg";
 
 const router = useRouter();
 
