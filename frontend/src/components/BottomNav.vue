@@ -15,8 +15,8 @@
       <button
         type="button"
         class="flex h-10 w-10 items-center justify-center rounded-full text-white/95 transition-transform duration-150 hover:scale-110 hover:cursor-pointer hover:text-white"
-        :class="active === 'pulse' ? 'text-white' : ''"
-        @click="$emit('select', 'pulse')"
+        :class="active === 'data' ? 'text-white' : ''"
+        @click="handleNav('data')"
       >
         <Icon icon="cuida:heart-rate-outline" class="h-8 w-8" />
       </button>
@@ -68,6 +68,11 @@ const router = useRouter();
 function handleNav(target) {
   if (target === "home") {
     router.push({ name: "dashboard" });
+    return;
+  }
+
+  if (target === "data") {
+    router.push({ name: "data" });
     return;
   }
 
