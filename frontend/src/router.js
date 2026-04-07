@@ -4,6 +4,7 @@ import Dashboard from './components/Dashboard.vue'
 import NotFound from './components/NotFound.vue'
 import Register from './components/Register.vue'
 import Wizard from './components/Wizard.vue'
+import Map from './components/Map.vue'
 
 const routes = [
   {
@@ -34,7 +35,12 @@ const routes = [
   component: Wizard,
   meta: { requiresAuth: true }
 },
-  // La route 404 en Dernier svp //
+  {
+    path: '/map',
+    name: 'map',
+    component: Map,
+    meta: { requiresAuth: true }
+  },
   {
     path: '/:pathMatch(.*)*',
     name: 'not-found',

@@ -5,8 +5,7 @@
     >
       <button
         type="button"
-        class="flex h-10 w-10 items-center justify-center rounded-full text-white/95 transition-colors hover:text-white"
-        :class="active === 'home' ? 'text-white' : ''"
+        class="flex h-10 w-10 items-center justify-center rounded-full text-white transition-colors"
         @click="handleNav('home')"
       >
         <Icon icon="material-symbols:home-rounded" class="h-8 w-8" />
@@ -14,8 +13,7 @@
 
       <button
         type="button"
-        class="flex h-10 w-10 items-center justify-center rounded-full text-white/95 transition-colors hover:text-white"
-        :class="active === 'pulse' ? 'text-white' : ''"
+        class="flex h-10 w-10 items-center justify-center rounded-full text-white transition-colors"
         @click="$emit('select', 'pulse')"
       >
         <Icon icon="cuida:heart-rate-outline" class="h-8 w-8" />
@@ -23,7 +21,7 @@
 
       <button
         type="button"
-        class="-mt-10 flex h-20 w-20 items-center justify-center rounded-full border-4 border-white bg-main text-white transition-transform hover:scale-[1.03]"
+        class="-mt-10 flex h-20 w-20 items-center justify-center rounded-full border-4 border-white bg-main text-white transition-colors hover:bg-main-light"
         :class="active === 'add' ? 'ring-2 ring-white/40' : ''"
         @click="handleNav('add')"
       >
@@ -32,17 +30,15 @@
 
       <button
         type="button"
-        class="flex h-10 w-10 items-center justify-center rounded-full text-white/95 transition-colors hover:text-white"
-        :class="active === 'map' ? 'text-white' : ''"
-        @click="$emit('select', 'map')"
+        class="flex h-10 w-10 items-center justify-center rounded-full text-white transition-colors"
+        @click="handleNav('map')"
       >
         <Icon icon="material-symbols:map-outline" class="h-8 w-8" />
       </button>
 
       <button
         type="button"
-        class="flex h-10 w-10 items-center justify-center rounded-full text-white/95 transition-colors hover:text-white"
-        :class="active === 'profile' ? 'text-white' : ''"
+        class="flex h-10 w-10 items-center justify-center rounded-full text-white transition-colors"
         @click="handleLogout"
       >
         <Icon icon="mdi:user" class="h-8 w-8" />
@@ -66,13 +62,18 @@ const emit = defineEmits(["select"]);
 const router = useRouter();
 
 function handleNav(target) {
-  if (target === "home") {
-    router.push({ name: "dashboard" });
+  if (target === 'home') {
+    router.push({ name: 'dashboard' });
     return;
   }
 
-  if (target === "add") {
-    router.push({ name: "activities" });
+  if (target === 'add') {
+    router.push({ name: 'activities' });
+    return;
+  }
+
+  if (target === 'map') {
+    router.push({ name: 'map' });
     return;
   }
 
