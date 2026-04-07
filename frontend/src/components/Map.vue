@@ -4,7 +4,9 @@
       class="mx-auto flex min-h-screen w-full max-w-105 flex-col bg-white shadow-[0_0_0_1px_rgba(0,0,0,0.04)] lg:my-0 lg:rounded-none lg:px-10"
     >
       <!-- Header -->
-      <div class="sticky top-0 z-20 flex items-center justify-between rounded-b-3xl bg-white px-4 py-3 shadow-sm">
+      <div
+        class="sticky top-0 z-20 flex items-center justify-between rounded-b-3xl bg-white px-4 py-3 shadow-sm"
+      >
         <button
           type="button"
           class="flex h-10 w-10 items-center justify-center rounded-lg transition-colors hover:bg-main-light"
@@ -47,9 +49,13 @@
                   class="h-12 w-12 rounded-full object-cover"
                 />
                 <div>
-                  <p class="font-bold text-black text-body-16">{{ selectedUser.name }}</p>
+                  <p class="font-bold text-black text-body-16">
+                    {{ selectedUser.name }}
+                  </p>
                   <p class="text-grey text-body-12">{{ selectedUser.rank }}</p>
-                  <p class="font-bold text-main text-body-16">{{ selectedUser.weight }} kg</p>
+                  <p class="font-bold text-main text-body-16">
+                    {{ selectedUser.weight }} kg
+                  </p>
                 </div>
               </div>
             </div>
@@ -72,7 +78,9 @@
                   class="h-12 w-12 rounded-full object-cover"
                 />
                 <div>
-                  <p class="font-bold text-black text-body-16">{{ friend.name }}</p>
+                  <p class="font-bold text-black text-body-16">
+                    {{ friend.name }}
+                  </p>
                   <p class="text-grey text-body-12">{{ friend.weight }}</p>
                 </div>
               </div>
@@ -80,11 +88,11 @@
                 <div
                   :class="[
                     'h-3 w-3 rounded-full',
-                    friend.online ? 'bg-main' : 'bg-systeme'
+                    friend.online ? 'bg-main' : 'bg-systeme',
                   ]"
                 ></div>
                 <span class="text-grey text-body-12">
-                  {{ friend.online ? 'Online' : 'Offline' }}
+                  {{ friend.online ? "Online" : "Offline" }}
                 </span>
               </div>
             </div>
@@ -99,39 +107,39 @@
 </template>
 
 <script setup>
-import { ref } from 'vue'
-import { Icon } from '@iconify/vue'
-import { useRouter } from 'vue-router'
-import BottomNav from './BottomNav.vue'
+import { ref } from "vue";
+import { Icon } from "@iconify/vue";
+import { useRouter } from "vue-router";
+import BottomNav from "./BottomNav.vue";
 
-const router = useRouter()
-const showPopup = ref(false)
+const router = useRouter();
+const showPopup = ref(false);
 const selectedUser = ref({
-  name: 'Jules.F',
-  rank: '2nd',
-  weight: '4',
-  avatar: 'https://via.placeholder.com/100?text=Jules'
-})
+  name: "Jules.F",
+  rank: "2nd",
+  weight: "4",
+  avatar: "https://via.placeholder.com/100?text=Jules",
+});
 
 const friends = ref([
   {
     id: 1,
-    name: 'Kenzo',
-    weight: '6e : 19 kg',
+    name: "Kenzo",
+    weight: "6e : 19 kg",
     online: true,
-    avatar: 'https://via.placeholder.com/100?text=Kenzo'
+    avatar: "https://via.placeholder.com/100?text=Kenzo",
   },
   {
     id: 2,
-    name: 'Kenza',
-    weight: '5e : 15 kg',
+    name: "Kenza",
+    weight: "5e : 15 kg",
     online: false,
-    avatar: 'https://via.placeholder.com/100?text=Kenza'
-  }
-])
+    avatar: "https://via.placeholder.com/100?text=Kenza",
+  },
+]);
 
 function closeMap() {
-  router.push({ name: 'dashboard' })
+  router.push({ name: "dashboard" });
 }
 
 function handleNavSelect(target) {
@@ -145,18 +153,4 @@ function handleNavSelect(target) {
   background: white;
   border-radius: 0.5rem;
 }
-
-/* Styles pour les régions SVG */
-:deep(path) {
-  fill: #6f9c76;
-  stroke: #ffffff;
-  stroke-width: 0.5;
-  cursor: pointer;
-  transition: fill 0.3s ease;
-}
-
-:deep(path:hover) {
-  fill: #5a8563;
-}
 </style>
-
