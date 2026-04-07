@@ -68,7 +68,7 @@
     <div class="mt-8 flex justify-center">
       <div
         v-if="!isManualSurfaceOpen"
-        class="inline-flex min-w-[210px] items-center justify-center rounded-[999px] bg-white px-10 py-9 shadow-[0_10px_18px_rgba(0,0,0,0.18)]"
+        class="inline-flex min-h-33 min-w-52.5 items-center justify-center rounded-[999px] bg-white px-10 py-9 shadow-[0_10px_18px_rgba(0,0,0,0.18)]"
       >
         <span class="font-ui text-[36px] leading-none text-black"
           >{{ surface }} M²</span
@@ -77,7 +77,7 @@
 
       <div
         v-else
-        class="flex w-full max-w-[240px] items-center gap-3 rounded-[999px] bg-white px-4 py-4 shadow-[0_10px_18px_rgba(0,0,0,0.18)]"
+        class="flex min-h-33 w-full max-w-60 items-center gap-3 rounded-[999px] bg-white px-4 py-4 shadow-[0_10px_18px_rgba(0,0,0,0.18)]"
       >
         <input
           v-model="manualSurfaceValue"
@@ -111,7 +111,7 @@
     <div class="mt-10 flex items-center justify-between gap-3 px-1">
       <button
         type="button"
-        class="flex h-14 min-w-[74px] items-center justify-center rounded-3xl bg-secondary-light px-4 font-ui text-[30px] leading-none text-secondary"
+        class="flex h-14 min-w-18.5 items-center justify-center rounded-3xl bg-secondary-light px-4 font-ui text-[30px] leading-none text-secondary"
         @click="$emit('adjust-surface', -10)"
       >
         -10
@@ -140,7 +140,7 @@
       </button>
       <button
         type="button"
-        class="flex h-14 min-w-[74px] items-center justify-center rounded-3xl bg-secondary-light px-4 font-ui text-[30px] leading-none text-secondary"
+        class="flex h-14 min-w-18.5 items-center justify-center rounded-3xl bg-secondary-light px-4 font-ui text-[30px] leading-none text-secondary"
         @click="$emit('adjust-surface', 10)"
       >
         +10
@@ -172,7 +172,7 @@
       />
       <div
         v-else
-        class="flex w-full items-center gap-3 rounded-[18px] bg-white px-4 py-4 shadow-[0_10px_16px_rgba(0,0,0,0.14)]"
+        class="flex min-h-17 w-full items-center gap-3 rounded-[18px] bg-white px-4 py-4 shadow-[0_10px_16px_rgba(0,0,0,0.14)]"
       >
         <input
           v-model="manualDurationValue"

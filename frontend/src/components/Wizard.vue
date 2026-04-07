@@ -39,237 +39,243 @@
         </div>
       </section>
 
-      <Transition name="wizard-step" mode="out-in">
-        <section
-          v-if="currentStep === 1"
-          key="wizard-step-1"
-          class="flex-1 overflow-y-auto px-4 pt-6"
-        >
-          <div class="mx-auto w-full px-1">
-            <div class="flex w-full" :class="stepIndicatorContainerClass">
-              <div
-                class="[&>svg]:h-20 [&>svg]:w-auto [&>svg]:max-w-full"
-                :class="stepIndicatorColorClass"
-                v-html="stepIndicatorSvgMarkup"
-              ></div>
-            </div>
-          </div>
-
-          <h2
-            class="mt-6 text-center font-ui text-[36px] leading-[0.98] text-black"
+      <div class="relative flex-1 overflow-hidden">
+        <Transition :name="stepTransitionName">
+          <section
+            v-if="currentStep === 1"
+            key="wizard-step-1"
+            class="h-full overflow-y-auto px-4 pt-6"
           >
-            Type of activity
-          </h2>
+            <div class="mx-auto w-full px-1">
+              <div class="flex w-full" :class="stepIndicatorContainerClass">
+                <div
+                  class="[&>svg]:h-20 [&>svg]:w-auto [&>svg]:max-w-full"
+                  :class="stepIndicatorColorClass"
+                  v-html="stepIndicatorSvgMarkup"
+                ></div>
+              </div>
+            </div>
 
-          <p class="mt-2 text-center font-ui text-body-16 text-black/55">
-            Pick one category to continue
-          </p>
+            <h2
+              class="mt-6 text-center font-ui text-[36px] leading-[0.98] text-black"
+            >
+              Type of activity
+            </h2>
 
-          <Spinner
-            v-if="loading"
-            class="mt-6"
-            label="Loading activities..."
-            color-class="text-main"
-            text-class="text-grey"
+            <p class="mt-2 text-center font-ui text-body-16 text-black/55">
+              Pick one category to continue
+            </p>
+
+            <Spinner
+              v-if="loading"
+              class="mt-6"
+              label="Loading activities..."
+              color-class="text-main"
+              text-class="text-grey"
+            />
+
+            <div v-else class="mt-6 space-y-4">
+              <button
+                v-for="activity in shownTypes"
+                :key="activity.id"
+                type="button"
+                class="flex w-full items-center gap-3 rounded-[20px] border border-black/7 bg-white px-4 py-4 text-left shadow-[0_10px_16px_rgba(0,0,0,0.12)] transition-all duration-200 hover:-translate-y-0.5 hover:shadow-[0_14px_22px_rgba(0,0,0,0.16)]"
+                @click="selectActivityType(activity.raw)"
+              >
+                <div
+                  class="flex h-18 w-18 shrink-0 items-center justify-center rounded-2xl"
+                  :class="activity.iconBoxClass"
+                  :style="activity.iconBoxStyle"
+                >
+                  <Icon
+                    :icon="activity.icon"
+                    class="h-12 w-12"
+                    :class="activity.iconColorClass"
+                    :style="activity.iconColorStyle"
+                  />
+                </div>
+
+                <span class="font-ui text-[28px] leading-none text-black">{{
+                  activity.label
+                }}</span>
+              </button>
+            </div>
+          </section>
+
+          <WizardStep2Travel
+            v-else-if="currentStep === 2 && selectedCategory === 'travel'"
+            key="wizard-step-2-travel"
+            class="h-full"
+            :step-title="stepTitle"
+            :step-indicator-svg-markup="stepIndicatorSvgMarkup"
+            :step-indicator-color-class="stepIndicatorColorClass"
+            :step-indicator-container-class="stepIndicatorContainerClass"
+            :transport-mode="transportMode"
+            :transport-options="transportOptions"
+            :is-transport-menu-open="isTransportMenuOpen"
+            :distance="distance"
+            @toggle-transport-menu="isTransportMenuOpen = !isTransportMenuOpen"
+            @select-transport-mode="selectTransportMode"
+            @adjust-distance="adjustDistance"
+            @update-distance="distance = $event"
           />
 
-          <div v-else class="mt-6 space-y-4">
-            <button
-              v-for="activity in shownTypes"
-              :key="activity.id"
-              type="button"
-              class="flex w-full items-center gap-3 rounded-[20px] border border-black/7 bg-white px-4 py-4 text-left shadow-[0_10px_16px_rgba(0,0,0,0.12)] transition-all duration-200 hover:-translate-y-0.5 hover:shadow-[0_14px_22px_rgba(0,0,0,0.16)]"
-              @click="selectActivityType(activity.raw)"
-            >
-              <div
-                class="flex h-18 w-18 shrink-0 items-center justify-center rounded-2xl"
-                :class="activity.iconBoxClass"
-                :style="activity.iconBoxStyle"
-              >
-                <Icon
-                  :icon="activity.icon"
-                  class="h-12 w-12"
-                  :class="activity.iconColorClass"
-                  :style="activity.iconColorStyle"
-                />
-              </div>
+          <WizardStep2Food
+            v-else-if="currentStep === 2 && selectedCategory === 'food'"
+            key="wizard-step-2-food"
+            class="h-full"
+            :step-indicator-svg-markup="stepIndicatorSvgMarkup"
+            :step-indicator-color-class="stepIndicatorColorClass"
+            :step-indicator-container-class="stepIndicatorContainerClass"
+            :selected-food-consumption="selectedFoodConsumption"
+            :food-consumption-options="foodConsumptionOptions"
+            :selected-food-consumption-label="selectedFoodConsumptionLabel"
+            :food-sections="foodSections"
+            :selected-food-options="selectedFoodOptions"
+            @select-food-consumption="selectFoodConsumption"
+            @select-food-option="selectFoodOption"
+            @reset-food-selection="resetFoodSelection"
+          />
 
-              <span class="font-ui text-[28px] leading-none text-black">{{
-                activity.label
-              }}</span>
-            </button>
-          </div>
-        </section>
+          <WizardStep2Consumption
+            v-else-if="currentStep === 2 && selectedCategory === 'consumption'"
+            key="wizard-step-2-consumption"
+            class="h-full"
+            :step-indicator-svg-markup="stepIndicatorSvgMarkup"
+            :step-indicator-color-class="stepIndicatorColorClass"
+            :step-indicator-container-class="stepIndicatorContainerClass"
+            :consumption-source="consumptionSource"
+            :consumption-sources="consumptionSources"
+            :is-consumption-menu-open="isConsumptionMenuOpen"
+            :surface="surface"
+            :duration="duration"
+            :duration-marks="durationMarks"
+            @toggle-consumption-menu="
+              isConsumptionMenuOpen = !isConsumptionMenuOpen
+            "
+            @select-consumption-source="selectConsumptionSource"
+            @adjust-surface="adjustSurface"
+            @update-surface="surface = $event"
+            @update-duration="duration = $event"
+          />
 
-        <WizardStep2Travel
-          v-else-if="currentStep === 2 && selectedCategory === 'travel'"
-          key="wizard-step-2-travel"
-          :step-title="stepTitle"
-          :step-indicator-svg-markup="stepIndicatorSvgMarkup"
-          :step-indicator-color-class="stepIndicatorColorClass"
-          :step-indicator-container-class="stepIndicatorContainerClass"
-          :transport-mode="transportMode"
-          :transport-options="transportOptions"
-          :is-transport-menu-open="isTransportMenuOpen"
-          :distance="distance"
-          @toggle-transport-menu="isTransportMenuOpen = !isTransportMenuOpen"
-          @select-transport-mode="selectTransportMode"
-          @adjust-distance="adjustDistance"
-          @update-distance="distance = $event"
-        />
+          <WizardStep2Clothing
+            v-else-if="currentStep === 2 && selectedCategory === 'clothing'"
+            key="wizard-step-2-clothing"
+            class="h-full"
+            :step-indicator-svg-markup="stepIndicatorSvgMarkup"
+            :step-indicator-color-class="stepIndicatorColorClass"
+            :step-indicator-container-class="stepIndicatorContainerClass"
+            :selected-clothing-purchase="selectedClothingPurchase"
+            :clothing-purchase-options="clothingPurchaseOptions"
+            :selected-clothing-purchase-label="selectedClothingPurchaseLabel"
+            :clothing-sections="clothingSections"
+            :selected-clothing-options="selectedClothingOptions"
+            @select-clothing-purchase="selectedClothingPurchase = $event"
+            @select-clothing-option="selectClothingOption"
+            @reset-clothing-selection="resetClothingSelection"
+          />
 
-        <WizardStep2Food
-          v-else-if="currentStep === 2 && selectedCategory === 'food'"
-          key="wizard-step-2-food"
-          :step-indicator-svg-markup="stepIndicatorSvgMarkup"
-          :step-indicator-color-class="stepIndicatorColorClass"
-          :step-indicator-container-class="stepIndicatorContainerClass"
-          :selected-food-consumption="selectedFoodConsumption"
-          :food-consumption-options="foodConsumptionOptions"
-          :selected-food-consumption-label="selectedFoodConsumptionLabel"
-          :food-sections="foodSections"
-          :selected-food-options="selectedFoodOptions"
-          @select-food-consumption="selectFoodConsumption"
-          @select-food-option="selectFoodOption"
-          @reset-food-selection="resetFoodSelection"
-        />
-
-        <WizardStep2Consumption
-          v-else-if="currentStep === 2 && selectedCategory === 'consumption'"
-          key="wizard-step-2-consumption"
-          :step-indicator-svg-markup="stepIndicatorSvgMarkup"
-          :step-indicator-color-class="stepIndicatorColorClass"
-          :step-indicator-container-class="stepIndicatorContainerClass"
-          :consumption-source="consumptionSource"
-          :consumption-sources="consumptionSources"
-          :is-consumption-menu-open="isConsumptionMenuOpen"
-          :surface="surface"
-          :duration="duration"
-          :duration-marks="durationMarks"
-          @toggle-consumption-menu="
-            isConsumptionMenuOpen = !isConsumptionMenuOpen
-          "
-          @select-consumption-source="selectConsumptionSource"
-          @adjust-surface="adjustSurface"
-          @update-surface="surface = $event"
-          @update-duration="duration = $event"
-        />
-
-        <WizardStep2Clothing
-          v-else-if="currentStep === 2 && selectedCategory === 'clothing'"
-          key="wizard-step-2-clothing"
-          :step-indicator-svg-markup="stepIndicatorSvgMarkup"
-          :step-indicator-color-class="stepIndicatorColorClass"
-          :step-indicator-container-class="stepIndicatorContainerClass"
-          :selected-clothing-purchase="selectedClothingPurchase"
-          :clothing-purchase-options="clothingPurchaseOptions"
-          :selected-clothing-purchase-label="selectedClothingPurchaseLabel"
-          :clothing-sections="clothingSections"
-          :selected-clothing-options="selectedClothingOptions"
-          @select-clothing-purchase="selectedClothingPurchase = $event"
-          @select-clothing-option="selectClothingOption"
-          @reset-clothing-selection="resetClothingSelection"
-        />
-
-        <section
-          v-else
-          key="wizard-step-3"
-          class="flex flex-1 flex-col overflow-y-auto px-4 pb-40 pt-3"
-        >
-          <div class="mx-auto w-full px-1">
-            <div class="flex w-full" :class="stepIndicatorContainerClass">
-              <div
-                class="[&>svg]:h-20 [&>svg]:w-auto [&>svg]:max-w-full"
-                :class="stepIndicatorColorClass"
-                v-html="stepIndicatorSvgMarkup"
-              ></div>
-            </div>
-          </div>
-
-          <h2
-            class="mt-7 text-center font-ui text-[34px] leading-none text-black"
+          <section
+            v-else
+            key="wizard-step-3"
+            class="flex h-full flex-col overflow-y-auto px-4 pb-40 pt-3"
           >
-            Recap : {{ stepTitle }}
-          </h2>
+            <div class="mx-auto w-full px-1">
+              <div class="flex w-full" :class="stepIndicatorContainerClass">
+                <div
+                  class="[&>svg]:h-20 [&>svg]:w-auto [&>svg]:max-w-full"
+                  :class="stepIndicatorColorClass"
+                  v-html="stepIndicatorSvgMarkup"
+                ></div>
+              </div>
+            </div>
 
-          <p class="mt-2 text-center font-ui text-body-16 text-black/55">
-            Review your inputs before confirmation
-          </p>
+            <h2
+              class="mt-7 text-center font-ui text-[34px] leading-none text-black"
+            >
+              Recap : {{ stepTitle }}
+            </h2>
 
-          <div v-if="selectedCategory === 'food'" class="mt-10 space-y-6">
-            <p class="font-ui text-[24px] leading-none text-black">
-              Type : {{ selectedFoodConsumptionLabel }}
+            <p class="mt-2 text-center font-ui text-body-16 text-black/55">
+              Review your inputs before confirmation
             </p>
-            <template
-              v-for="section in cachedFoodSections[selectedFoodConsumption] ||
-              []"
-              :key="section.id"
+
+            <div v-if="selectedCategory === 'food'" class="mt-10 space-y-6">
+              <p class="font-ui text-[24px] leading-none text-black">
+                Type : {{ selectedFoodConsumptionLabel }}
+              </p>
+              <template
+                v-for="section in cachedFoodSections[selectedFoodConsumption] ||
+                []"
+                :key="section.id"
+              >
+                <p class="font-ui text-[24px] leading-none text-black">
+                  {{ section.label }} :
+                  {{ getFoodSelectionLabels(section.id) }}
+                </p>
+              </template>
+            </div>
+
+            <div
+              v-else-if="selectedCategory === 'consumption'"
+              class="mt-12 space-y-10"
+            >
+              <p class="font-ui text-[32px] leading-none text-black">
+                Type : {{ consumptionSource }}
+              </p>
+              <p class="font-ui text-[32px] leading-none text-black">
+                Surface : {{ surface }} m²
+              </p>
+              <p class="font-ui text-[32px] leading-none text-black">
+                Duration : {{ duration }}h
+              </p>
+            </div>
+
+            <div
+              v-else-if="selectedCategory === 'clothing'"
+              class="mt-10 space-y-6"
             >
               <p class="font-ui text-[24px] leading-none text-black">
-                {{ section.label }} :
-                {{ getFoodSelectionLabels(section.id) }}
+                Purchase : {{ selectedClothingPurchaseLabel }}
               </p>
-            </template>
-          </div>
+              <p class="font-ui text-[24px] leading-none text-black">
+                Top outfits : {{ getClothingLabel("top") }}
+              </p>
+              <p class="font-ui text-[24px] leading-none text-black">
+                Stockings : {{ getClothingLabel("stocking") }}
+              </p>
+              <p class="font-ui text-[24px] leading-none text-black">
+                Shoes : {{ getClothingLabel("shoes") }}
+              </p>
+              <p class="font-ui text-[24px] leading-none text-black">
+                Underwear : {{ getClothingLabel("underwear") }}
+              </p>
+              <p class="font-ui text-[24px] leading-none text-black">
+                Accessory : {{ getClothingLabel("accessory") }}
+              </p>
+            </div>
 
-          <div
-            v-else-if="selectedCategory === 'consumption'"
-            class="mt-12 space-y-10"
-          >
-            <p class="font-ui text-[32px] leading-none text-black">
-              Type : {{ consumptionSource }}
-            </p>
-            <p class="font-ui text-[32px] leading-none text-black">
-              Surface : {{ surface }} m²
-            </p>
-            <p class="font-ui text-[32px] leading-none text-black">
-              Duration : {{ duration }}h
-            </p>
-          </div>
+            <div v-else class="mt-16 space-y-16">
+              <p class="font-ui text-[32px] leading-none text-black">
+                Transport : {{ transportMode }}
+              </p>
+              <p class="font-ui text-[32px] leading-none text-black">
+                Distance : {{ distance }}km
+              </p>
+            </div>
 
-          <div
-            v-else-if="selectedCategory === 'clothing'"
-            class="mt-10 space-y-6"
-          >
-            <p class="font-ui text-[24px] leading-none text-black">
-              Purchase : {{ selectedClothingPurchaseLabel }}
-            </p>
-            <p class="font-ui text-[24px] leading-none text-black">
-              Top outfits : {{ getClothingLabel("top") }}
-            </p>
-            <p class="font-ui text-[24px] leading-none text-black">
-              Stockings : {{ getClothingLabel("stocking") }}
-            </p>
-            <p class="font-ui text-[24px] leading-none text-black">
-              Shoes : {{ getClothingLabel("shoes") }}
-            </p>
-            <p class="font-ui text-[24px] leading-none text-black">
-              Underwear : {{ getClothingLabel("underwear") }}
-            </p>
-            <p class="font-ui text-[24px] leading-none text-black">
-              Accessory : {{ getClothingLabel("accessory") }}
-            </p>
-          </div>
-
-          <div v-else class="mt-16 space-y-16">
-            <p class="font-ui text-[32px] leading-none text-black">
-              Transport : {{ transportMode }}
-            </p>
-            <p class="font-ui text-[32px] leading-none text-black">
-              Distance : {{ distance }}km
-            </p>
-          </div>
-
-          <div class="mt-auto pb-4 text-center">
-            <p
-              :class="step3TextAccentClass"
-              class="font-ui text-[44px] font-bold leading-none"
-            >
-              {{ formattedCo2 }} KG CO2E
-            </p>
-          </div>
-        </section>
-      </Transition>
+            <div class="mt-auto pb-4 text-center">
+              <p
+                :class="step3TextAccentClass"
+                class="font-ui text-[44px] font-bold leading-none"
+              >
+                {{ formattedCo2 }} KG CO2E
+              </p>
+            </div>
+          </section>
+        </Transition>
+      </div>
 
       <div
         v-if="currentStep > 1"
@@ -282,17 +288,26 @@
           <button
             type="button"
             :class="actionBackClass"
-            @click="goToStep(currentStep === 2 ? 1 : 2)"
+            @click="goToStep(currentStep === 2 ? 1 : 2, 'backward')"
           >
             Back
           </button>
           <button
             type="button"
             :class="actionNextClass"
-            :disabled="currentStep === 2 && !canProceedToRecap"
+            :disabled="
+              (currentStep === 2 && !canProceedToRecap) ||
+              (currentStep === 3 && isSubmittingConfirmation)
+            "
             @click="currentStep === 2 ? goNextStep() : confirmWizard()"
           >
-            {{ currentStep === 2 ? "Next" : "Confirm" }}
+            {{
+              currentStep === 2
+                ? "Next"
+                : isSubmittingConfirmation
+                  ? "Confirming..."
+                  : "Confirm"
+            }}
           </button>
         </div>
       </div>
@@ -360,6 +375,8 @@ export default {
     const selectedClothingOptions = ref({});
     const showSuccessPopup = ref(false);
     const lastAddedCo2Label = ref("");
+    const transitionDirection = ref("forward");
+    const isSubmittingConfirmation = ref(false);
 
     const clothingPurchaseFactors = {
       online: 1,
@@ -773,6 +790,12 @@ export default {
       return "justify-start";
     });
 
+    const stepTransitionName = computed(() =>
+      transitionDirection.value === "backward"
+        ? "wizard-step-backward"
+        : "wizard-step-forward",
+    );
+
     const actionBackClass = computed(() =>
       selectedCategory.value === "food"
         ? "flex h-14 items-center justify-center rounded-[18px] border-4 border-tertiary bg-white font-ui text-[24px] leading-none text-tertiary shadow-[0_6px_14px_rgba(0,0,0,0.08)] transition-all duration-200 hover:-translate-y-0.5"
@@ -853,7 +876,8 @@ export default {
         const payload = token.split(".")[1];
         if (!payload) return null;
         const normalized = payload.replace(/-/g, "+").replace(/_/g, "/");
-        const padded = normalized + "=".repeat((4 - (normalized.length % 4)) % 4);
+        const padded =
+          normalized + "=".repeat((4 - (normalized.length % 4)) % 4);
         return JSON.parse(atob(padded));
       } catch {
         return null;
@@ -959,6 +983,7 @@ export default {
 
     const selectActivityType = (type) => {
       selectedType.value = type;
+      transitionDirection.value = "forward";
       transportMode.value = transportOptionsFromApi.value[0] || "Car";
       distance.value = 7;
       isTransportMenuOpen.value = false;
@@ -974,7 +999,7 @@ export default {
       duration.value = 8;
       selectedClothingPurchase.value = "second-hand";
       initializeClothingSelection();
-      currentStep.value = 2;
+      goToStep(2, "forward");
     };
 
     const selectTransportMode = (option) => {
@@ -1040,9 +1065,10 @@ export default {
       initializeClothingSelection();
     };
 
-    const goToStep = (step) => {
+    const goToStep = (step, direction = "forward") => {
       isTransportMenuOpen.value = false;
       isConsumptionMenuOpen.value = false;
+      transitionDirection.value = direction;
       currentStep.value = step;
     };
 
@@ -1056,7 +1082,7 @@ export default {
         return;
       }
 
-      goToStep(3);
+      goToStep(3, "forward");
     };
 
     const goBack = () => {
@@ -1066,6 +1092,7 @@ export default {
     const resetWizardState = () => {
       selectedType.value = null;
       currentStep.value = 1;
+      transitionDirection.value = "forward";
       transportMode.value = transportOptionsFromApi.value[0] || "Car";
       isTransportMenuOpen.value = false;
       distance.value = 7;
@@ -1095,6 +1122,8 @@ export default {
 
     // 🚀 LA NOUVELLE FONCTION MAGIQUE DE VALIDATION PANIER
     const confirmWizard = async () => {
+      if (isSubmittingConfirmation.value) return;
+
       const token = localStorage.getItem("jwt_token");
       if (!token) return;
 
@@ -1187,6 +1216,8 @@ export default {
         details: details,
       };
 
+      isSubmittingConfirmation.value = true;
+
       try {
         const entryResponse = await axios.post(
           "http://localhost:8000/api/entries",
@@ -1218,11 +1249,10 @@ export default {
         lastAddedCo2Label.value = formattedCo2.value;
         showSuccessPopup.value = true;
       } catch (error) {
-        console.error(
-          "Submission error:",
-          error.response?.data || error,
-        );
+        console.error("Submission error:", error.response?.data || error);
         alert("An error occurred while saving your footprint.");
+      } finally {
+        isSubmittingConfirmation.value = false;
       }
     };
 
@@ -1258,11 +1288,13 @@ export default {
       selectedClothingOptions,
       showSuccessPopup,
       lastAddedCo2Label,
+      isSubmittingConfirmation,
       formattedCo2,
       headerClass,
       stepIndicatorSvgMarkup,
       stepIndicatorColorClass,
       stepIndicatorContainerClass,
+      stepTransitionName,
       actionBackClass,
       actionNextClass,
       step3GaugeFillClass,
@@ -1293,33 +1325,45 @@ export default {
 </script>
 
 <style scoped>
-.wizard-step-enter-active,
-.wizard-step-leave-active {
-  transition:
-    opacity 260ms ease,
-    transform 320ms cubic-bezier(0.22, 1, 0.36, 1),
-    filter 260ms ease;
-  will-change: transform, opacity, filter;
+.wizard-step-forward-enter-active,
+.wizard-step-forward-leave-active,
+.wizard-step-backward-enter-active,
+.wizard-step-backward-leave-active {
+  transition: transform 320ms cubic-bezier(0.22, 1, 0.36, 1);
+  will-change: transform;
+  position: absolute;
+  inset: 0;
 }
 
-.wizard-step-enter-active {
-  animation: wizard-gradient-in 320ms ease;
+.wizard-step-forward-enter-from {
+  transform: translateX(100%);
 }
 
-.wizard-step-enter-from,
-.wizard-step-leave-to {
-  opacity: 0;
-  transform: translateY(12px);
-  filter: blur(2px);
+.wizard-step-forward-enter-to {
+  transform: translateX(0);
 }
 
-@keyframes wizard-gradient-in {
-  from {
-    box-shadow: inset 0 0 0 999px rgba(255, 255, 255, 0.34);
-  }
+.wizard-step-forward-leave-from {
+  transform: translateX(0);
+}
 
-  to {
-    box-shadow: inset 0 0 0 999px rgba(255, 255, 255, 0);
-  }
+.wizard-step-forward-leave-to {
+  transform: translateX(-100%);
+}
+
+.wizard-step-backward-enter-from {
+  transform: translateX(-100%);
+}
+
+.wizard-step-backward-enter-to {
+  transform: translateX(0);
+}
+
+.wizard-step-backward-leave-from {
+  transform: translateX(0);
+}
+
+.wizard-step-backward-leave-to {
+  transform: translateX(100%);
 }
 </style>
