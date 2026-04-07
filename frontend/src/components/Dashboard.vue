@@ -11,30 +11,38 @@
         ></div>
 
         <div class="relative flex flex-col items-center">
-          <div
-            class="relative flex h-64 w-64 items-center justify-center rounded-full bg-white shadow-[0_0_0_1px_rgba(17,125,111,0.12)] transition-all duration-300"
-            :style="gaugeStyle"
-          >
+          <div class="relative h-72 w-72 transition-all duration-300">
             <div
-              class="absolute inset-4 rounded-full border border-dashed border-grey/50"
-            ></div>
-            <div
-              class="absolute -right-2 top-1/2 h-7 w-7 -translate-y-1/2 rounded-full border-4 border-main bg-white"
+              class="absolute inset-0 rounded-full"
+              :style="gaugeRingStyle"
             ></div>
 
             <div
-              class="relative z-10 flex flex-col items-center justify-center text-center"
+              class="absolute inset-[10px] rounded-full bg-white shadow-[inset_0_8px_18px_rgba(255,255,255,0.45)]"
+            >
+              <div
+                class="absolute inset-[8px] rounded-full border border-dashed border-[#a9a9a9]"
+              ></div>
+            </div>
+
+            <div
+              class="absolute z-20 box-border h-7 w-7 rounded-full border-4 shadow-[0_2px_8px_rgba(0,0,0,0.22)]"
+              :style="gaugeMarkerStyle"
+            ></div>
+
+            <div
+              class="absolute inset-[26px] z-10 flex flex-col items-center justify-center text-center"
             >
               <img
                 :src="mascotSrc"
                 alt="Mascot"
                 class="mb-2 h-24 w-24 object-contain"
               />
-              <p class="font-title text-[38px] leading-none text-black">
+              <p class="font-title text-[40px] leading-none text-black">
                 {{ formattedAnimatedDailyCo2 }} kg
               </p>
-              <p class="mt-2 text-[14px] text-grey">CO2 / Daily</p>
-              <p class="text-body-12 mt-1 text-main">
+              <p class="mt-2 text-[22px] text-grey">CO2 / Daily</p>
+              <p class="text-body-12 mt-1" :class="gaugeProgressTextClass">
                 {{ Math.round(progressPercent) }}% of daily target
               </p>
             </div>
@@ -51,13 +59,61 @@
             </p>
           </div>
 
-          <button
-            type="button"
-            class="mt-3 flex w-full items-center justify-center rounded-full border border-grey/20 bg-white px-4 py-2 text-[13px] font-medium text-black shadow-[0_8px_18px_rgba(0,0,0,0.14)]"
+          <div
+            class="mt-3 w-full overflow-hidden rounded-2xl border border-grey/20 bg-white shadow-[0_8px_18px_rgba(0,0,0,0.14)]"
           >
-            Friends Leaderboard (live)
-            <span class="ml-2 text-[18px] leading-none">⌄</span>
-          </button>
+            <button
+              type="button"
+              class="flex w-full items-center justify-between px-4 py-3 text-[13px] font-medium text-black"
+              @click="isLeaderboardOpen = !isLeaderboardOpen"
+            >
+              <span>Friends Leaderboard (live)</span>
+              <span
+                class="text-[18px] leading-none transition-transform duration-200"
+                :class="isLeaderboardOpen ? 'rotate-180' : ''"
+              >⌄</span>
+            </button>
+
+            <transition name="leaderboard-collapse">
+              <div v-show="isLeaderboardOpen" class="leaderboard-panel border-t border-grey/15 px-3 pb-3 pt-2">
+                <p
+                  v-if="leaderboard.length === 0"
+                  class="py-2 text-center text-[12px] text-grey"
+                >
+                  No leaderboard data yet.
+                </p>
+
+                <ul v-else class="space-y-2">
+                  <li
+                    v-for="(friend, index) in leaderboard"
+                    :key="friend.id"
+                    class="flex items-center justify-between rounded-xl px-3 py-2"
+                    :class="friend.isCurrentUser ? 'bg-main-light ring-1 ring-main/25' : 'bg-main-light/65'"
+                  >
+                    <div class="flex min-w-0 items-center gap-2">
+                      <span
+                        class="inline-flex h-6 w-6 shrink-0 items-center justify-center rounded-full text-[11px] font-semibold text-white"
+                        :class="rankBadgeClass(index)"
+                      >
+                        {{ index + 1 }}
+                      </span>
+                      <div class="min-w-0">
+                        <p class="truncate text-[13px] font-medium text-black">
+                          {{ friend.name }}
+                          <span v-if="friend.isCurrentUser" class="ml-1 text-[11px] font-semibold text-main">(you)</span>
+                        </p>
+                        <p class="text-[11px] text-grey">{{ friend.activityCount }} activities today</p>
+                      </div>
+                    </div>
+                    <div class="text-right">
+                      <p class="text-[12px] font-semibold text-main">{{ friend.points }} pts</p>
+                      <p class="text-[11px] text-grey">{{ friend.co2 }}</p>
+                    </div>
+                  </li>
+                </ul>
+              </div>
+            </transition>
+          </div>
         </div>
       </section>
 
@@ -132,8 +188,10 @@ const API_BASE = "http://localhost:8000/api";
 const loading = ref(true);
 const dailyCo2 = ref(0);
 const animatedDailyCo2 = ref(0);
-const dailyTargetKg = ref(30);
+const dailyTargetKg = ref(200);
 const activities = ref([]);
+const leaderboard = ref([]);
+const isLeaderboardOpen = ref(false);
 
 let animationFrameId = null;
 
@@ -289,17 +347,86 @@ const progressPercent = computed(() => {
   return Math.min((animatedDailyCo2.value / dailyTargetKg.value) * 100, 100);
 });
 
-const gaugeStyle = computed(() => {
+const GAUGE_ARC_START_DEG = 210;
+const GAUGE_ARC_SWEEP_DEG = 300;
+
+const gaugePalette = computed(() => {
   const p = Math.max(0, Math.min(progressPercent.value, 100));
+
+  if (p >= 90) {
+    return {
+      solid: "rgba(212,10,23,0.98)",
+      track: "rgba(212,10,23,0.28)",
+      markerBorder: "#d40a17",
+      markerFill: "#fdeced",
+      progressClass: "text-systeme",
+    };
+  }
+
+  if (p >= 65) {
+    return {
+      solid: "rgba(210,139,20,0.98)",
+      track: "rgba(210,139,20,0.30)",
+      markerBorder: "#d28b14",
+      markerFill: "#fff4df",
+      progressClass: "text-[#d28b14]",
+    };
+  }
+
   return {
-    background: `conic-gradient(rgba(17,125,111,0.95) ${p}%, rgba(17,125,111,0.15) ${p}% 100%)`,
-    padding: "10px",
+    solid: "rgba(17,125,111,0.95)",
+    track: "rgba(74,184,173,0.55)",
+    markerBorder: "#117d6f",
+    markerFill: "#eaf6f6",
+    progressClass: "text-main",
+  };
+});
+
+const gaugeProgressTextClass = computed(() => gaugePalette.value.progressClass);
+
+const gaugeRingStyle = computed(() => {
+  const p = Math.max(0, Math.min(progressPercent.value, 100));
+  const palette = gaugePalette.value;
+  const activeDeg = (p / 100) * GAUGE_ARC_SWEEP_DEG;
+  return {
+    background: `conic-gradient(from ${GAUGE_ARC_START_DEG}deg, ${palette.solid} 0deg, ${palette.solid} ${activeDeg}deg, ${palette.track} ${activeDeg}deg, ${palette.track} ${GAUGE_ARC_SWEEP_DEG}deg, transparent ${GAUGE_ARC_SWEEP_DEG}deg, transparent 360deg)`,
+  };
+});
+
+const gaugeMarkerStyle = computed(() => {
+  const p = Math.max(0, Math.min(progressPercent.value, 100));
+  const markerAngleDeg = GAUGE_ARC_START_DEG + (p / 100) * GAUGE_ARC_SWEEP_DEG;
+  const angleInRadians = (markerAngleDeg - 90) * (Math.PI / 180);
+  const center = 144;
+  const radius = 139;
+  const markerHalfSize = 14;
+  const x = center + radius * Math.cos(angleInRadians) - markerHalfSize;
+  const y = center + radius * Math.sin(angleInRadians) - markerHalfSize;
+  const palette = gaugePalette.value;
+
+  return {
+    left: `${x}px`,
+    top: `${y}px`,
+    borderColor: palette.markerBorder,
+    backgroundColor: palette.markerFill,
   };
 });
 
 const formattedAnimatedDailyCo2 = computed(() =>
   formatKg(animatedDailyCo2.value),
 );
+
+const formatLeaderboardName = (user) => {
+  if (user?.username) return user.username;
+  return `User #${user?.id ?? "-"}`;
+};
+
+const rankBadgeClass = (index) => {
+  if (index === 0) return "bg-[#d4af37]";
+  if (index === 1) return "bg-[#a2acbc]";
+  if (index === 2) return "bg-[#b97745]";
+  return "bg-main";
+};
 
 const loadDashboardData = async () => {
   loading.value = true;
@@ -333,7 +460,7 @@ const loadDashboardData = async () => {
       return;
     }
 
-    dailyTargetKg.value = Number(currentUser?.targetCo2 || 2000) / 365;
+    dailyTargetKg.value = 200;
 
     const entryItemsByIri = new Map(
       entryItems.map((item) => [item["@id"], item]),
@@ -355,10 +482,42 @@ const loadDashboardData = async () => {
     activities.value = userEntries
       .slice(0, 3)
       .map((entry) => toDashboardActivity(entry, entryItemsByIri, activityTypesByIri));
+
+    leaderboard.value = users
+      .map((user) => {
+        const userIri = user?.["@id"];
+        const todayUserEntries = entries.filter(
+          (entry) => entry.owner === userIri && isSameDay(entry.createdAt),
+        );
+
+        const todayUserCo2 = todayUserEntries.reduce(
+          (sum, entry) =>
+            sum + entryCo2(entry, entryItemsByIri, activityTypesByIri),
+          0,
+        );
+
+        const points = Math.max(0, Math.round(200 - todayUserCo2 * 10));
+
+        return {
+          id: user.id,
+          name: formatLeaderboardName(user),
+          points,
+          todayUserCo2,
+          activityCount: todayUserEntries.length,
+          isCurrentUser: userIri === currentUserIri,
+          co2: `${formatKg(todayUserCo2)} kg CO2`,
+        };
+      })
+      .sort((a, b) => {
+        if (b.points !== a.points) return b.points - a.points;
+        return a.todayUserCo2 - b.todayUserCo2;
+      })
+      .slice(0, 5);
   } catch (error) {
     console.error("Dashboard data loading error:", error);
     activities.value = [];
     dailyCo2.value = 0;
+    leaderboard.value = [];
   } finally {
     loading.value = false;
   }
@@ -374,3 +533,25 @@ onBeforeUnmount(() => {
   if (animationFrameId) cancelAnimationFrame(animationFrameId);
 });
 </script>
+
+<style scoped>
+.leaderboard-collapse-enter-active,
+.leaderboard-collapse-leave-active {
+  transition: opacity 0.24s ease, transform 0.24s ease, max-height 0.28s ease;
+  overflow: hidden;
+}
+
+.leaderboard-collapse-enter-from,
+.leaderboard-collapse-leave-to {
+  opacity: 0;
+  transform: translateY(-6px);
+  max-height: 0;
+}
+
+.leaderboard-collapse-enter-to,
+.leaderboard-collapse-leave-from {
+  opacity: 1;
+  transform: translateY(0);
+  max-height: 320px;
+}
+</style>
