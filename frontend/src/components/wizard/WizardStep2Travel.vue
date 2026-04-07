@@ -40,7 +40,7 @@
 
       <div
         v-if="isTransportMenuOpen"
-        class="absolute left-0 right-0 top-[calc(100%+10px)] z-10 max-h-[260px] overflow-y-auto overflow-x-hidden rounded-[18px] border border-main bg-white shadow-[0_10px_16px_rgba(0,0,0,0.14)]"
+        class="absolute left-0 right-0 top-[calc(100%+10px)] z-10 max-h-65 overflow-y-auto overflow-x-hidden rounded-[18px] border border-main bg-white shadow-[0_10px_16px_rgba(0,0,0,0.14)]"
       >
         <button
           v-for="option in transportOptions"
@@ -68,7 +68,7 @@
     <div class="mt-8 flex justify-center">
       <div
         v-if="!isManualDistanceOpen"
-        class="relative inline-flex min-w-[148px] items-center justify-center rounded-[999px] bg-white px-8 py-9 shadow-[0_10px_18px_rgba(0,0,0,0.18)]"
+        class="relative inline-flex min-h-33 min-w-37 items-center justify-center rounded-[999px] bg-white px-8 py-9 shadow-[0_10px_18px_rgba(0,0,0,0.18)]"
       >
         <span class="font-ui text-[36px] leading-none text-black"
           >{{ distance }} KM</span
@@ -77,7 +77,7 @@
 
       <div
         v-else
-        class="flex w-full max-w-[220px] items-center gap-3 rounded-[999px] bg-white px-4 py-4 shadow-[0_10px_18px_rgba(0,0,0,0.18)]"
+        class="flex w-full max-w-55 min-h-33 items-center gap-3 rounded-[999px] bg-white px-4 py-9 shadow-[0_10px_18px_rgba(0,0,0,0.18)]"
       >
         <input
           v-model="manualDistanceValue"
@@ -111,7 +111,7 @@
     <div class="mt-10 flex items-center justify-between gap-3 px-1">
       <button
         type="button"
-        class="flex h-14 min-w-[74px] items-center justify-center rounded-3xl bg-main-light px-4 font-ui text-[30px] leading-none text-main"
+        class="flex h-14 min-w-18.5 items-center justify-center rounded-3xl bg-main-light px-4 font-ui text-[30px] leading-none text-main"
         @click="$emit('adjust-distance', -5)"
       >
         -5
@@ -140,7 +140,7 @@
       </button>
       <button
         type="button"
-        class="flex h-14 min-w-[74px] items-center justify-center rounded-3xl bg-main-light px-4 font-ui text-[30px] leading-none text-main"
+        class="flex h-14 min-w-18.5 items-center justify-center rounded-3xl bg-main-light px-4 font-ui text-[30px] leading-none text-main"
         @click="$emit('adjust-distance', 5)"
       >
         +5
