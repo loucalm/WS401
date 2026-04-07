@@ -1,14 +1,11 @@
-import { createRouter, createWebHistory } from 'vue-router'
-import Login from './components/Login.vue'
-import Dashboard from './components/Dashboard.vue'
-import NotFound from './components/NotFound.vue'
-import Register from './components/Register.vue'
-import Wizard from './components/Wizard.vue'
-<<<<<<<<< Temporary merge branch 1
-import Profile from './components/Profile.vue'
-=========
-import Map from './components/Map.vue'
->>>>>>>>> Temporary merge branch 2
+import { createRouter, createWebHistory } from "vue-router";
+import Login from "./components/Login.vue";
+import Dashboard from "./components/Dashboard.vue";
+import NotFound from "./components/NotFound.vue";
+import Register from "./components/Register.vue";
+import Wizard from "./components/Wizard.vue";
+import Map from "./components/Map.vue";
+import Profile from "./components/Profile.vue";
 
 const routes = [
   {
@@ -34,27 +31,23 @@ const routes = [
     meta: { requiresAuth: true },
   },
   {
-  path: '/activities',
-  name: 'activities',
-  component: Wizard,
-  meta: { requiresAuth: true }
-},
-<<<<<<<<< Temporary merge branch 1
- {
-  path: '/profile',
-  name: 'profile',
-  component: Profile,
-  meta: { requiresAuth: true }
-},
-  // La route 404 en Dernier svp //
-=========
+    path: "/activities",
+    name: "activities",
+    component: Wizard,
+    meta: { requiresAuth: true },
+  },
   {
     path: "/map",
     name: "map",
     component: Map,
     meta: { requiresAuth: true },
   },
->>>>>>>>> Temporary merge branch 2
+  {
+    path: "/profile",
+    name: "profile",
+    component: Profile,
+    meta: { requiresAuth: true },
+  },
   {
     path: "/:pathMatch(.*)*",
     name: "not-found",

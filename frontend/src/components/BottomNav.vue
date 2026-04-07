@@ -43,7 +43,7 @@
         type="button"
         class="flex h-10 w-10 items-center justify-center rounded-full text-white/95 transition-transform duration-150 hover:scale-110 hover:cursor-pointer hover:text-white"
         :class="active === 'profile' ? 'text-white' : ''"
-        @click="handleLogout"
+        @click="handleNav('profile')"
       >
         <Icon icon="mdi:user" class="h-8 w-8" />
       </button>
@@ -81,11 +81,11 @@ function handleNav(target) {
     return;
   }
 
-  emit("select", target);
-}
+  if (target === "profile") {
+    router.push({ name: "profile" });
+    return;
+  }
 
-function handleLogout() {
-  localStorage.removeItem("jwt_token");
-  router.push("/");
+  emit("select", target);
 }
 </script>
