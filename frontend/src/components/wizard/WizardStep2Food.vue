@@ -25,7 +25,7 @@
         @click="$emit('select-food-consumption', option.id)"
       >
         <div
-          class="flex aspect-square min-h-37.5 flex-col items-center justify-center gap-2 rounded-[20px] border-2 bg-white transition-all duration-200"
+          class="flex aspect-square min-h-31 flex-col items-center justify-center gap-1 rounded-[20px] border-2 bg-white transition-all duration-200"
           :class="
             selectedFoodConsumption === option.id
               ? 'border-tertiary bg-white'
@@ -36,7 +36,7 @@
             v-if="option.image"
             :src="option.image"
             :alt="option.label"
-            class="h-16 w-16 object-contain"
+            class="h-14 w-14 object-contain"
           />
           <p
             class="px-3 text-center font-ui text-body-16 leading-none text-black"
