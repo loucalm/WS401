@@ -1,11 +1,13 @@
 <template>
   <section class="flex-1 overflow-y-auto px-4 pb-30 pt-3">
-    <div class="mx-auto w-full max-w-175 px-1">
-      <div
-        class="mx-auto [&>svg]:h-auto [&>svg]:w-full"
-        :class="[stepIndicatorColorClass, stepIndicatorContainerClass]"
-        v-html="stepIndicatorSvgMarkup"
-      ></div>
+    <div class="mx-auto w-full px-1">
+      <div class="flex w-full" :class="stepIndicatorContainerClass">
+        <div
+          class="[&>svg]:h-20 [&>svg]:w-auto [&>svg]:max-w-full"
+          :class="stepIndicatorColorClass"
+          v-html="stepIndicatorSvgMarkup"
+        ></div>
+      </div>
     </div>
 
     <h2 class="mt-5 text-center font-ui text-[34px] leading-none text-black">
@@ -21,19 +23,24 @@
         v-for="option in clothingPurchaseOptions"
         :key="option.id"
         type="button"
-        class="text-center"
+        class="text-center transition-transform duration-200 hover:-translate-y-0.5"
         @click="$emit('select-clothing-purchase', option.id)"
       >
         <div
-          class="flex aspect-square items-center justify-center rounded-[20px] border-4 bg-cloth-light"
+          class="flex aspect-square flex-col items-center justify-center gap-2 rounded-[20px] border-4 bg-cloth-light transition-all duration-200"
           :class="
             selectedClothingPurchase === option.id
               ? 'border-cloth bg-white'
               : 'border-transparent'
           "
         >
+          <span
+            v-if="option.svgMarkup"
+            class="text-cloth [&>svg]:h-12 [&>svg]:w-12"
+            v-html="option.svgMarkup"
+          ></span>
           <p
-            class="px-2 text-center font-ui text-[18px] leading-none text-cloth"
+            class="px-2 text-center font-ui text-body-16 leading-none text-cloth"
           >
             {{ option.label }}
           </p>
@@ -45,6 +52,16 @@
       {{ selectedClothingPurchaseLabel }}
     </p>
 
+    <div class="mt-4 flex justify-center">
+      <button
+        type="button"
+        class="rounded-[14px] border-2 border-cloth bg-white px-3 py-2 font-ui text-body-16 leading-none text-cloth transition-all duration-200 hover:bg-cloth-light"
+        @click="$emit('reset-clothing-selection')"
+      >
+        Tout deselectionner
+      </button>
+    </div>
+
     <div class="mt-8 space-y-7 pb-4">
       <div v-for="section in clothingSections" :key="section.id">
         <p class="font-ui text-[24px] leading-none text-black">
@@ -55,11 +72,11 @@
             v-for="option in section.options"
             :key="option.id"
             type="button"
-            class="text-left"
+            class="text-left transition-transform duration-200 hover:-translate-y-0.5"
             @click="$emit('select-clothing-option', section.id, option.id)"
           >
             <div
-              class="flex min-h-31 flex-col items-center justify-center rounded-[18px] border-4 bg-cloth-light px-2 py-3 transition-transform"
+              class="flex min-h-31 flex-col items-center justify-center rounded-[18px] border-4 bg-cloth-light px-2 py-3 transition-all duration-200"
               :class="
                 (selectedClothingOptions[section.id] || []).includes(option.id)
                   ? 'border-cloth bg-white'
@@ -88,7 +105,11 @@ import { Icon } from "@iconify/vue";
 
 export default {
   components: { Icon },
-  emits: ["select-clothing-purchase", "select-clothing-option"],
+  emits: [
+    "select-clothing-purchase",
+    "select-clothing-option",
+    "reset-clothing-selection",
+  ],
   props: {
     stepIndicatorSvgMarkup: {
       type: String,

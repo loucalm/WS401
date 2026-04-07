@@ -1,7 +1,14 @@
 <template>
-  <div class="h-screen overflow-hidden bg-white text-black">
-    <main class="mx-auto flex h-full w-full max-w-105 flex-col bg-white">
-      <section :class="headerClass" class="rounded-b-3xl px-4 pb-6 pt-4">
+  <div
+    class="h-screen overflow-hidden bg-[linear-gradient(180deg,#ffffff_0%,#f8fafc_100%)] text-black"
+  >
+    <main
+      class="mx-auto flex h-full w-full max-w-105 flex-col border-x border-black/5 bg-white shadow-[0_0_40px_rgba(15,23,42,0.06)]"
+    >
+      <section
+        :class="headerClass"
+        class="rounded-b-[30px] px-4 pb-6 pt-4 shadow-[0_8px_20px_rgba(0,0,0,0.06)]"
+      >
         <div class="relative flex items-center justify-center">
           <button
             type="button"
@@ -32,218 +39,245 @@
         </div>
       </section>
 
-      <section
-        v-if="currentStep === 1"
-        class="flex-1 overflow-y-auto px-4 pt-6"
-      >
-        <div class="mx-auto w-full max-w-175 px-1">
-          <div
-            class="mx-auto [&>svg]:h-auto [&>svg]:w-full"
-            :class="[stepIndicatorColorClass, stepIndicatorContainerClass]"
-            v-html="stepIndicatorSvgMarkup"
-          ></div>
-        </div>
-
-        <h2
-          class="mt-6 text-center font-ui text-[36px] leading-[0.98] text-black"
+      <Transition name="wizard-step" mode="out-in">
+        <section
+          v-if="currentStep === 1"
+          key="wizard-step-1"
+          class="flex-1 overflow-y-auto px-4 pt-6"
         >
-          Type of activity
-        </h2>
-
-        <p v-if="loading" class="mt-6 text-center text-body-16 text-grey">
-          Chargement des activites...
-        </p>
-
-        <div v-else class="mt-6 space-y-4">
-          <button
-            v-for="activity in shownTypes"
-            :key="activity.id"
-            type="button"
-            class="flex w-full items-center gap-3 rounded-[20px] border border-black/7 bg-white px-4 py-4 text-left shadow-[0_10px_16px_rgba(0,0,0,0.14)]"
-            @click="selectActivityType(activity.raw)"
-          >
-            <div
-              class="flex h-18 w-18 shrink-0 items-center justify-center rounded-2xl"
-              :class="activity.iconBoxClass"
-              :style="activity.iconBoxStyle"
-            >
-              <Icon
-                :icon="activity.icon"
-                class="h-12 w-12"
-                :class="activity.iconColorClass"
-                :style="activity.iconColorStyle"
-              />
+          <div class="mx-auto w-full px-1">
+            <div class="flex w-full" :class="stepIndicatorContainerClass">
+              <div
+                class="[&>svg]:h-20 [&>svg]:w-auto [&>svg]:max-w-full"
+                :class="stepIndicatorColorClass"
+                v-html="stepIndicatorSvgMarkup"
+              ></div>
             </div>
+          </div>
 
-            <span class="font-ui text-[28px] leading-none text-black">{{
-              activity.label
-            }}</span>
-          </button>
-        </div>
-      </section>
-
-      <WizardStep2Travel
-        v-else-if="currentStep === 2 && selectedCategory === 'travel'"
-        :step-title="stepTitle"
-        :step-indicator-svg-markup="stepIndicatorSvgMarkup"
-        :step-indicator-color-class="stepIndicatorColorClass"
-        :step-indicator-container-class="stepIndicatorContainerClass"
-        :transport-mode="transportMode"
-        :transport-options="transportOptions"
-        :is-transport-menu-open="isTransportMenuOpen"
-        :distance="distance"
-        @toggle-transport-menu="isTransportMenuOpen = !isTransportMenuOpen"
-        @select-transport-mode="selectTransportMode"
-        @adjust-distance="adjustDistance"
-        @update-distance="distance = $event"
-      />
-
-      <WizardStep2Food
-        v-else-if="currentStep === 2 && selectedCategory === 'food'"
-        :step-indicator-svg-markup="stepIndicatorSvgMarkup"
-        :step-indicator-color-class="stepIndicatorColorClass"
-        :step-indicator-container-class="stepIndicatorContainerClass"
-        :selected-food-consumption="selectedFoodConsumption"
-        :food-consumption-options="foodConsumptionOptions"
-        :selected-food-consumption-label="selectedFoodConsumptionLabel"
-        :food-sections="foodSections"
-        :selected-food-options="selectedFoodOptions"
-        @select-food-consumption="selectFoodConsumption"
-        @select-food-option="selectFoodOption"
-      />
-
-      <WizardStep2Consumption
-        v-else-if="currentStep === 2 && selectedCategory === 'consumption'"
-        :step-indicator-svg-markup="stepIndicatorSvgMarkup"
-        :step-indicator-color-class="stepIndicatorColorClass"
-        :step-indicator-container-class="stepIndicatorContainerClass"
-        :consumption-source="consumptionSource"
-        :consumption-sources="consumptionSources"
-        :is-consumption-menu-open="isConsumptionMenuOpen"
-        :surface="surface"
-        :duration="duration"
-        :duration-marks="durationMarks"
-        @toggle-consumption-menu="
-          isConsumptionMenuOpen = !isConsumptionMenuOpen
-        "
-        @select-consumption-source="selectConsumptionSource"
-        @adjust-surface="adjustSurface"
-        @update-surface="surface = $event"
-        @update-duration="duration = $event"
-      />
-
-      <WizardStep2Clothing
-        v-else-if="currentStep === 2 && selectedCategory === 'clothing'"
-        :step-indicator-svg-markup="stepIndicatorSvgMarkup"
-        :step-indicator-color-class="stepIndicatorColorClass"
-        :step-indicator-container-class="stepIndicatorContainerClass"
-        :selected-clothing-purchase="selectedClothingPurchase"
-        :clothing-purchase-options="clothingPurchaseOptions"
-        :selected-clothing-purchase-label="selectedClothingPurchaseLabel"
-        :clothing-sections="clothingSections"
-        :selected-clothing-options="selectedClothingOptions"
-        @select-clothing-purchase="selectedClothingPurchase = $event"
-        @select-clothing-option="selectClothingOption"
-      />
-
-      <section
-        v-else
-        class="flex flex-1 flex-col overflow-y-auto px-4 pb-40 pt-3"
-      >
-        <div class="mx-auto w-full max-w-175 px-1">
-          <div
-            class="mx-auto [&>svg]:h-auto [&>svg]:w-full"
-            :class="[stepIndicatorColorClass, stepIndicatorContainerClass]"
-            v-html="stepIndicatorSvgMarkup"
-          ></div>
-        </div>
-
-        <h2
-          class="mt-7 text-center font-ui text-[34px] leading-none text-black"
-        >
-          Recap : {{ stepTitle }}
-        </h2>
-
-        <div v-if="selectedCategory === 'food'" class="mt-12 space-y-8">
-          <p class="font-ui text-[25px] leading-none text-black">
-            Type : {{ selectedFoodConsumptionLabel }}
-          </p>
-          <template
-            v-for="section in cachedFoodSections[selectedFoodConsumption] || []"
-            :key="section.id"
+          <h2
+            class="mt-6 text-center font-ui text-[36px] leading-[0.98] text-black"
           >
-            <p class="font-ui text-[25px] leading-none text-black">
-              {{ section.label }} :
-              {{ getFoodSelectionLabels(section.id) }}
+            Type of activity
+          </h2>
+
+          <p class="mt-2 text-center font-ui text-body-16 text-black/55">
+            Pick one category to continue
+          </p>
+
+          <Spinner
+            v-if="loading"
+            class="mt-6"
+            label="Chargement des activites..."
+            color-class="text-main"
+            text-class="text-grey"
+          />
+
+          <div v-else class="mt-6 space-y-4">
+            <button
+              v-for="activity in shownTypes"
+              :key="activity.id"
+              type="button"
+              class="flex w-full items-center gap-3 rounded-[20px] border border-black/7 bg-white px-4 py-4 text-left shadow-[0_10px_16px_rgba(0,0,0,0.12)] transition-all duration-200 hover:-translate-y-0.5 hover:shadow-[0_14px_22px_rgba(0,0,0,0.16)]"
+              @click="selectActivityType(activity.raw)"
+            >
+              <div
+                class="flex h-18 w-18 shrink-0 items-center justify-center rounded-2xl"
+                :class="activity.iconBoxClass"
+                :style="activity.iconBoxStyle"
+              >
+                <Icon
+                  :icon="activity.icon"
+                  class="h-12 w-12"
+                  :class="activity.iconColorClass"
+                  :style="activity.iconColorStyle"
+                />
+              </div>
+
+              <span class="font-ui text-[28px] leading-none text-black">{{
+                activity.label
+              }}</span>
+            </button>
+          </div>
+        </section>
+
+        <WizardStep2Travel
+          v-else-if="currentStep === 2 && selectedCategory === 'travel'"
+          key="wizard-step-2-travel"
+          :step-title="stepTitle"
+          :step-indicator-svg-markup="stepIndicatorSvgMarkup"
+          :step-indicator-color-class="stepIndicatorColorClass"
+          :step-indicator-container-class="stepIndicatorContainerClass"
+          :transport-mode="transportMode"
+          :transport-options="transportOptions"
+          :is-transport-menu-open="isTransportMenuOpen"
+          :distance="distance"
+          @toggle-transport-menu="isTransportMenuOpen = !isTransportMenuOpen"
+          @select-transport-mode="selectTransportMode"
+          @adjust-distance="adjustDistance"
+          @update-distance="distance = $event"
+        />
+
+        <WizardStep2Food
+          v-else-if="currentStep === 2 && selectedCategory === 'food'"
+          key="wizard-step-2-food"
+          :step-indicator-svg-markup="stepIndicatorSvgMarkup"
+          :step-indicator-color-class="stepIndicatorColorClass"
+          :step-indicator-container-class="stepIndicatorContainerClass"
+          :selected-food-consumption="selectedFoodConsumption"
+          :food-consumption-options="foodConsumptionOptions"
+          :selected-food-consumption-label="selectedFoodConsumptionLabel"
+          :food-sections="foodSections"
+          :selected-food-options="selectedFoodOptions"
+          @select-food-consumption="selectFoodConsumption"
+          @select-food-option="selectFoodOption"
+          @reset-food-selection="resetFoodSelection"
+        />
+
+        <WizardStep2Consumption
+          v-else-if="currentStep === 2 && selectedCategory === 'consumption'"
+          key="wizard-step-2-consumption"
+          :step-indicator-svg-markup="stepIndicatorSvgMarkup"
+          :step-indicator-color-class="stepIndicatorColorClass"
+          :step-indicator-container-class="stepIndicatorContainerClass"
+          :consumption-source="consumptionSource"
+          :consumption-sources="consumptionSources"
+          :is-consumption-menu-open="isConsumptionMenuOpen"
+          :surface="surface"
+          :duration="duration"
+          :duration-marks="durationMarks"
+          @toggle-consumption-menu="
+            isConsumptionMenuOpen = !isConsumptionMenuOpen
+          "
+          @select-consumption-source="selectConsumptionSource"
+          @adjust-surface="adjustSurface"
+          @update-surface="surface = $event"
+          @update-duration="duration = $event"
+        />
+
+        <WizardStep2Clothing
+          v-else-if="currentStep === 2 && selectedCategory === 'clothing'"
+          key="wizard-step-2-clothing"
+          :step-indicator-svg-markup="stepIndicatorSvgMarkup"
+          :step-indicator-color-class="stepIndicatorColorClass"
+          :step-indicator-container-class="stepIndicatorContainerClass"
+          :selected-clothing-purchase="selectedClothingPurchase"
+          :clothing-purchase-options="clothingPurchaseOptions"
+          :selected-clothing-purchase-label="selectedClothingPurchaseLabel"
+          :clothing-sections="clothingSections"
+          :selected-clothing-options="selectedClothingOptions"
+          @select-clothing-purchase="selectedClothingPurchase = $event"
+          @select-clothing-option="selectClothingOption"
+          @reset-clothing-selection="resetClothingSelection"
+        />
+
+        <section
+          v-else
+          key="wizard-step-3"
+          class="flex flex-1 flex-col overflow-y-auto px-4 pb-40 pt-3"
+        >
+          <div class="mx-auto w-full px-1">
+            <div class="flex w-full" :class="stepIndicatorContainerClass">
+              <div
+                class="[&>svg]:h-20 [&>svg]:w-auto [&>svg]:max-w-full"
+                :class="stepIndicatorColorClass"
+                v-html="stepIndicatorSvgMarkup"
+              ></div>
+            </div>
+          </div>
+
+          <h2
+            class="mt-7 text-center font-ui text-[34px] leading-none text-black"
+          >
+            Recap : {{ stepTitle }}
+          </h2>
+
+          <p class="mt-2 text-center font-ui text-body-16 text-black/55">
+            Review your inputs before confirmation
+          </p>
+
+          <div v-if="selectedCategory === 'food'" class="mt-10 space-y-6">
+            <p class="font-ui text-[24px] leading-none text-black">
+              Type : {{ selectedFoodConsumptionLabel }}
             </p>
-          </template>
-        </div>
+            <template
+              v-for="section in cachedFoodSections[selectedFoodConsumption] ||
+              []"
+              :key="section.id"
+            >
+              <p class="font-ui text-[24px] leading-none text-black">
+                {{ section.label }} :
+                {{ getFoodSelectionLabels(section.id) }}
+              </p>
+            </template>
+          </div>
 
-        <div
-          v-else-if="selectedCategory === 'consumption'"
-          class="mt-16 space-y-14"
-        >
-          <p class="font-ui text-[32px] leading-none text-black">
-            Type : {{ consumptionSource }}
-          </p>
-          <p class="font-ui text-[32px] leading-none text-black">
-            Surface : {{ surface }} m²
-          </p>
-          <p class="font-ui text-[32px] leading-none text-black">
-            Duration : {{ duration }}h
-          </p>
-        </div>
-
-        <div
-          v-else-if="selectedCategory === 'clothing'"
-          class="mt-12 space-y-8"
-        >
-          <p class="font-ui text-[25px] leading-none text-black">
-            Purchase : {{ selectedClothingPurchaseLabel }}
-          </p>
-          <p class="font-ui text-[25px] leading-none text-black">
-            Top outfits : {{ getClothingLabel("top") }}
-          </p>
-          <p class="font-ui text-[25px] leading-none text-black">
-            Stockings : {{ getClothingLabel("stocking") }}
-          </p>
-          <p class="font-ui text-[25px] leading-none text-black">
-            Shoes : {{ getClothingLabel("shoes") }}
-          </p>
-          <p class="font-ui text-[25px] leading-none text-black">
-            Underwear : {{ getClothingLabel("underwear") }}
-          </p>
-          <p class="font-ui text-[25px] leading-none text-black">
-            Accessory : {{ getClothingLabel("accessory") }}
-          </p>
-        </div>
-
-        <div v-else class="mt-16 space-y-16">
-          <p class="font-ui text-[32px] leading-none text-black">
-            Transport : {{ transportMode }}
-          </p>
-          <p class="font-ui text-[32px] leading-none text-black">
-            Distance : {{ distance }}km
-          </p>
-        </div>
-
-        <div class="mt-auto pb-4 text-center">
-          <p
-            :class="step3TextAccentClass"
-            class="font-ui text-[44px] font-bold leading-none"
+          <div
+            v-else-if="selectedCategory === 'consumption'"
+            class="mt-12 space-y-10"
           >
-            {{ formattedCo2 }} KG CO2E
-          </p>
-        </div>
-      </section>
+            <p class="font-ui text-[32px] leading-none text-black">
+              Type : {{ consumptionSource }}
+            </p>
+            <p class="font-ui text-[32px] leading-none text-black">
+              Surface : {{ surface }} m²
+            </p>
+            <p class="font-ui text-[32px] leading-none text-black">
+              Duration : {{ duration }}h
+            </p>
+          </div>
+
+          <div
+            v-else-if="selectedCategory === 'clothing'"
+            class="mt-10 space-y-6"
+          >
+            <p class="font-ui text-[24px] leading-none text-black">
+              Purchase : {{ selectedClothingPurchaseLabel }}
+            </p>
+            <p class="font-ui text-[24px] leading-none text-black">
+              Top outfits : {{ getClothingLabel("top") }}
+            </p>
+            <p class="font-ui text-[24px] leading-none text-black">
+              Stockings : {{ getClothingLabel("stocking") }}
+            </p>
+            <p class="font-ui text-[24px] leading-none text-black">
+              Shoes : {{ getClothingLabel("shoes") }}
+            </p>
+            <p class="font-ui text-[24px] leading-none text-black">
+              Underwear : {{ getClothingLabel("underwear") }}
+            </p>
+            <p class="font-ui text-[24px] leading-none text-black">
+              Accessory : {{ getClothingLabel("accessory") }}
+            </p>
+          </div>
+
+          <div v-else class="mt-16 space-y-16">
+            <p class="font-ui text-[32px] leading-none text-black">
+              Transport : {{ transportMode }}
+            </p>
+            <p class="font-ui text-[32px] leading-none text-black">
+              Distance : {{ distance }}km
+            </p>
+          </div>
+
+          <div class="mt-auto pb-4 text-center">
+            <p
+              :class="step3TextAccentClass"
+              class="font-ui text-[44px] font-bold leading-none"
+            >
+              {{ formattedCo2 }} KG CO2E
+            </p>
+          </div>
+        </section>
+      </Transition>
 
       <div
         v-if="currentStep > 1"
-        class="pointer-events-none fixed inset-x-0 bottom-0 z-20 px-4 pb-4"
+        class="pointer-events-none fixed inset-x-0 bottom-0 z-20 bg-linear-to-t from-white/88 via-white/75 to-transparent px-4 pb-2 backdrop-blur-sm"
       >
         <div
           :class="currentStep === 2 ? '' : 'bg-white'"
-          class="mx-auto grid w-full max-w-105 grid-cols-2 gap-4 pt-3 pointer-events-auto"
+          class="mx-auto grid w-full max-w-105 grid-cols-2 gap-4 rounded-3xl px-2 pt-3 pointer-events-auto"
         >
           <button
             type="button"
@@ -271,6 +305,7 @@ import { computed, onMounted, ref } from "vue";
 import { useRouter } from "vue-router";
 import axios from "axios";
 import { Icon } from "@iconify/vue";
+import Spinner from "./Spinner.vue";
 import WizardStep2Travel from "./wizard/WizardStep2Travel.vue";
 import WizardStep2Food from "./wizard/WizardStep2Food.vue";
 import WizardStep2Consumption from "./wizard/WizardStep2Consumption.vue";
@@ -278,10 +313,17 @@ import WizardStep2Clothing from "./wizard/WizardStep2Clothing.vue";
 import wizardStep1Svg from "../assets/img/svg/wizard_etape_1.svg?raw";
 import wizardStep2Svg from "../assets/img/svg/wizard_etape_2.svg?raw";
 import wizardStep3Svg from "../assets/img/svg/wizard_etape_3.svg?raw";
+import ecoBoostImg from "../assets/img/eco-boost.png";
+import ecoGreenImg from "../assets/img/eco-green.png";
+import ecoMixImg from "../assets/img/eco-mix.png";
+import onlinePurchaseSvg from "../assets/img/svg/online.svg?raw";
+import secondHandPurchaseSvg from "../assets/img/svg/second-hand.svg?raw";
+import shopPurchaseSvg from "../assets/img/svg/shop.svg?raw";
 
 export default {
   components: {
     Icon,
+    Spinner,
     WizardStep2Travel,
     WizardStep2Food,
     WizardStep2Consumption,
@@ -311,7 +353,7 @@ export default {
     const clothingPurchaseFactors = {
       online: 1,
       "second-hand": 0.35,
-      premium: 1.15,
+      store: 1.15,
     };
 
     const fallbackTypes = [
@@ -327,9 +369,13 @@ export default {
     ];
 
     const clothingPurchaseOptions = [
-      { id: "online", label: "Online" },
-      { id: "second-hand", label: "Second hand" },
-      { id: "premium", label: "Premium" },
+      { id: "online", label: "Online", svgMarkup: onlinePurchaseSvg },
+      {
+        id: "second-hand",
+        label: "Second hand",
+        svgMarkup: secondHandPurchaseSvg,
+      },
+      { id: "store", label: "Shop", svgMarkup: shopPurchaseSvg },
     ];
 
     const iconConfig = {
@@ -493,12 +539,26 @@ export default {
       return diets;
     });
 
+    const normalizeDietKey = (diet = "") =>
+      diet.toString().trim().toLowerCase().replace(/\s+/g, "-");
+
+    const dietImageByKey = {
+      "eco-boost": ecoBoostImg,
+      "eco-green": ecoGreenImg,
+      "eco-mix": ecoMixImg,
+    };
+
     const foodConsumptionOptionsFromApi = computed(() =>
-      foodDietsFromApi.value.map((diet) => ({
-        id: diet,
-        label: diet,
-        cardClass: "border-transparent bg-tertiary-light",
-      })),
+      foodDietsFromApi.value.map((diet) => {
+        const dietKey = normalizeDietKey(diet);
+
+        return {
+          id: diet,
+          label: diet,
+          image: dietImageByKey[dietKey] || null,
+          cardClass: "border-transparent bg-tertiary-light",
+        };
+      }),
     );
 
     const buildFoodSectionsForDiet = (diet) => {
@@ -697,29 +757,29 @@ export default {
     });
 
     const stepIndicatorContainerClass = computed(() => {
-      if (currentStep.value === 1) return "w-full max-w-[216px] !ml-auto !mr-0";
-      if (currentStep.value === 2) return "w-full max-w-[355px]";
-      return "w-full max-w-[216px] !ml-0 !mr-auto";
+      if (currentStep.value === 1) return "justify-end";
+      if (currentStep.value === 2) return "justify-center";
+      return "justify-start";
     });
 
     const actionBackClass = computed(() =>
       selectedCategory.value === "food"
-        ? "flex h-14 items-center justify-center rounded-[18px] border-2 border-tertiary bg-white font-ui text-[24px] leading-none text-tertiary"
+        ? "flex h-14 items-center justify-center rounded-[18px] border-4 border-tertiary bg-white font-ui text-[24px] leading-none text-tertiary shadow-[0_6px_14px_rgba(0,0,0,0.08)] transition-all duration-200 hover:-translate-y-0.5"
         : selectedCategory.value === "consumption"
-          ? "flex h-14 items-center justify-center rounded-[18px] border-2 border-secondary bg-white font-ui text-[24px] leading-none text-secondary"
+          ? "flex h-14 items-center justify-center rounded-[18px] border-4 border-secondary bg-white font-ui text-[24px] leading-none text-secondary shadow-[0_6px_14px_rgba(0,0,0,0.08)] transition-all duration-200 hover:-translate-y-0.5"
           : selectedCategory.value === "clothing"
-            ? "flex h-14 items-center justify-center rounded-[18px] border-2 border-cloth bg-white font-ui text-[24px] leading-none text-cloth"
-            : "flex h-14 items-center justify-center rounded-[18px] border-2 border-main bg-white font-ui text-[24px] leading-none text-main",
+            ? "flex h-14 items-center justify-center rounded-[18px] border-4 border-cloth bg-white font-ui text-[24px] leading-none text-cloth shadow-[0_6px_14px_rgba(0,0,0,0.08)] transition-all duration-200 hover:-translate-y-0.5"
+            : "flex h-14 items-center justify-center rounded-[18px] border-4 border-main bg-white font-ui text-[24px] leading-none text-main shadow-[0_6px_14px_rgba(0,0,0,0.08)] transition-all duration-200 hover:-translate-y-0.5",
     );
 
     const actionNextClass = computed(() =>
       selectedCategory.value === "food"
-        ? "flex h-14 items-center justify-center rounded-[18px] bg-tertiary font-ui text-[24px] leading-none text-white"
+        ? "flex h-14 items-center justify-center rounded-[18px] bg-tertiary font-ui text-[24px] leading-none text-white shadow-[0_8px_16px_rgba(0,0,0,0.12)] transition-all duration-200 hover:-translate-y-0.5 disabled:opacity-50 disabled:cursor-not-allowed disabled:translate-y-0"
         : selectedCategory.value === "consumption"
-          ? "flex h-14 items-center justify-center rounded-[18px] bg-secondary font-ui text-[24px] leading-none text-white"
+          ? "flex h-14 items-center justify-center rounded-[18px] bg-secondary font-ui text-[24px] leading-none text-white shadow-[0_8px_16px_rgba(0,0,0,0.12)] transition-all duration-200 hover:-translate-y-0.5 disabled:opacity-50 disabled:cursor-not-allowed disabled:translate-y-0"
           : selectedCategory.value === "clothing"
-            ? "flex h-14 items-center justify-center rounded-[18px] bg-cloth font-ui text-[24px] leading-none text-white"
-            : "flex h-14 items-center justify-center rounded-[18px] bg-main font-ui text-[24px] leading-none text-white",
+            ? "flex h-14 items-center justify-center rounded-[18px] bg-cloth font-ui text-[24px] leading-none text-white shadow-[0_8px_16px_rgba(0,0,0,0.12)] transition-all duration-200 hover:-translate-y-0.5 disabled:opacity-50 disabled:cursor-not-allowed disabled:translate-y-0"
+            : "flex h-14 items-center justify-center rounded-[18px] bg-main font-ui text-[24px] leading-none text-white shadow-[0_8px_16px_rgba(0,0,0,0.12)] transition-all duration-200 hover:-translate-y-0.5 disabled:opacity-50 disabled:cursor-not-allowed disabled:translate-y-0",
     );
 
     const hasFoodSelection = computed(() =>
@@ -936,6 +996,14 @@ export default {
       initializeFoodSelection();
     };
 
+    const resetFoodSelection = () => {
+      initializeFoodSelection();
+    };
+
+    const resetClothingSelection = () => {
+      initializeClothingSelection();
+    };
+
     const goToStep = (step) => {
       isTransportMenuOpen.value = false;
       isConsumptionMenuOpen.value = false;
@@ -1109,7 +1177,9 @@ export default {
       adjustSurface,
       selectFoodOption,
       selectFoodConsumption,
+      resetFoodSelection,
       selectClothingOption,
+      resetClothingSelection,
       getFoodSelectionLabels,
       getClothingLabel,
       canProceedToRecap,
@@ -1121,3 +1191,35 @@ export default {
   },
 };
 </script>
+
+<style scoped>
+.wizard-step-enter-active,
+.wizard-step-leave-active {
+  transition:
+    opacity 260ms ease,
+    transform 320ms cubic-bezier(0.22, 1, 0.36, 1),
+    filter 260ms ease;
+  will-change: transform, opacity, filter;
+}
+
+.wizard-step-enter-active {
+  animation: wizard-gradient-in 320ms ease;
+}
+
+.wizard-step-enter-from,
+.wizard-step-leave-to {
+  opacity: 0;
+  transform: translateY(12px);
+  filter: blur(2px);
+}
+
+@keyframes wizard-gradient-in {
+  from {
+    box-shadow: inset 0 0 0 999px rgba(255, 255, 255, 0.34);
+  }
+
+  to {
+    box-shadow: inset 0 0 0 999px rgba(255, 255, 255, 0);
+  }
+}
+</style>

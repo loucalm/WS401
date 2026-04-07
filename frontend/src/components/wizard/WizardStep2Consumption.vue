@@ -1,11 +1,13 @@
 <template>
   <section class="flex-1 overflow-y-auto px-4 pb-30 pt-3">
-    <div class="mx-auto w-full max-w-[700px] px-1">
-      <div
-        class="mx-auto [&>svg]:h-auto [&>svg]:w-full"
-        :class="[stepIndicatorColorClass, stepIndicatorContainerClass]"
-        v-html="stepIndicatorSvgMarkup"
-      ></div>
+    <div class="mx-auto w-full px-1">
+      <div class="flex w-full" :class="stepIndicatorContainerClass">
+        <div
+          class="[&>svg]:h-20 [&>svg]:w-auto [&>svg]:max-w-full"
+          :class="stepIndicatorColorClass"
+          v-html="stepIndicatorSvgMarkup"
+        ></div>
+      </div>
     </div>
 
     <h2 class="mt-5 text-center font-ui text-[34px] leading-none text-black">
@@ -59,16 +61,8 @@
       </div>
     </div>
 
-    <div class="mt-8 flex items-center justify-between gap-3">
+    <div class="mt-8 flex items-center gap-3">
       <h3 class="font-ui text-[28px] leading-none text-black">Surface</h3>
-      <button
-        type="button"
-        class="flex h-10 w-10 items-center justify-center rounded-full bg-secondary-light text-secondary"
-        aria-label="Modifier la surface"
-        @click="toggleManualSurface"
-      >
-        <Icon icon="lucide:edit" class="h-5 w-5" />
-      </button>
     </div>
 
     <div class="mt-8 flex justify-center">
@@ -128,6 +122,14 @@
         @click="$emit('adjust-surface', -1)"
       >
         -
+      </button>
+      <button
+        type="button"
+        class="flex h-14 w-14 items-center justify-center rounded-full bg-secondary-light text-secondary"
+        aria-label="Modifier la surface"
+        @click="toggleManualSurface"
+      >
+        <Icon icon="lucide:edit" class="h-6 w-6" />
       </button>
       <button
         type="button"
