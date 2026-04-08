@@ -239,21 +239,11 @@
               <p class="font-ui text-[24px] leading-none text-black">
                 Purchase : {{ selectedClothingPurchaseLabel }}
               </p>
-              <p class="font-ui text-[24px] leading-none text-black">
-                Top outfits : {{ getClothingLabel("top") }}
-              </p>
-              <p class="font-ui text-[24px] leading-none text-black">
-                Stockings : {{ getClothingLabel("stocking") }}
-              </p>
-              <p class="font-ui text-[24px] leading-none text-black">
-                Shoes : {{ getClothingLabel("shoes") }}
-              </p>
-              <p class="font-ui text-[24px] leading-none text-black">
-                Underwear : {{ getClothingLabel("underwear") }}
-              </p>
-              <p class="font-ui text-[24px] leading-none text-black">
-                Accessory : {{ getClothingLabel("accessory") }}
-              </p>
+              <template v-for="section in clothingSections" :key="section.id">
+                <p class="font-ui text-[24px] leading-none text-black">
+                  {{ section.label }} : {{ getClothingLabel(section.id) }}
+                </p>
+              </template>
             </div>
 
             <div v-else class="mt-16 space-y-16">
