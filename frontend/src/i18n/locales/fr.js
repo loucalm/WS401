@@ -113,6 +113,7 @@ export default {
   map: {
     title: "Carte des amis",
     active_friends_online: "Amis actifs en ligne",
+    recenter: "Recentrer",
     rank_place: "{rank} place",
     saved_kg: "+{weight} kg économisés",
     rank_label: "Classement {rank}",

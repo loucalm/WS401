@@ -112,6 +112,7 @@ export default {
   map: {
     title: "Friends Map",
     active_friends_online: "Active Friends Online",
+    recenter: "Recenter",
     rank_place: "{rank} place",
     saved_kg: "+{weight} kg saved",
     rank_label: "{rank} rank",

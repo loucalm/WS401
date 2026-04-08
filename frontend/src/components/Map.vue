@@ -1,7 +1,7 @@
 <template>
   <div class="min-h-screen bg-white text-black font-ui">
     <main
-      class="mx-auto flex min-h-screen w-full max-w-105 flex-col bg-white pb-32 shadow-[0_0_0_1px_rgba(0,0,0,0.04)] relative overflow-hidden"
+      class="mx-auto flex min-h-screen w-full max-w-105 flex-col bg-white pb-0 shadow-[0_0_0_1px_rgba(0,0,0,0.04)] relative overflow-hidden"
     >
       <div
         class="sticky top-0 z-40 flex items-center justify-between bg-white px-6 py-4 shadow-sm border-b border-grey/5"
@@ -82,6 +82,7 @@
       </Transition>
 
       <div
+        ref="mapViewportRef"
         class="flex-1 relative bg-main-light/50 overflow-hidden touch-none"
         @mousedown="startDragging"
         @mousemove="drag"
@@ -92,7 +93,12 @@
         @touchend="stopDragging"
       >
         <div
-          class="absolute inset-0 flex items-center justify-center transition-transform duration-300 ease-out"
+          class="absolute inset-0 flex items-center justify-center will-change-transform"
+          :class="
+            cameraAnimating && !isDragging
+              ? 'transition-transform duration-500 ease-[cubic-bezier(0.22,1,0.36,1)]'
+              : ''
+          "
           :style="{
             transform: `translate(${translateX}px, ${translateY}px) scale(${zoomLevel})`,
           }"
@@ -107,6 +113,7 @@
             <div
               v-for="friend in friends"
               :key="friend.id"
+              :data-user-id="friend.id"
               :style="{
                 position: 'absolute',
                 top: friend.position.top,
@@ -114,7 +121,7 @@
                 transform: `translate(-50%, -50%) scale(${Math.max(0.5, 1 / (zoomLevel * 0.8))})`,
               }"
               class="h-14 w-14 rounded-full border-4 border-white shadow-xl cursor-pointer active:scale-95 transition-all z-10"
-              @click.stop="selectFriend(friend)"
+              @click.stop="focusFriend(friend)"
             >
               <img
                 :src="friend.avatar"
@@ -129,7 +136,15 @@
           </div>
         </div>
 
-        <div class="absolute bottom-10 right-6 flex flex-col gap-3 z-20">
+        <div class="absolute bottom-28 right-6 flex flex-col gap-3 z-20 sm:bottom-32">
+          <button
+            class="h-14 w-14 bg-main text-white rounded-2xl shadow-xl flex items-center justify-center active:scale-90 border border-main/10"
+            :title="t('map.recenter')"
+            :aria-label="t('map.recenter')"
+            @click="recenterOnCurrentUser"
+          >
+            <Icon icon="ph:crosshair-simple-bold" class="h-7 w-7" />
+          </button>
           <button
             class="h-14 w-14 bg-white text-main rounded-2xl shadow-xl flex items-center justify-center font-bold text-2xl active:scale-90 border border-grey/5"
             @click="zoomIn"
@@ -186,7 +201,7 @@
 </template>
 
 <script setup>
-import { ref } from "vue";
+import { nextTick, ref } from "vue";
 import { Icon } from "@iconify/vue";
 import { useI18n } from "vue-i18n";
 import axios from "axios";
@@ -212,36 +227,10 @@ const dragStart = ref({ x: 0, y: 0 });
 const showLeaderboard = ref(false);
 const showPopup = ref(false);
 const selectedUser = ref({});
+const mapViewportRef = ref(null);
+const cameraAnimating = ref(false);
 
-const friends = ref([
-  {
-    id: 1,
-    name: "Rafamaru",
-    rank: "1st",
-    weight: 42.8,
-    online: true,
-    avatar: rafaAvatar,
-    position: { top: "32%", left: "38%" },
-  },
-  {
-    id: 2,
-    name: "Kenza",
-    rank: "5th",
-    weight: 15.2,
-    online: false,
-    avatar: kenzaAvatar,
-    position: { top: "58%", left: "62%" },
-  },
-  {
-    id: 3,
-    name: "Kenzo",
-    rank: "6th",
-    weight: 19.5,
-    online: true,
-    avatar: kenzoAvatar,
-    position: { top: "45%", left: "42%" },
-  },
-]);
+const friends = ref([]);
 
 const normalizeToken = (rawToken) => {
   if (typeof rawToken !== "string") return "";
@@ -358,7 +347,10 @@ const loadFriendsFromApi = async () => {
       })
       .filter(Boolean);
 
-    if (usersWithLocation.length === 0) return;
+    if (usersWithLocation.length === 0) {
+      friends.value = [];
+      return;
+    }
 
     const avatars = [rafaAvatar, kenzaAvatar, kenzoAvatar];
     usersWithLocation.forEach((friend, index) => {
@@ -377,6 +369,7 @@ const loadFriendsFromApi = async () => {
 };
 
 const initiateDrag = (clientX, clientY) => {
+  cameraAnimating.value = false;
   isDragging.value = true;
   dragStart.value = {
     x: clientX - translateX.value,
@@ -411,11 +404,65 @@ const selectFriend = (friend) => {
   showPopup.value = true;
 };
 
-const focusFriend = (friend) => {
-  selectFriend(friend);
+const centerMarkerByUserId = (userId) => {
+  const viewportEl = mapViewportRef.value;
+  if (!viewportEl) return false;
+
+  const markerEl = viewportEl.querySelector(`[data-user-id="${userId}"]`);
+  if (!markerEl) return false;
+
+  const viewportRect = viewportEl.getBoundingClientRect();
+  const markerRect = markerEl.getBoundingClientRect();
+
+  const viewportCenterX = viewportRect.left + viewportRect.width / 2;
+  const viewportCenterY = viewportRect.top + viewportRect.height / 2;
+  const markerCenterX = markerRect.left + markerRect.width / 2;
+  const markerCenterY = markerRect.top + markerRect.height / 2;
+
+  translateX.value += viewportCenterX - markerCenterX;
+  translateY.value += viewportCenterY - markerCenterY;
+  return true;
+};
+
+const centerOnFriend = async (friend, showDetails = true) => {
+  if (!friend) return;
+  if (showDetails) selectFriend(friend);
   showLeaderboard.value = false;
-  translateX.value = 0;
-  translateY.value = 0;
+  cameraAnimating.value = true;
+
+  const targetZoom = Math.min(2.2, 4);
+  zoomLevel.value = Math.max(zoomLevel.value, targetZoom);
+
+  await nextTick();
+  requestAnimationFrame(() => {
+    requestAnimationFrame(() => {
+      if (!centerMarkerByUserId(friend.id)) {
+        translateX.value = 0;
+        translateY.value = 0;
+      }
+
+      setTimeout(() => {
+        cameraAnimating.value = false;
+      }, 520);
+    });
+  });
+};
+
+const focusFriend = (friend) => {
+  centerOnFriend(friend, true);
+};
+
+const recenterOnCurrentUser = () => {
+  const currentUser = friends.value.find((friend) => friend.online);
+  if (!currentUser) {
+    translateX.value = 0;
+    translateY.value = 0;
+    zoomLevel.value = 1.2;
+    return;
+  }
+
+  zoomLevel.value = Math.max(zoomLevel.value, 1.2);
+  centerOnFriend(currentUser, false);
 };
 
 onMounted(loadFriendsFromApi);

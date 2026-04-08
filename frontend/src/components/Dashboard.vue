@@ -38,11 +38,11 @@
                 alt="Mascot"
                 class="mb-2 h-24 w-24 object-contain"
               />
-              <p class="font-title text-[37px] leading-none text-black">
+              <p class="font-title text-[35px] leading-none text-black sm:text-[39px]">
                 {{ formattedAnimatedDailyCo2 }} kg
               </p>
-              <p class="mt-2 text-[20px] text-grey">{{ t("dashboard.co2_daily") }}</p>
-              <p class="mt-1 text-[11px]" :class="gaugeProgressTextClass">
+              <p class="mt-2 text-[18px] text-grey sm:text-[21px]">{{ t("dashboard.co2_daily") }}</p>
+              <p class="mt-1 text-[11px] sm:text-[12px]" :class="gaugeProgressTextClass">
                 {{ t("dashboard.target_progress", { percent: Math.round(progressPercent) }) }}
               </p>
             </div>
@@ -51,10 +51,10 @@
           <div
             class="relative z-10 mt-4 w-full rounded-2xl border border-grey/20 bg-white px-4 py-2 text-center shadow-[0_8px_18px_rgba(0,0,0,0.14)]"
           >
-            <p class="font-title text-[28px] leading-none text-main">
+            <p class="font-title text-[27px] leading-none text-main sm:text-[30px]">
               {{ t("dashboard.points_title") }}
             </p>
-            <p class="mt-1 font-ui text-[18px] font-bold text-main">
+            <p class="mt-1 font-ui text-[17px] font-bold text-main sm:text-[19px]">
               {{ t("dashboard.points_value", { count: 560 }) }}
             </p>
           </div>
@@ -64,12 +64,12 @@
           >
             <button
               type="button"
-              class="flex w-full items-center justify-between px-4 py-3 text-[13px] font-medium text-black"
+              class="flex w-full items-center justify-between px-4 py-3 text-[13px] font-medium text-black sm:text-[14px]"
               @click="isLeaderboardOpen = !isLeaderboardOpen"
             >
               <span>{{ t("dashboard.leaderboard_title") }}</span>
               <span
-                class="text-[18px] leading-none transition-transform duration-200"
+                class="text-[17px] leading-none transition-transform duration-200 sm:text-[19px]"
                 :class="isLeaderboardOpen ? 'rotate-180' : ''"
                 >⌄</span
               >
@@ -82,7 +82,7 @@
               >
                 <p
                   v-if="leaderboard.length === 0"
-                  class="py-2 text-center text-[12px] text-grey"
+                  class="py-2 text-center text-[12px] text-grey sm:text-[13px]"
                 >
                   {{ t("dashboard.leaderboard_empty") }}
                 </p>
@@ -100,30 +100,30 @@
                   >
                     <div class="flex min-w-0 items-center gap-2">
                       <span
-                        class="inline-flex h-6 w-6 shrink-0 items-center justify-center rounded-full text-[11px] font-semibold text-white"
+                        class="inline-flex h-6 w-6 shrink-0 items-center justify-center rounded-full text-[11px] font-semibold text-white sm:text-[12px]"
                         :class="rankBadgeClass(index)"
                       >
                         {{ index + 1 }}
                       </span>
                       <div class="min-w-0">
-                        <p class="truncate text-[13px] font-medium text-black">
+                        <p class="truncate text-[13px] font-medium text-black sm:text-[14px]">
                           {{ friend.name }}
                           <span
                             v-if="friend.isCurrentUser"
-                            class="ml-1 text-[11px] font-semibold text-main"
+                            class="ml-1 text-[11px] font-semibold text-main sm:text-[12px]"
                             >{{ t("dashboard.you") }}</span
                           >
                         </p>
-                        <p class="text-[11px] text-grey">
+                        <p class="text-[11px] text-grey sm:text-[12px]">
                           {{ t("dashboard.activities_today", { count: friend.activityCount }) }}
                         </p>
                       </div>
                     </div>
                     <div class="text-right">
-                      <p class="text-[12px] font-semibold text-main">
+                      <p class="text-[12px] font-semibold text-main sm:text-[13px]">
                         {{ friend.points }} pts
                       </p>
-                      <p class="text-[11px] text-grey">{{ friend.co2 }}</p>
+                      <p class="text-[11px] text-grey sm:text-[12px]">{{ friend.co2 }}</p>
                     </div>
                   </li>
                 </ul>
@@ -134,20 +134,20 @@
       </section>
 
       <section class="px-4 pt-5">
-        <h2 class="font-ui text-[18px] font-semibold text-black">
+        <h2 class="font-ui text-[17px] font-semibold text-black sm:text-[19px]">
           {{ t("dashboard.latest_activities") }}
         </h2>
 
         <div
           v-if="loading"
-          class="mt-4 rounded-2xl border border-grey/15 bg-white px-4 py-4 text-center text-[14px] text-grey shadow-[0_6px_16px_rgba(0,0,0,0.14)]"
+          class="mt-4 rounded-2xl border border-grey/15 bg-white px-4 py-4 text-center text-[14px] text-grey shadow-[0_6px_16px_rgba(0,0,0,0.14)] sm:text-[15px]"
         >
           {{ t("dashboard.loading_activities") }}
         </div>
 
         <div
           v-else-if="activities.length === 0"
-          class="mt-4 rounded-2xl border border-grey/15 bg-white px-4 py-4 text-center text-[14px] text-grey shadow-[0_6px_16px_rgba(0,0,0,0.14)]"
+          class="mt-4 rounded-2xl border border-grey/15 bg-white px-4 py-4 text-center text-[14px] text-grey shadow-[0_6px_16px_rgba(0,0,0,0.14)] sm:text-[15px]"
         >
           {{ t("dashboard.no_activity") }}
         </div>
@@ -171,19 +171,19 @@
                     {{ activity.title }}
                   </p>
                   <p
-                    class="mt-1 text-[14px] font-medium"
+                    class="mt-1 text-[14px] font-medium sm:text-[15px]"
                     :class="activity.pointsClass"
                   >
                     {{ activity.points }}
                   </p>
                 </div>
-                <p class="shrink-0 font-ui text-[18px] font-medium text-black">
+                <p class="shrink-0 font-ui text-[17px] font-medium text-black sm:text-[19px]">
                   {{ activity.quantityLabel }}
                 </p>
               </div>
 
               <p
-                class="mt-1 text-right text-[14px] font-medium"
+                class="mt-1 text-right text-[14px] font-medium sm:text-[15px]"
                 :class="activity.co2Class"
               >
                 {{ activity.co2 }}
