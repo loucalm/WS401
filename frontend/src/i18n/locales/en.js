@@ -72,6 +72,8 @@ export default {
     notifications_title: "Notifications",
     notifications_empty: "No notifications yet.",
     friend_rank_alert: "{name} is now {rank} with {points} pts today!",
+    friend_overtake_alert:
+      "{winner} overtook {loser} and moved to rank {rank}/{total} among friends with {points} pts today!",
   },
   data: {
     title: "Data",
@@ -116,9 +118,9 @@ export default {
     title: "Friends Map",
     active_friends_online: "Active Friends Online",
     recenter: "Recenter",
-    rank_place: "{rank} place",
-    saved_kg: "+{weight} kg saved",
-    rank_label: "{rank} rank",
+    rank_place: "{rank}/{total} place",
+    points_value: "{points} pts",
+    rank_label: "Rank {rank}/{total}",
   },
   profile: {
     my_points: "My Points",
