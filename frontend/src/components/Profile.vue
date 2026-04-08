@@ -141,10 +141,7 @@
           <Icon icon="ph:caret-right" class="text-grey h-5 w-5" />
         </router-link>
 
-        <button
-          @click="toggleLocale"
-          class="flex w-full items-center rounded-xl border border-grey/15 bg-white px-4.5 py-4 shadow-[0_4px_10px_rgba(0,0,0,0.05)] transition-transform active:scale-[0.98]"
-        >
+        <div class="flex items-center rounded-xl border border-grey/15 bg-white px-4.5 py-4 shadow-[0_4px_10px_rgba(0,0,0,0.05)]">
           <div
             class="flex h-11 w-11 items-center justify-center rounded-lg bg-[#EFEFEF] text-main"
           >
@@ -155,12 +152,19 @@
           >
             {{ t("profile.language") }}
           </span>
-          <span
-            class="font-ui text-[15px] font-bold text-main uppercase tracking-wide"
-          >
-            {{ locale === "fr" ? "EN" : "FR" }}
-          </span>
-        </button>
+          <div class="flex items-center gap-1 rounded-xl border border-grey/20 bg-[#F4F4F4] p-1">
+            <button
+              @click="locale !== 'fr' && toggleLocale()"
+              class="rounded-lg px-3 py-1.5 font-ui text-[14px] font-bold uppercase tracking-wide transition-all duration-200"
+              :class="locale === 'fr' ? 'bg-main text-white shadow-sm' : 'text-grey hover:text-black'"
+            >FR</button>
+            <button
+              @click="locale !== 'en' && toggleLocale()"
+              class="rounded-lg px-3 py-1.5 font-ui text-[14px] font-bold uppercase tracking-wide transition-all duration-200"
+              :class="locale === 'en' ? 'bg-main text-white shadow-sm' : 'text-grey hover:text-black'"
+            >EN</button>
+          </div>
+        </div>
       </section>
 
       <section class="px-7 mt-8 mb-4">
