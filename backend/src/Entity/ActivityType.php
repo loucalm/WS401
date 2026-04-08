@@ -23,11 +23,15 @@ class ActivityType
     #[ORM\Column(length: 50)]
     private ?string $unitLabel = null;
 
-    // 👇 La colonne pour "Top", "Base", "Protéines"...
+    // Sous-catégorie permettant de regrouper les types d'activités au sein d'une même catégorie.
+    // Exemples pour la nourriture : 'Base', 'Protéines', 'Vitamines'.
+    // Exemples pour les vêtements : 'Top', 'Bas', 'Chaussures'.
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $subCategory = null;
 
-    // 👇 LA NOUVELLE COLONNE POUR "Eco-Green", "Eco-Mix"... 👇
+    // Champ utilisé uniquement pour la catégorie Nourriture.
+    // Il indique à quel "régime" appartient ce type d'aliment : 'Eco-Green', 'Eco-Mix' ou 'Eco-Boost'.
+    // Cela permet au Wizard front-end d'afficher les bons aliments selon le régime choisi par l'utilisateur.
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $diet = null;
 
@@ -87,7 +91,7 @@ class ActivityType
         return $this;
     }
 
-    // 👇 NOUVEAUX GETTER / SETTER POUR LE RÉGIME 👇
+    // Getters et setters pour le régime alimentaire
     public function getDiet(): ?string
     {
         return $this->diet;

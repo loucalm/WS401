@@ -20,14 +20,19 @@ class AppFixtures extends Fixture
 
     public function load(ObjectManager $manager): void
     {
-        // 1. CRÉATION DES UTILISATEURS DE TEST
+        // Création de deux utilisateurs de test avec des mots de passe hachés.
+        // Ces utilisateurs servent à tester l'authentification sans créer de compte manuellement.
         $user1 = new User();
         $user1->setEmail('admin@test.com');
         $user1->setUsername('EcoWarrior');
         $user1->setTargetCo2(2000);
         $user1->setUnitPreference('metric');
+<<<<<<< Updated upstream
         $user1->setRoles(['ROLE_ADMIN']);
         // Le mot de passe pour tester sera : "test"
+=======
+        $user1->setRoles([]);
+>>>>>>> Stashed changes
         $user1->setPassword($this->passwordHasher->hashPassword($user1, 'test'));
         $manager->persist($user1);
 
@@ -41,7 +46,8 @@ class AppFixtures extends Fixture
         $manager->persist($user2);
 
 
-        // 2. CRÉATION DES CATÉGORIES PRINCIPALES
+        // Création des catégories principales qui regroupent les types d'activités.
+        // Chaque catégorie a un nom, une icône (format Iconify) et une couleur CSS.
         $catData = [
             'Travel' => ['mdi:travel', '--color-main'],
             'Food' => ['mdi:food', '--color-tertiary'],
@@ -56,11 +62,13 @@ class AppFixtures extends Fixture
             $cat->setIcon($info[0]);
             $cat->setColor($info[1]);
             $manager->persist($cat);
-            $categories[$name] = $cat; // On les stocke pour les lier facilement
+            $categories[$name] = $cat; // On les indexe par nom pour les réutiliser lors de la création des ActivityTypes
         }
 
 
-        // 3. LE SUPER-CATALOGUE (Activity Types)
+        // Catalogue complet des types d'activités avec leurs facteurs d'émission CO2.
+        // Format de chaque ligne : [Catégorie, Sous-catégorie, Régime, Nom, FacteurCO2, Unité, Icône (optionnel)]
+        // Le facteur CO2 est exprimé en kg de CO2 émis par unité (km, portion, kWh, article...).
         $activities = [
             // Travel
             ['Travel', 'Transport', null, 'Car (Diesel)', 0.19, 'km'],
@@ -146,7 +154,7 @@ class AppFixtures extends Fixture
             $manager->persist($activityType);
         }
 
-        // On exécute le tout en base de données
+        // On sauvegarde toutes les entités créées en base de données en une seule opération.
         $manager->flush();
     }
 }

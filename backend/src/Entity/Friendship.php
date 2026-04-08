@@ -16,14 +16,14 @@ class Friendship
 
     #[ORM\ManyToOne]
     #[ORM\JoinColumn(nullable: false)]
-    private ?User $sender = null; // Celui qui invite
+    private ?User $sender = null; // L'utilisateur qui a envoyé la demande d'amitié
 
     #[ORM\ManyToOne]
     #[ORM\JoinColumn(nullable: false)]
-    private ?User $receiver = null; // Celui qui reçoit l'invitation
+    private ?User $receiver = null; // L'utilisateur qui a reçu la demande d'amitié
 
     #[ORM\Column(length: 20)]
-    private ?string $status = 'pending'; // 'pending' ou 'accepted'
+    private ?string $status = 'pending'; // Statut de la demande : 'pending' (en attente) ou 'accepted' (acceptée)
 
-    // Getters et Setters...
+    // Getters et setters à ajouter si nécessaire
 }

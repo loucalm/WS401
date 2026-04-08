@@ -25,10 +25,10 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private ?string $username = null;
 
     #[ORM\Column(nullable: true)]
-    private ?float $targetCo2 = 2000.0; // Objectif par défaut en kg (2 tonnes)
+    private ?float $targetCo2 = 2000.0; // Objectif CO2 journalier de l'utilisateur, en grammes. Par défaut 2000g soit 2kg.
 
     #[ORM\Column(length: 20)]
-    private ?string $unitPreference = 'metric'; // 'metric' ou 'imperial'
+    private ?string $unitPreference = 'metric'; // Préférence d'unité de mesure : 'metric' (km, kg) ou 'imperial' (miles, lbs)
 
     #[ORM\Column(nullable: true)]
     private ?float $latitude = null;
@@ -72,7 +72,9 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      */
     public function getUserIdentifier(): string
     {
-        return (string) $this->email; // <-- LE CORRECTIF EST LÀ
+        // Symfony utilise cette méthode pour identifier l'utilisateur dans la session et les tokens JWT.
+        // On retourne l'email car c'est le champ unique qui sert d'identifiant dans notre app.
+        return (string) $this->email;
     }
     /**
      * @see UserInterface
@@ -80,7 +82,8 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function getRoles(): array
     {
         $roles = $this->roles;
-        // guarantee every user at least has ROLE_USER
+        // On s'assure que chaque utilisateur possède au minimum ROLE_USER,
+        // même si la colonne roles est vide en base de données.
         $roles[] = 'ROLE_USER';
 
         return array_unique($roles);
@@ -111,7 +114,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }
 
-    // --- NOUVEAUX GETTERS ET SETTERS ---
+    // Getters et setters pour les champs spécifiques à notre application
 
    public function getUsername(): string
     {
@@ -173,10 +176,11 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }
 
-    // --- FIN DES NOUVEAUX GETTERS ET SETTERS ---
-
     /**
-     * Ensure the session doesn't contain actual password hashes by CRC32C-hashing them, as supported since Symfony 7.3.
+     * Méthode de sérialisation de l'utilisateur pour la session Symfony.
+     * On ne stocke pas le hash complet du mot de passe dans la session pour des raisons de sécurité.
+     * À la place, on stocke un hash CRC32C du mot de passe, ce qui permet à Symfony
+     * de détecter un changement de mot de passe et d'invalider la session automatiquement.
      */
     public function __serialize(): array
     {
@@ -189,7 +193,23 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[\Deprecated]
     public function eraseCredentials(): void
     {
-        // @deprecated, to be removed when upgrading to Symfony 8
+        // Méthode dépréciée depuis Symfony 7. Elle sera supprimée lors du passage à Symfony 8.
+    }
+
+    // Champ virtuel utilisé uniquement dans les formulaires (EasyAdmin, inscription).
+    // Il n'est jamais persisté en base de données : on l'utilise pour récupérer
+    // le mot de passe en clair, le hasher, puis le stocker dans le champ $password.
+    private ?string $plainPassword = null;
+
+    public function getPlainPassword(): ?string
+    {
+        return $this->plainPassword;
+    }
+
+    public function setPlainPassword(?string $plainPassword): static
+    {
+        $this->plainPassword = $plainPassword;
+        return $this;
     }
 
     public function __toString(): string

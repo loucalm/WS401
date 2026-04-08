@@ -4,7 +4,10 @@ namespace App\Controller\Admin;
 
 use App\Entity\ActivityType;
 use App\Entity\Category;
+<<<<<<< Updated upstream
 use App\Entity\Entry;
+=======
+>>>>>>> Stashed changes
 use App\Entity\User;
 use EasyCorp\Bundle\EasyAdminBundle\Attribute\AdminDashboard;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
@@ -32,6 +35,7 @@ class DashboardController extends AbstractDashboardController
 
     public function index(): Response
     {
+<<<<<<< Updated upstream
         $categoryRepository = $this->entityManager->getRepository(Category::class);
         $activityTypeRepository = $this->entityManager->getRepository(ActivityType::class);
         $userRepository = $this->entityManager->getRepository(User::class);
@@ -83,18 +87,26 @@ class DashboardController extends AbstractDashboardController
             'recentEntries' => $recentEntries,
             'currentLocale' => $this->requestStack->getCurrentRequest()?->getLocale() ?? 'fr',
         ]);
+=======
+        return $this->redirectToRoute('admin', ['crudAction' => 'index', 'crudControllerFqcn' => UserCrudController::class]);
+>>>>>>> Stashed changes
     }
 
     public function configureDashboard(): Dashboard
     {
         return Dashboard::new()
+<<<<<<< Updated upstream
             ->setTranslationDomain('admin')
             ->setTitle($this->trans('dashboard.title'))
             ->renderContentMaximized();
+=======
+            ->setTitle('N2E Admin');
+>>>>>>> Stashed changes
     }
 
     public function configureMenuItems(): iterable
     {
+<<<<<<< Updated upstream
         yield MenuItem::linkToDashboard($this->trans('menu.dashboard'), 'fa-solid fa-chart-pie');
 
         yield MenuItem::section($this->trans('menu.catalog'));
@@ -123,5 +135,16 @@ class DashboardController extends AbstractDashboardController
             ->setController($crudController)
             ->setAction(Crud::PAGE_INDEX)
             ->generateUrl();
+=======
+        yield MenuItem::linkToDashboard('Dashboard', 'fa fa-home');
+
+        yield MenuItem::section('Utilisateurs');
+        yield MenuItem::linkToCrud('Users', 'fa fa-users', User::class);
+
+        yield MenuItem::section('Activités');
+        yield MenuItem::linkToCrud('Activity Types', 'fa fa-list', ActivityType::class);
+        yield MenuItem::linkToCrud('Catégories', 'fa fa-tags', Category::class);
+>>>>>>> Stashed changes
     }
 }
+

@@ -26,7 +26,9 @@ class Entry
     #[ORM\Column]
     private ?\DateTimeImmutable $createdAt = null;
 
-    // NOUVEAU : Le champ JSON pour stocker { "distance": 15, "origin": "thrift" }
+    // Champ JSON pour stocker des informations complémentaires libres sur l'entrée.
+    // Par exemple pour un trajet : { "distance": 15, "transportMode": "voiture" }.
+    // Ce champ est optionnel et son contenu dépend du type d'activité.
     #[ORM\Column(type: 'json', nullable: true)]
     private ?array $details = null;
 
@@ -34,17 +36,27 @@ class Entry
     #[ORM\JoinColumn(nullable: false)]
     private ?User $owner = null;
 
-    // NOUVEAU : La relation vers le contenu du panier (EntryItem)
+    // Relation vers les lignes de détail de l'entrée (comme les lignes d'une commande).
+    // Chaque EntryItem représente un type d'activité avec sa quantité.
+    // La cascade 'persist' et 'remove' signifie que si on sauvegarde ou supprime une Entry,
+    // ses EntryItems sont automatiquement sauvegardés ou supprimés avec elle.
     #[ORM\OneToMany(mappedBy: 'entry', targetEntity: EntryItem::class, cascade: ['persist', 'remove'])]
     private Collection $entryItems;
 
     public function __construct()
     {
         $this->createdAt = new \DateTimeImmutable();
-        $this->entryItems = new ArrayCollection(); // On initialise la collection
+        // On initialise la collection d'items pour éviter les erreurs PHP quand on y accède
+        // avant que l'entrée ne soit enregistrée en base de données.
+        $this->entryItems = new ArrayCollection();
     }
 
-    // NOUVEAU CALCUL MAGIQUE : On boucle sur tous les items du panier !
+    /**
+     * Calcule automatiquement le total CO2 de l'entrée avant chaque sauvegarde en base.
+     * Symfony (Doctrine) appelle cette méthode automatiquement grâce aux attributs
+     * PrePersist (avant l'insertion) et PreUpdate (avant la mise à jour).
+     * On parcourt tous les items liés et on fait la somme : quantité * facteur CO2 de chaque activité.
+     */
     #[ORM\PrePersist]
     #[ORM\PreUpdate]
     public function calculateTotalCo2(): void
@@ -59,7 +71,7 @@ class Entry
         $this->totalCo2 = $total;
     }
 
-    // --- GETTERS & SETTERS ---
+    // Getters et setters
 
     public function getId(): ?int
     {
@@ -129,7 +141,8 @@ class Entry
     public function removeEntryItem(EntryItem $entryItem): static
     {
         if ($this->entryItems->removeElement($entryItem)) {
-            // set the owning side to null (unless already changed)
+            // On met le côté propriétaire de la relation à null pour couper le lien
+            // en base de données et éviter des liens orphelins.
             if ($entryItem->getEntry() === $this) {
                 $entryItem->setEntry(null);
             }

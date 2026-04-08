@@ -18,21 +18,22 @@ class RegistrationController extends AbstractController
         UserPasswordHasherInterface $passwordHasher, 
         EntityManagerInterface $entityManager
     ): JsonResponse {
-        // 1. On récupère les données envoyées par le Front (en JSON)
+        // On récupère le corps de la requête HTTP et on le décode depuis le format JSON.
         $data = json_decode($request->getContent(), true);
 
-        // 2. Vérification de base
+        // Vérification minimale : l'email et le mot de passe sont obligatoires.
         if (!isset($data['email']) || !isset($data['password'])) {
             return new JsonResponse(['error' => 'Email et mot de passe requis.'], 400);
         }
 
-        // 3. Vérifier si l'email existe déjà dans la BDD
+        // On vérifie qu'aucun compte n'existe déjà avec cet email.
+        // Si c'est le cas, on renvoie une erreur 409 (conflit) pour l'indiquer au front-end.
         $existingUser = $entityManager->getRepository(User::class)->findOneBy(['email' => $data['email']]);
         if ($existingUser) {
             return new JsonResponse(['error' => 'Cet email est déjà utilisé.'], 409);
         }
 
-        // 4. Création du nouvel utilisateur
+        // Création d'un nouvel objet User et remplissage de ses champs.
         $user = new User();
         $user->setEmail($data['email']);
         
@@ -40,15 +41,17 @@ class RegistrationController extends AbstractController
             $user->setUsername($data['username']);
         }
 
-        // 5. Hachage du mot de passe (TRÈS IMPORTANT)
+        // On ne stocke jamais le mot de passe en clair en base de données.
+        // Le PasswordHasher de Symfony applique un algorithme de hachage sécurisé (bcrypt/argon2).
         $hashedPassword = $passwordHasher->hashPassword($user, $data['password']);
         $user->setPassword($hashedPassword);
 
-        // 6. Sauvegarde dans la base de données
+        // persist() indique à Doctrine de suivre cet objet.
+        // flush() exécute la requête SQL INSERT en base de données.
         $entityManager->persist($user);
         $entityManager->flush();
 
-        // 7. On renvoie un message de succès
+        // On retourne un code 201 (Created) pour confirmer la création au client.
         return new JsonResponse(['message' => 'Utilisateur créé avec succès !'], 201);
     }
 }
