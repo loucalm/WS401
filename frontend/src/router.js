@@ -6,8 +6,12 @@ import Register from "./components/Register.vue";
 import Wizard from "./components/Wizard.vue";
 import Map from "./components/Map.vue";
 import Profile from "./components/Profile.vue";
+import ProfileLocation from "./components/ProfileLocation.vue";
 import Data from "./components/Data.vue";
 
+/**
+ * @param {string} token
+ */
 const parseJwtPayload = (token) => {
   try {
     const payload = token.split(".")[1];
@@ -20,11 +24,17 @@ const parseJwtPayload = (token) => {
   }
 };
 
+/**
+ * @param {unknown} rawToken
+ */
 const normalizeToken = (rawToken) => {
   if (typeof rawToken !== "string") return "";
   return rawToken.trim().replace(/^"+|"+$/g, "");
 };
 
+/**
+ * @param {string} token
+ */
 const isJwtValid = (token) => {
   if (!token) return false;
   const payload = parseJwtPayload(token);
@@ -72,6 +82,12 @@ const routes = [
     path: "/profile",
     name: "profile",
     component: Profile,
+    meta: { requiresAuth: true },
+  },
+  {
+    path: "/profile/location",
+    name: "profile-location",
+    component: ProfileLocation,
     meta: { requiresAuth: true },
   },
   {
