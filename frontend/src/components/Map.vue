@@ -209,11 +209,10 @@ import { onMounted } from "vue";
 import { useRouter } from "vue-router";
 import BottomNav from "./BottomNav.vue";
 
-// Import images according to your assets structure
-import rafaAvatar from "@/assets/img/profil-pic/persona.jpg";
-// Note: Ensure persona2.jpg and persona3.jpg exist in your profil-pic folder.
-import kenzaAvatar from "@/assets/img/profil-pic/persona2.jpg";
-import kenzoAvatar from "@/assets/img/profil-pic/persona3.jpg";
+
+import rafaAvatar from "@/assets/img/persona.jpg";
+import kenzaAvatar from "@/assets/img/persona2.jpg";
+import kenzoAvatar from "@/assets/img/persona3.jpg";
 
 const { t } = useI18n();
 const router = useRouter();

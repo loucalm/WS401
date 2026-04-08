@@ -1,7 +1,7 @@
 <template>
-  <div class="min-h-screen bg-white text-black">
+  <div class="min-h-screen bg-white text-black font-ui">
     <main
-      class="mx-auto flex min-h-screen w-full max-w-105 flex-col bg-white pb-28 shadow-[0_0_0_1px_rgba(0,0,0,0.04)] lg:my-0 lg:rounded-none lg:px-10"
+      class="mx-auto flex min-h-screen w-full max-w-105 flex-col bg-white pb-28 shadow-[0_0_0_1px_rgba(0,0,0,0.04)] lg:my-0 lg:rounded-none lg:px-10 relative"
     >
       <section
         class="relative overflow-hidden rounded-b-[36px] bg-main-light px-4 pb-6 pt-4"
@@ -192,6 +192,26 @@
           </article>
         </div>
       </section>
+
+      <Transition name="pop">
+        <div v-if="showOvertookPopup" class="fixed inset-0 z-[100] flex items-center justify-center px-6">
+          <div class="absolute inset-0 bg-black/40 backdrop-blur-sm" @click="showOvertookPopup = false"></div>
+          <div class="relative w-full max-w-sm overflow-hidden rounded-[32px] bg-white p-8 text-center shadow-2xl animate-zoom">
+            <div class="mx-auto mb-6 flex h-20 w-20 items-center justify-center rounded-full bg-systeme/10 text-systeme">
+              <Icon icon="ph:trend-down-bold" class="h-10 w-10" />
+            </div>
+            <h3 class="font-title text-[24px] leading-tight text-black">
+              {{ t("dashboard.overtook_title", "Watch out!") }}
+            </h3>
+            <p class="mt-4 text-body-16 text-grey">
+              {{ t("dashboard.overtook_message", "Your friend just overtook you in the general ranking!") }}
+            </p>
+            <button type="button" class="mt-8 w-full rounded-2xl bg-main py-4 font-ui text-[18px] font-bold text-white transition-transform active:scale-95 shadow-lg shadow-main/20" @click="showOvertookPopup = false">
+              {{ t("dashboard.overtook_button", "I'm coming for them!") }}
+            </button>
+          </div>
+        </div>
+      </Transition>
     </main>
 
     <BottomNav active="home" />
@@ -218,6 +238,7 @@ const dailyTargetKg = ref(200);
 const activities = ref([]);
 const leaderboard = ref([]);
 const isLeaderboardOpen = ref(false);
+const showOvertookPopup = ref(false); 
 
 let animationFrameId = null;
 
@@ -583,6 +604,15 @@ const loadDashboardData = async () => {
         return a.todayUserCo2 - b.todayUserCo2;
       })
       .slice(0, 5);
+
+   //pop up//
+    setTimeout(() => {
+      const userRank = leaderboard.value.findIndex(u => u.isCurrentUser);
+      if (userRank > 0) {
+        showOvertookPopup.value = true;
+      }
+    }, 1200);
+
   } catch (error) {
     if (error?.response?.status === 401) {
       localStorage.removeItem("jwt_token");
@@ -611,6 +641,7 @@ onBeforeUnmount(() => {
 </script>
 
 <style scoped>
+
 .leaderboard-collapse-enter-active,
 .leaderboard-collapse-leave-active {
   transition:
@@ -632,5 +663,26 @@ onBeforeUnmount(() => {
   opacity: 1;
   transform: translateY(0);
   max-height: 320px;
+}
+
+
+.pop-enter-active {
+  transition: opacity 0.3s ease-out;
+}
+.pop-leave-active {
+  transition: opacity 0.2s ease-in;
+}
+.pop-enter-from,
+.pop-leave-to {
+  opacity: 0;
+}
+
+.animate-zoom {
+  animation: zoom-in 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+@keyframes zoom-in {
+  from { transform: scale(0.9); opacity: 0; }
+  to { transform: scale(1); opacity: 1; }
 }
 </style>
