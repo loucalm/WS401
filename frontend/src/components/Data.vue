@@ -715,6 +715,13 @@ const getTitle = (id) => {
   return labels[id];
 };
 
+
+const statsData = {
+  day: { labels: ['Morning', 'Noon', 'After.', 'Eve.'], values: [0.4, 2.1, 1.2, 0.8], max: 3 },
+  week: { labels: ['Wk.10', 'Wk.11', 'Wk.12', 'Wk.13'], values: [2, 3, 8, 12], max: 15 },
+  month: { labels: ['Jan.', 'Feb.', 'Mar.', 'Apr.'], values: [45, 38, 52, 30], max: 60 }
+};
+
 const challenges = computed(() => [
   {
     title: t("data.challenges.car_free_week"),
@@ -779,19 +786,10 @@ const chartOptions = {
 </script>
 
 <style scoped>
-/* Mapping logic helpers for theme variables from app.css */
-.font-title {
-  font-family: var(--font-title);
-}
-.font-ui {
-  font-family: var(--font-ui);
-}
-.text-main {
-  color: var(--color-main);
-}
-.text-grey {
-  color: var(--color-grey);
-}
+.font-title { font-family: var(--font-title); }
+.font-ui { font-family: var(--font-ui); }
+.text-main { color: var(--color-main); }
+.text-grey { color: var(--color-grey); }
 
 .fade-enter-active,
 .fade-leave-active {
