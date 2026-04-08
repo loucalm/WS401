@@ -1,11 +1,57 @@
 <template>
-  <div class="min-h-screen bg-white text-black font-ui">
+  <div class="min-h-screen bg-white text-black">
     <main
-      class="mx-auto flex min-h-screen w-full max-w-105 flex-col bg-white pb-28 shadow-[0_0_0_1px_rgba(0,0,0,0.04)] lg:my-0 lg:rounded-none lg:px-10 relative"
+      class="mx-auto flex min-h-screen w-full max-w-105 flex-col bg-white pb-28 shadow-[0_0_0_1px_rgba(0,0,0,0.04)] lg:my-0 lg:rounded-none lg:px-10"
     >
       <section
         class="relative overflow-hidden rounded-b-[36px] bg-main-light px-4 pb-6 pt-4"
       >
+        <div class="absolute right-4 top-4 z-30">
+          <button
+            type="button"
+            class="relative flex h-10 w-10 items-center justify-center rounded-full bg-[#F4F4F4] text-grey shadow-sm transition-all active:scale-90"
+            @click="isNotifOpen = !isNotifOpen"
+            :aria-label="t('dashboard.notifications_title')"
+            :title="t('dashboard.notifications_title')"
+          >
+            <Icon icon="ph:bell" class="h-5.5 w-5.5" />
+            <span
+              v-if="unreadNotifications > 0"
+              class="absolute -right-1 -top-1 inline-flex h-5 min-w-5 items-center justify-center rounded-full bg-systeme px-1 text-[10px] font-bold text-white"
+            >
+              {{ unreadNotifications > 9 ? '9+' : unreadNotifications }}
+            </span>
+          </button>
+
+          <transition name="notif-pop">
+            <div
+              v-if="isNotifOpen"
+              class="absolute right-0 mt-2 w-72 rounded-2xl border border-grey/15 bg-white p-3 shadow-2xl"
+            >
+              <p class="px-1 text-[12px] font-bold uppercase tracking-wider text-grey">
+                {{ t("dashboard.notifications_title") }}
+              </p>
+              <div v-if="notifications.length === 0" class="px-1 py-3 text-[12px] text-grey">
+                {{ t("dashboard.notifications_empty") }}
+              </div>
+              <ul v-else class="mt-2 max-h-52 space-y-2 overflow-y-auto pr-1">
+                <li
+                  v-for="notif in notifications"
+                  :key="notif.id"
+                  class="rounded-xl border border-grey/10 bg-main-light/35 px-3 py-2"
+                >
+                  <p class="text-[12px] font-medium leading-snug text-black">
+                    {{ notif.message }}
+                  </p>
+                  <p class="mt-1 text-[10px] uppercase tracking-wide text-grey">
+                    {{ notif.timeLabel }}
+                  </p>
+                </li>
+              </ul>
+            </div>
+          </transition>
+        </div>
+
         <div
           class="absolute inset-x-0 bottom-6 h-36 bg-[radial-gradient(circle_at_20%_40%,rgba(17,125,111,0.18),transparent_32%),radial-gradient(circle_at_80%_30%,rgba(17,125,111,0.12),transparent_28%)] opacity-80"
         ></div>
@@ -192,27 +238,31 @@
           </article>
         </div>
       </section>
-
-      <Transition name="pop">
-        <div v-if="showOvertookPopup" class="fixed inset-0 z-[100] flex items-center justify-center px-6">
-          <div class="absolute inset-0 bg-black/40 backdrop-blur-sm" @click="showOvertookPopup = false"></div>
-          <div class="relative w-full max-w-sm overflow-hidden rounded-[32px] bg-white p-8 text-center shadow-2xl animate-zoom">
-            <div class="mx-auto mb-6 flex h-20 w-20 items-center justify-center rounded-full bg-systeme/10 text-systeme">
-              <Icon icon="ph:trend-down-bold" class="h-10 w-10" />
-            </div>
-            <h3 class="font-title text-[24px] leading-tight text-black">
-              {{ t("dashboard.overtook_title", "Watch out!") }}
-            </h3>
-            <p class="mt-4 text-body-16 text-grey">
-              {{ t("dashboard.overtook_message", "Your friend just overtook you in the general ranking!") }}
-            </p>
-            <button type="button" class="mt-8 w-full rounded-2xl bg-main py-4 font-ui text-[18px] font-bold text-white transition-transform active:scale-95 shadow-lg shadow-main/20" @click="showOvertookPopup = false">
-              {{ t("dashboard.overtook_button", "I'm coming for them!") }}
-            </button>
-          </div>
-        </div>
-      </Transition>
     </main>
+
+    <transition name="notif-toast">
+      <div
+        v-if="activeToast"
+        class="fixed inset-x-4 top-5 z-[90] mx-auto w-[min(560px,calc(100%-2rem))] rounded-2xl border border-white/50 bg-white/95 px-4 py-3 shadow-[0_16px_30px_rgba(0,0,0,0.18)] backdrop-blur"
+      >
+        <div class="flex items-start gap-3">
+          <div class="mt-0.5 flex h-8 w-8 items-center justify-center rounded-full bg-main-light text-main">
+            <Icon icon="ph:bell-ringing" class="h-5 w-5" />
+          </div>
+          <div class="min-w-0 flex-1">
+            <p class="text-[12px] font-bold uppercase tracking-wider text-grey">
+              {{ t("dashboard.notifications_title") }}
+            </p>
+            <p class="mt-0.5 text-[14px] font-medium leading-snug text-black">
+              {{ activeToast.message }}
+            </p>
+          </div>
+          <button class="rounded-full p-1 text-grey hover:bg-grey/10" @click="hideActiveToast">
+            <Icon icon="ph:x-bold" class="h-4 w-4" />
+          </button>
+        </div>
+      </div>
+    </transition>
 
     <BottomNav active="home" />
   </div>
@@ -238,9 +288,15 @@ const dailyTargetKg = ref(200);
 const activities = ref([]);
 const leaderboard = ref([]);
 const isLeaderboardOpen = ref(false);
-const showOvertookPopup = ref(false); 
+const isNotifOpen = ref(false);
+const notifications = ref([]);
+const unreadNotifications = ref(0);
+const activeToast = ref(null);
 
 let animationFrameId = null;
+let refreshIntervalId = null;
+let toastTimeoutId = null;
+let previousRanks = new Map();
 
 const parseJwtPayload = (token) => {
   try {
@@ -501,8 +557,62 @@ const rankBadgeClass = (index) => {
   return "bg-main";
 };
 
-const loadDashboardData = async () => {
-  loading.value = true;
+const ordinalRankLabel = (rank) => {
+  if (locale.value === "fr") {
+    if (rank === 1) return "1er";
+    if (rank === 2) return "2e";
+    if (rank === 3) return "3e";
+    return `${rank}e`;
+  }
+
+  if (rank === 1) return "1st";
+  if (rank === 2) return "2nd";
+  if (rank === 3) return "3rd";
+  return `${rank}th`;
+};
+
+const buildFriendRankMessage = (name, rank, co2Value) =>
+  t("dashboard.friend_rank_alert", {
+    name,
+    rank: ordinalRankLabel(rank),
+    co2: formatKg(co2Value),
+  });
+
+const hideActiveToast = () => {
+  activeToast.value = null;
+  if (toastTimeoutId) {
+    clearTimeout(toastTimeoutId);
+    toastTimeoutId = null;
+  }
+};
+
+const pushNotification = (message) => {
+  const notification = {
+    id: `${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
+    message,
+    timeLabel: new Date().toLocaleTimeString(
+      locale.value === "fr" ? "fr-FR" : "en-US",
+      { hour: "2-digit", minute: "2-digit" },
+    ),
+  };
+
+  notifications.value = [notification, ...notifications.value].slice(0, 20);
+  unreadNotifications.value += 1;
+  activeToast.value = notification;
+
+  if (toastTimeoutId) clearTimeout(toastTimeoutId);
+  toastTimeoutId = setTimeout(() => {
+    activeToast.value = null;
+    toastTimeoutId = null;
+  }, 5200);
+};
+
+watch(isNotifOpen, (open) => {
+  if (open) unreadNotifications.value = 0;
+});
+
+const loadDashboardData = async ({ silent = false } = {}) => {
+  if (!silent) loading.value = true;
   try {
     const token = normalizeToken(localStorage.getItem("jwt_token"));
     if (!token) {
@@ -574,7 +684,7 @@ const loadDashboardData = async () => {
         toDashboardActivity(entry, entryItemsByIri, activityTypesByIri),
       );
 
-    leaderboard.value = users
+    const rankedUsers = users
       .map((user) => {
         const userIri = user?.["@id"];
         const todayUserEntries = entries.filter(
@@ -602,17 +712,31 @@ const loadDashboardData = async () => {
       .sort((a, b) => {
         if (b.points !== a.points) return b.points - a.points;
         return a.todayUserCo2 - b.todayUserCo2;
-      })
-      .slice(0, 5);
+      });
 
-   //pop up//
-    setTimeout(() => {
-      const userRank = leaderboard.value.findIndex(u => u.isCurrentUser);
-      if (userRank > 0) {
-        showOvertookPopup.value = true;
-      }
-    }, 1200);
+    leaderboard.value = rankedUsers.slice(0, 5);
 
+    const currentRanks = new Map(rankedUsers.map((user, index) => [user.id, index + 1]));
+    const rankMoversInTop3 = rankedUsers
+      .slice(0, 3)
+      .filter((user, index) => {
+        if (user.isCurrentUser) return false;
+        const newRank = index + 1;
+        const oldRank = previousRanks.get(user.id);
+        return Number.isInteger(oldRank) && oldRank !== newRank;
+      });
+
+    rankMoversInTop3.forEach((user, index) => {
+      setTimeout(() => {
+        const currentRank = currentRanks.get(user.id);
+        if (!currentRank || currentRank > 3) return;
+        pushNotification(
+          buildFriendRankMessage(user.name, currentRank, user.todayUserCo2),
+        );
+      }, index * 180);
+    });
+
+    previousRanks = currentRanks;
   } catch (error) {
     if (error?.response?.status === 401) {
       localStorage.removeItem("jwt_token");
@@ -625,7 +749,7 @@ const loadDashboardData = async () => {
     dailyCo2.value = 0;
     leaderboard.value = [];
   } finally {
-    loading.value = false;
+    if (!silent) loading.value = false;
   }
 };
 
@@ -633,14 +757,42 @@ watch(dailyCo2, (value) => {
   animateDailyCo2(Math.max(0, value));
 });
 
-onMounted(loadDashboardData);
+onMounted(async () => {
+  await loadDashboardData();
+  refreshIntervalId = setInterval(() => {
+    loadDashboardData({ silent: true });
+  }, 18000);
+});
 
 onBeforeUnmount(() => {
   if (animationFrameId) cancelAnimationFrame(animationFrameId);
+  if (refreshIntervalId) clearInterval(refreshIntervalId);
+  if (toastTimeoutId) clearTimeout(toastTimeoutId);
 });
 </script>
 
 <style scoped>
+.notif-pop-enter-active,
+.notif-pop-leave-active {
+  transition: all 0.2s ease;
+}
+
+.notif-pop-enter-from,
+.notif-pop-leave-to {
+  opacity: 0;
+  transform: translateY(-4px) scale(0.98);
+}
+
+.notif-toast-enter-active,
+.notif-toast-leave-active {
+  transition: all 0.3s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.notif-toast-enter-from,
+.notif-toast-leave-to {
+  opacity: 0;
+  transform: translateY(-12px) scale(0.98);
+}
 
 .leaderboard-collapse-enter-active,
 .leaderboard-collapse-leave-active {
@@ -663,26 +815,5 @@ onBeforeUnmount(() => {
   opacity: 1;
   transform: translateY(0);
   max-height: 320px;
-}
-
-
-.pop-enter-active {
-  transition: opacity 0.3s ease-out;
-}
-.pop-leave-active {
-  transition: opacity 0.2s ease-in;
-}
-.pop-enter-from,
-.pop-leave-to {
-  opacity: 0;
-}
-
-.animate-zoom {
-  animation: zoom-in 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
-}
-
-@keyframes zoom-in {
-  from { transform: scale(0.9); opacity: 0; }
-  to { transform: scale(1); opacity: 1; }
 }
 </style>
