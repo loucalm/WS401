@@ -27,12 +27,7 @@ class AppFixtures extends Fixture
         $user1->setUsername('EcoWarrior');
         $user1->setTargetCo2(2000);
         $user1->setUnitPreference('metric');
-<<<<<<< Updated upstream
         $user1->setRoles(['ROLE_ADMIN']);
-        // Le mot de passe pour tester sera : "test"
-=======
-        $user1->setRoles([]);
->>>>>>> Stashed changes
         $user1->setPassword($this->passwordHasher->hashPassword($user1, 'test'));
         $manager->persist($user1);
 

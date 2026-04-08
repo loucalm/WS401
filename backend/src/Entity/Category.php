@@ -63,10 +63,6 @@ class Category
 
     public function __toString(): string
     {
-<<<<<<< Updated upstream
-        return $this->name ?? 'Category';
-=======
         return $this->name ?? '';
->>>>>>> Stashed changes
     }
 }
