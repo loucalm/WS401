@@ -284,6 +284,52 @@ export default {
     subtitle: "Cette route n'existe pas",
     back_login: "Retour à la connexion",
   },
+  security: {
+    kicker: "Compte",
+    page_title: "Sécurité & Confidentialité",
+    page_subtitle:
+      "Gère ta sécurité et ta confidentialité depuis un seul écran.",
+    section_title: "Sécurité",
+    change_password: "Changer le mot de passe",
+    change_password_desc: "Modifie ton mot de passe pour sécuriser ton compte",
+    active_sessions: "Sessions actives",
+    active_sessions_desc: "Examine et révoque les sessions actives",
+    two_factor: "Authentification à deux facteurs",
+    two_factor_desc: "Ajoute une protection supplémentaire à ton compte",
+    enable: "Activer",
+    disable: "Désactiver",
+  },
+  privacy: {
+    section_title: "Confidentialité",
+    data_download: "Télécharger mes données",
+    data_download_desc:
+      "Télécharge une copie de toutes tes données personnelles",
+    download: "Télécharger",
+    download_coming_soon:
+      "Le téléchargement de données sera bientôt disponible",
+    profile_visibility: "Visibilité du profil",
+    profile_visibility_desc:
+      "Contrôle qui peut voir ton profil et tes statistiques",
+    cookie_preferences: "Préférences de cookies",
+    cookie_preferences_desc: "Gère tes préférences en matière de cookies",
+    delete_account: "Supprimer mon compte",
+    delete_account_desc:
+      "Supprime définitivement ton compte et toutes tes données",
+    delete: "Supprimer le compte",
+    delete_confirmation:
+      "Es-tu sûr ? Cette action ne peut pas être annulée. Tous tes données seront supprimées.",
+    delete_coming_soon: "La suppression de compte sera bientôt disponible",
+    info_section_title: "À propos de ta sécurité",
+    info_1_title: "Chiffrement de données",
+    info_1_desc:
+      "Tes données sont chiffrées en transit et stockées en toute sécurité sur nos serveurs.",
+    info_2_title: "Pas de partage",
+    info_2_desc:
+      "Nous ne partageons jamais tes données personnelles avec des tiers sans ton consentement.",
+    info_3_title: "Conformité RGPD",
+    info_3_desc:
+      "Nous respectons le Règlement Général sur la Protection des Données.",
+  },
   wizard: {
     add_activity: "Ajouter une activité",
     type_of_activity: "Type d'activité",
