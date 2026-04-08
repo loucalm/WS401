@@ -208,11 +208,7 @@ import axios from "axios";
 import { onMounted } from "vue";
 import { useRouter } from "vue-router";
 import BottomNav from "./BottomNav.vue";
-
-
-import rafaAvatar from "@/assets/img/persona.jpg";
-import kenzaAvatar from "@/assets/img/persona2.jpg";
-import kenzoAvatar from "@/assets/img/persona3.jpg";
+import { resolveProfilePictureSrc } from "../utils/profilePictures";
 
 const { t } = useI18n();
 const router = useRouter();
@@ -340,7 +336,7 @@ const loadFriendsFromApi = async () => {
           rank: "-",
           weight: 0,
           online: user.email === currentEmail,
-          avatar: rafaAvatar,
+          avatar: resolveProfilePictureSrc(user.profilePicture),
           position,
         };
       })
@@ -350,10 +346,7 @@ const loadFriendsFromApi = async () => {
       friends.value = [];
       return;
     }
-
-    const avatars = [rafaAvatar, kenzaAvatar, kenzoAvatar];
     usersWithLocation.forEach((friend, index) => {
-      friend.avatar = avatars[index % avatars.length];
       friend.rank = `${index + 1}${index === 0 ? "st" : index === 1 ? "nd" : index === 2 ? "rd" : "th"}`;
       friend.weight = Number(Math.max(0, 35 - index * 4.2).toFixed(1));
     });

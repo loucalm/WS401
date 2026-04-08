@@ -10,6 +10,7 @@ import ProfileEdit from "./components/ProfileEdit.vue";
 import ProfileLocation from "./components/ProfileLocation.vue";
 import Data from "./components/Data.vue";
 import SecurityPrivacy from "./components/SecurityPrivacy.vue";
+import Friends from "./components/Friends.vue";
 
 /**
  * @param {string} token
@@ -108,6 +109,12 @@ const routes = [
     path: "/profile/security",
     name: "security-privacy",
     component: SecurityPrivacy,
+    meta: { requiresAuth: true },
+  },
+  {
+    path: "/friends",
+    name: "friends",
+    component: Friends,
     meta: { requiresAuth: true },
   },
   {

@@ -24,5 +24,45 @@ class Friendship
 
     #[ORM\Column(length: 20)]
     private ?string $status = 'pending'; // Statut de la demande : 'pending' (en attente) ou 'accepted' (acceptée)
- // ajouter des getters et setters ici si besoin
+
+    public function getId(): ?int
+    {
+        return $this->id;
+    }
+
+    public function getSender(): ?User
+    {
+        return $this->sender;
+    }
+
+    public function setSender(?User $sender): static
+    {
+        $this->sender = $sender;
+
+        return $this;
+    }
+
+    public function getReceiver(): ?User
+    {
+        return $this->receiver;
+    }
+
+    public function setReceiver(?User $receiver): static
+    {
+        $this->receiver = $receiver;
+
+        return $this;
+    }
+
+    public function getStatus(): ?string
+    {
+        return $this->status;
+    }
+
+    public function setStatus(?string $status): static
+    {
+        $this->status = $status;
+
+        return $this;
+    }
 }
