@@ -62,7 +62,9 @@
     </div>
 
     <div class="mt-8 flex items-center gap-3">
-      <h3 class="font-ui text-[28px] leading-none text-black">{{ t("wizard.surface") }}</h3>
+      <h3 class="font-ui text-[28px] leading-none text-black">
+        {{ t("wizard.surface") }}
+      </h3>
     </div>
 
     <div class="mt-8 flex justify-center">
@@ -121,7 +123,7 @@
         class="flex h-14 w-14 items-center justify-center rounded-full bg-secondary-light font-ui text-[30px] leading-none text-secondary"
         @click="$emit('adjust-surface', -1)"
       >
-        -
+        <Icon icon="tabler:minus" class="h-7 w-7" />
       </button>
       <button
         type="button"
@@ -136,7 +138,7 @@
         class="flex h-14 w-14 items-center justify-center rounded-full bg-secondary-light font-ui text-[30px] leading-none text-secondary"
         @click="$emit('adjust-surface', 1)"
       >
-        +
+        <Icon icon="tabler:plus" class="h-7 w-7" />
       </button>
       <button
         type="button"
@@ -148,7 +150,9 @@
     </div>
 
     <div class="mt-9 flex items-center justify-between gap-3">
-      <h3 class="font-ui text-[28px] leading-none text-black">{{ t("wizard.duration") }}</h3>
+      <h3 class="font-ui text-[28px] leading-none text-black">
+        {{ t("wizard.duration") }}
+      </h3>
       <button
         type="button"
         class="flex h-10 w-10 items-center justify-center rounded-full bg-secondary-light text-secondary"

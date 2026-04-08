@@ -62,7 +62,9 @@
     </div>
 
     <div class="mt-8 flex items-center gap-3">
-      <h3 class="font-ui text-[28px] leading-none text-black">{{ t("wizard.distance") }}</h3>
+      <h3 class="font-ui text-[28px] leading-none text-black">
+        {{ t("wizard.distance") }}
+      </h3>
     </div>
 
     <div class="mt-8 flex justify-center">
@@ -121,7 +123,7 @@
         class="flex h-14 w-14 items-center justify-center rounded-full bg-main-light font-ui text-[30px] leading-none text-main"
         @click="$emit('adjust-distance', -1)"
       >
-        -
+        <Icon icon="tabler:minus" class="h-7 w-7" />
       </button>
       <button
         type="button"
@@ -136,7 +138,7 @@
         class="flex h-14 w-14 items-center justify-center rounded-full bg-main-light font-ui text-[30px] leading-none text-main"
         @click="$emit('adjust-distance', 1)"
       >
-        +
+        <Icon icon="tabler:plus" class="h-7 w-7" />
       </button>
       <button
         type="button"

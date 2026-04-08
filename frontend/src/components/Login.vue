@@ -50,7 +50,9 @@
           <button
             type="button"
             class="absolute right-4 top-1/2 -translate-y-1/2 text-grey hover:text-black"
-            :aria-label="showPassword ? t('auth.hide_password') : t('auth.show_password')"
+            :aria-label="
+              showPassword ? t('auth.hide_password') : t('auth.show_password')
+            "
             @click="showPassword = !showPassword"
           >
             <svg
@@ -185,8 +187,8 @@ import { useRouter } from "vue-router";
 import { useI18n } from "vue-i18n";
 import logoUrl from "../assets/logo.svg";
 import backgroundUrl from "../assets/img/background.png";
-import fabienUrl from "../assets/img/fabien.png";
-import briceUrl from "../assets/img/brice.png";
+import fabienUrl from "../assets/img/profil-pic/fabien.png";
+import briceUrl from "../assets/img/profil-pic/brice.png";
 
 const email = ref("");
 const password = ref("");

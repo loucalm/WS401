@@ -6,6 +6,7 @@ import Register from "./components/Register.vue";
 import Wizard from "./components/Wizard.vue";
 import Map from "./components/Map.vue";
 import Profile from "./components/Profile.vue";
+import ProfileEdit from "./components/ProfileEdit.vue";
 import ProfileLocation from "./components/ProfileLocation.vue";
 import Data from "./components/Data.vue";
 
@@ -88,6 +89,12 @@ const routes = [
     path: "/profile/location",
     name: "profile-location",
     component: ProfileLocation,
+    meta: { requiresAuth: true },
+  },
+  {
+    path: "/profile/edit",
+    name: "profile-edit",
+    component: ProfileEdit,
     meta: { requiresAuth: true },
   },
   {

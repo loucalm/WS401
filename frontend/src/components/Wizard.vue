@@ -201,68 +201,181 @@
               {{ t("wizard.review") }}
             </p>
 
-            <div v-if="selectedCategory === 'food'" class="mt-10 space-y-6">
-              <p class="font-ui text-[24px] leading-none text-black">
-                {{ t("wizard.diet") }} : {{ selectedFoodConsumptionLabel }}
-              </p>
+            <div
+              class="mt-7 rounded-3xl border border-black/7 bg-linear-to-br from-white to-main-light/35 p-4 shadow-[0_12px_24px_rgba(15,23,42,0.1)]"
+            >
+              <div class="flex items-center gap-3">
+                <div
+                  class="flex h-11 w-11 items-center justify-center rounded-2xl bg-white text-main shadow-sm"
+                >
+                  <Icon icon="tabler:clipboard-check" class="h-6 w-6" />
+                </div>
+                <div>
+                  <p
+                    class="font-ui text-[13px] uppercase tracking-[0.14em] text-black/45"
+                  >
+                    {{ t("wizard.recap", { title: stepTitle }) }}
+                  </p>
+                  <p class="font-ui text-[21px] leading-none text-black">
+                    {{ stepTitle }}
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            <div v-if="selectedCategory === 'food'" class="mt-5 space-y-3">
+              <div
+                class="rounded-2xl border border-black/7 bg-white px-4 py-4 shadow-[0_8px_14px_rgba(0,0,0,0.08)]"
+              >
+                <p
+                  class="font-ui text-[13px] uppercase tracking-widest text-black/45"
+                >
+                  {{ t("wizard.diet") }}
+                </p>
+                <p class="mt-1 font-ui text-[22px] leading-none text-black">
+                  {{ selectedFoodConsumptionLabel }}
+                </p>
+              </div>
               <template
                 v-for="section in cachedFoodSections[selectedFoodConsumption] ||
                 []"
                 :key="section.id"
               >
-                <p class="font-ui text-[24px] leading-none text-black">
-                  {{ section.label }} :
-                  {{ getFoodSelectionLabels(section.id) }}
-                </p>
+                <div
+                  class="rounded-2xl border border-black/7 bg-white px-4 py-4 shadow-[0_8px_14px_rgba(0,0,0,0.08)]"
+                >
+                  <p
+                    class="font-ui text-[13px] uppercase tracking-widest text-black/45"
+                  >
+                    {{ section.label }}
+                  </p>
+                  <p class="mt-1 font-ui text-[22px] leading-tight text-black">
+                    {{ getFoodSelectionLabels(section.id) }}
+                  </p>
+                </div>
               </template>
             </div>
 
             <div
               v-else-if="selectedCategory === 'consumption'"
-              class="mt-12 space-y-10"
+              class="mt-5 space-y-3"
             >
-              <p class="font-ui text-[32px] leading-none text-black">
-                {{ t("wizard.consumption") }} : {{ translateActivityLabel(consumptionSource) }}
-              </p>
-              <p class="font-ui text-[32px] leading-none text-black">
-                {{ t("wizard.surface") }} : {{ surface }} m²
-              </p>
-              <p class="font-ui text-[32px] leading-none text-black">
-                {{ t("wizard.duration") }} : {{ duration }}h
-              </p>
+              <div
+                class="rounded-2xl border border-black/7 bg-white px-4 py-4 shadow-[0_8px_14px_rgba(0,0,0,0.08)]"
+              >
+                <p
+                  class="font-ui text-[13px] uppercase tracking-widest text-black/45"
+                >
+                  {{ t("wizard.consumption") }}
+                </p>
+                <p class="mt-1 font-ui text-[24px] leading-none text-black">
+                  {{ translateActivityLabel(consumptionSource) }}
+                </p>
+              </div>
+              <div class="grid grid-cols-2 gap-3">
+                <div
+                  class="rounded-2xl border border-black/7 bg-white px-4 py-4 shadow-[0_8px_14px_rgba(0,0,0,0.08)]"
+                >
+                  <p
+                    class="font-ui text-[13px] uppercase tracking-widest text-black/45"
+                  >
+                    {{ t("wizard.surface") }}
+                  </p>
+                  <p class="mt-1 font-ui text-[24px] leading-none text-black">
+                    {{ surface }} m²
+                  </p>
+                </div>
+                <div
+                  class="rounded-2xl border border-black/7 bg-white px-4 py-4 shadow-[0_8px_14px_rgba(0,0,0,0.08)]"
+                >
+                  <p
+                    class="font-ui text-[13px] uppercase tracking-widest text-black/45"
+                  >
+                    {{ t("wizard.duration") }}
+                  </p>
+                  <p class="mt-1 font-ui text-[24px] leading-none text-black">
+                    {{ duration }}h
+                  </p>
+                </div>
+              </div>
             </div>
 
             <div
               v-else-if="selectedCategory === 'clothing'"
-              class="mt-10 space-y-6"
+              class="mt-5 space-y-3"
             >
-              <p class="font-ui text-[24px] leading-none text-black">
-                {{ t("wizard.purchase_type") }} {{ selectedClothingPurchaseLabel }}
-              </p>
-              <template v-for="section in clothingSections" :key="section.id">
-                <p class="font-ui text-[24px] leading-none text-black">
-                  {{ section.label }} : {{ getClothingLabel(section.id) }}
+              <div
+                class="rounded-2xl border border-black/7 bg-white px-4 py-4 shadow-[0_8px_14px_rgba(0,0,0,0.08)]"
+              >
+                <p
+                  class="font-ui text-[13px] uppercase tracking-widest text-black/45"
+                >
+                  {{ t("wizard.purchase_type") }}
                 </p>
+                <p class="mt-1 font-ui text-[22px] leading-none text-black">
+                  {{ selectedClothingPurchaseLabel }}
+                </p>
+              </div>
+              <template v-for="section in clothingSections" :key="section.id">
+                <div
+                  class="rounded-2xl border border-black/7 bg-white px-4 py-4 shadow-[0_8px_14px_rgba(0,0,0,0.08)]"
+                >
+                  <p
+                    class="font-ui text-[13px] uppercase tracking-widest text-black/45"
+                  >
+                    {{ section.label }}
+                  </p>
+                  <p class="mt-1 font-ui text-[22px] leading-none text-black">
+                    {{ getClothingLabel(section.id) }}
+                  </p>
+                </div>
               </template>
             </div>
 
-            <div v-else class="mt-16 space-y-16">
-              <p class="font-ui text-[32px] leading-none text-black">
-                {{ t("wizard.transport") }} : {{ translateActivityLabel(transportMode) }}
-              </p>
-              <p class="font-ui text-[32px] leading-none text-black">
-                {{ t("wizard.distance") }} : {{ distance }}km
-              </p>
+            <div v-else class="mt-5 space-y-3">
+              <div
+                class="rounded-2xl border border-black/7 bg-white px-4 py-4 shadow-[0_8px_14px_rgba(0,0,0,0.08)]"
+              >
+                <p
+                  class="font-ui text-[13px] uppercase tracking-widest text-black/45"
+                >
+                  {{ t("wizard.transport") }}
+                </p>
+                <p class="mt-1 font-ui text-[24px] leading-none text-black">
+                  {{ translateActivityLabel(transportMode) }}
+                </p>
+              </div>
+              <div
+                class="rounded-2xl border border-black/7 bg-white px-4 py-4 shadow-[0_8px_14px_rgba(0,0,0,0.08)]"
+              >
+                <p
+                  class="font-ui text-[13px] uppercase tracking-widest text-black/45"
+                >
+                  {{ t("wizard.distance") }}
+                </p>
+                <p class="mt-1 font-ui text-[24px] leading-none text-black">
+                  {{ distance }} km
+                </p>
+              </div>
             </div>
 
-            <div class="mt-auto pb-4 text-center">
+            <div
+              class="mt-7 rounded-3xl bg-main px-4 py-5 text-center shadow-[0_12px_20px_rgba(17,125,111,0.35)]"
+            >
+              <p
+                class="font-ui text-[13px] uppercase tracking-[0.15em] text-white/75"
+              >
+                {{ t("wizard.co2_estimate") }}
+              </p>
               <p
                 :class="step3TextAccentClass"
-                class="font-ui text-[44px] font-bold leading-none"
+                class="mt-1 font-ui text-[42px] font-bold leading-none text-white"
               >
                 {{ formattedCo2 }} KG CO2E
               </p>
             </div>
+
+            <div class="mt-auto pb-4"></div>
           </section>
         </Transition>
       </div>
@@ -272,7 +385,6 @@
         class="pointer-events-none fixed inset-x-0 bottom-0 z-20 bg-linear-to-t from-white/88 via-white/75 to-transparent px-4 pb-2 backdrop-blur-sm"
       >
         <div
-          :class="currentStep === 2 ? '' : 'bg-white'"
           class="mx-auto grid w-full max-w-105 grid-cols-2 gap-4 rounded-3xl px-2 pt-3 pointer-events-auto"
         >
           <button
@@ -891,6 +1003,16 @@ export default {
             : "text-main",
     );
 
+    const step3EstimateCardClass = computed(() =>
+      selectedCategory.value === "food"
+        ? "bg-tertiary shadow-[0_12px_20px_rgba(193,165,115,0.35)]"
+        : selectedCategory.value === "consumption"
+          ? "bg-secondary shadow-[0_12px_20px_rgba(75,100,129,0.35)]"
+          : selectedCategory.value === "clothing"
+            ? "bg-cloth shadow-[0_12px_20px_rgba(131,18,151,0.35)]"
+            : "bg-main shadow-[0_12px_20px_rgba(17,125,111,0.35)]",
+    );
+
     const extractCollection = (responseData) => {
       if (responseData?.member) return responseData.member;
       if (responseData?.["hydra:member"]) return responseData["hydra:member"];
@@ -1332,6 +1454,7 @@ export default {
       step3GaugeFillClass,
       step3GaugeRingClass,
       step3TextAccentClass,
+      step3EstimateCardClass,
       selectActivityType,
       selectTransportMode,
       selectConsumptionSource,

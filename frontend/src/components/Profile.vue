@@ -36,7 +36,7 @@
           class="h-36 w-36 rounded-full border-4 border-main/85 bg-white shadow-md overflow-hidden flex items-center justify-center"
         >
           <img
-            :src="personaSrc"
+            :src="profilePictureSrc"
             alt="Profile Avatar"
             class="h-full w-full object-cover scale-125 grayscale"
           />
@@ -48,11 +48,15 @@
           class="rounded-2xl border border-grey/15 bg-white px-7 py-6 text-center shadow-[0_4px_12px_rgba(0,0,0,0.06)]"
         >
           <h1
-            class="font-title text-[40px] leading-tight text-black tracking-tight"
+            class="font-title leading-tight text-black tracking-tight"
+            style="font-size: 40px"
           >
             {{ profileDisplayName }}
           </h1>
-          <p class="font-ui text-[16px] font-medium text-main mt-1.5">
+          <p
+            class="font-ui font-medium text-main mt-1.5"
+            style="font-size: 16px"
+          >
             {{ t("profile.level", { lvl: profileLevel }) }}
           </p>
 
@@ -83,7 +87,7 @@
             <Icon icon="ph:gear" class="h-6 w-6" />
           </div>
           <span
-            class="ml-4.5 flex-1 font-ui text-body-12 font-semibold text-black italic"
+            class="ml-4.5 flex-1 font-ui text-body-16 font-semibold text-black italic"
           >
             {{ t("profile.personal_info") }}
           </span>
@@ -100,7 +104,7 @@
             <Icon icon="ph:map-pin" class="h-6 w-6" />
           </div>
           <span
-            class="ml-4.5 flex-1 font-ui text-body-12 font-semibold text-black italic"
+            class="ml-4.5 flex-1 font-ui text-body-16 font-semibold text-black italic"
           >
             {{ t("profile.location") }}
           </span>
@@ -117,7 +121,7 @@
             <Icon icon="ph:shield-check" class="h-6 w-6" />
           </div>
           <span
-            class="ml-4.5 flex-1 font-ui text-body-12 font-semibold text-black italic"
+            class="ml-4.5 flex-1 font-ui text-body-16 font-semibold text-black italic"
           >
             {{ t("profile.security_privacy") }}
           </span>
@@ -134,35 +138,51 @@
             <Icon icon="ph:user-plus" class="h-6 w-6" />
           </div>
           <span
-            class="ml-4.5 flex-1 font-ui text-body-12 font-semibold text-black italic"
+            class="ml-4.5 flex-1 font-ui text-body-16 font-semibold text-black italic"
           >
             {{ t("profile.friends") }}
           </span>
           <Icon icon="ph:caret-right" class="text-grey h-5 w-5" />
         </router-link>
 
-        <div class="flex items-center rounded-xl border border-grey/15 bg-white px-4.5 py-4 shadow-[0_4px_10px_rgba(0,0,0,0.05)]">
+        <div
+          class="flex items-center rounded-xl border border-grey/15 bg-white px-4.5 py-4 shadow-[0_4px_10px_rgba(0,0,0,0.05)]"
+        >
           <div
             class="flex h-11 w-11 items-center justify-center rounded-lg bg-[#EFEFEF] text-main"
           >
             <Icon icon="ph:globe" class="h-6 w-6" />
           </div>
           <span
-            class="ml-4.5 flex-1 text-left font-ui text-body-12 font-semibold text-black italic"
+            class="ml-4.5 flex-1 text-left font-ui text-body-16 font-semibold text-black italic"
           >
             {{ t("profile.language") }}
           </span>
-          <div class="flex items-center gap-1 rounded-xl border border-grey/20 bg-[#F4F4F4] p-1">
+          <div
+            class="flex items-center gap-1 rounded-xl border border-grey/20 bg-[#F4F4F4] p-1"
+          >
             <button
               @click="locale !== 'fr' && toggleLocale()"
               class="rounded-lg px-3 py-1.5 font-ui text-[14px] font-bold uppercase tracking-wide transition-all duration-200"
-              :class="locale === 'fr' ? 'bg-main text-white shadow-sm' : 'text-grey hover:text-black'"
-            >FR</button>
+              :class="
+                locale === 'fr'
+                  ? 'bg-main text-white shadow-sm'
+                  : 'text-grey hover:text-black'
+              "
+            >
+              FR
+            </button>
             <button
               @click="locale !== 'en' && toggleLocale()"
               class="rounded-lg px-3 py-1.5 font-ui text-[14px] font-bold uppercase tracking-wide transition-all duration-200"
-              :class="locale === 'en' ? 'bg-main text-white shadow-sm' : 'text-grey hover:text-black'"
-            >EN</button>
+              :class="
+                locale === 'en'
+                  ? 'bg-main text-white shadow-sm'
+                  : 'text-grey hover:text-black'
+              "
+            >
+              EN
+            </button>
           </div>
         </div>
       </section>
@@ -188,13 +208,14 @@ import { useRouter } from "vue-router";
 import { useI18n } from "vue-i18n";
 import axios from "axios";
 import { computed, onMounted, ref } from "vue";
-import personaSrc from "../assets/img/persona.jpg";
+import { resolveProfilePictureSrc } from "../utils/profilePictures.js";
 
 const router = useRouter();
 const { t, locale } = useI18n();
 const API_BASE = "http://localhost:8000/api";
 
 const profileDisplayName = ref("-");
+const profilePictureSrc = ref(resolveProfilePictureSrc(null));
 const profilePoints = ref(0);
 const profileLevel = ref(1);
 const friendsCount = ref(0);
@@ -286,6 +307,10 @@ const loadProfile = async () => {
       router.push("/login");
       return;
     }
+
+    profilePictureSrc.value = resolveProfilePictureSrc(
+      currentUser.profilePicture,
+    );
 
     const currentUserIri = currentUser["@id"];
     profileDisplayName.value =
