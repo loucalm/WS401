@@ -207,7 +207,7 @@ import BottomNav from "./BottomNav.vue";
 import { useRouter } from "vue-router";
 import { useI18n } from "vue-i18n";
 import axios from "axios";
-import { computed, onMounted, ref } from "vue";
+import { computed, onBeforeUnmount, onMounted, ref } from "vue";
 import { resolveProfilePictureSrc } from "../utils/profilePictures.js";
 
 const router = useRouter();
@@ -220,6 +220,7 @@ const profilePoints = ref(0);
 const profileLevel = ref(1);
 const friendsCount = ref(0);
 const savedCo2Kg = ref(0);
+let refreshIntervalId = null;
 
 const savedCo2Label = computed(() => `+${savedCo2Kg.value.toFixed(2)}kg CO2`);
 
@@ -274,6 +275,34 @@ const fetchAll = async (resource, headers) => {
   return all;
 };
 
+const isSameDay = (isoDate) => {
+  if (!isoDate) return false;
+  const date = new Date(isoDate);
+  const now = new Date();
+  return (
+    date.getFullYear() === now.getFullYear() &&
+    date.getMonth() === now.getMonth() &&
+    date.getDate() === now.getDate()
+  );
+};
+
+const entryCo2 = (entry, entryItemsByIri, activityTypesByIri) => {
+  const itemIris = Array.isArray(entry?.entryItems) ? entry.entryItems : [];
+  if (itemIris.length === 0) return Number(entry?.totalCo2 || 0);
+
+  let total = 0;
+  for (const itemIri of itemIris) {
+    const item = entryItemsByIri.get(itemIri);
+    if (!item) continue;
+    const qty = Number(item.quantity || 0);
+    const type = activityTypesByIri.get(item.activityType);
+    const factor = Number(type?.co2Factor || 0);
+    total += qty * factor;
+  }
+
+  return total;
+};
+
 const loadProfile = async () => {
   try {
     const token = normalizeToken(localStorage.getItem("jwt_token"));
@@ -295,9 +324,11 @@ const loadProfile = async () => {
       Accept: "application/ld+json",
     };
 
-    const [users, entries, friendships] = await Promise.all([
+    const [users, entries, entryItems, activityTypes, friendships] = await Promise.all([
       fetchAll("users", headers),
       fetchAll("entries", headers),
+      fetchAll("entry_items", headers),
+      fetchAll("activity_types", headers),
       fetchAll("friendships", headers),
     ]);
 
@@ -316,16 +347,59 @@ const loadProfile = async () => {
     profileDisplayName.value =
       currentUser.username || currentUser.email || t("nav.profile");
 
+    const entryItemsByIri = new Map(
+      entryItems.map((item) => [item["@id"], item]),
+    );
+    const activityTypesByIri = new Map(
+      activityTypes.map((type) => [type["@id"], type]),
+    );
+
     const userEntries = entries.filter(
       (entry) => entry.owner === currentUserIri,
     );
     const totalCo2Kg = userEntries.reduce(
-      (sum, entry) => sum + Number(entry?.totalCo2 || 0),
+      (sum, entry) => sum + entryCo2(entry, entryItemsByIri, activityTypesByIri),
       0,
     );
 
-    // Keep a simple points model aligned with dashboard style.
-    const computedPoints = Math.max(0, Math.round((2 - totalCo2Kg) * 60));
+    const acceptedFriendIris = new Set(
+      friendships
+        .filter((friendship) => friendship?.status === "accepted")
+        .flatMap((friendship) => {
+          if (friendship?.sender === currentUserIri) return [friendship?.receiver];
+          if (friendship?.receiver === currentUserIri) return [friendship?.sender];
+          return [];
+        })
+        .filter(Boolean),
+    );
+
+    const leaderboardUserIris = new Set([currentUserIri, ...acceptedFriendIris]);
+
+    const rankedUsers = users
+      .filter((user) => leaderboardUserIris.has(user?.["@id"]))
+      .map((user) => {
+        const userIri = user?.["@id"];
+        const todayUserEntries = entries.filter(
+          (entry) => entry.owner === userIri && isSameDay(entry.createdAt),
+        );
+        const todayUserCo2 = todayUserEntries.reduce(
+          (sum, entry) => sum + entryCo2(entry, entryItemsByIri, activityTypesByIri),
+          0,
+        );
+
+        return {
+          id: user.id,
+          isCurrentUser: userIri === currentUserIri,
+          points: Math.max(0, Math.round(200 - todayUserCo2 * 10)),
+          todayUserCo2,
+        };
+      })
+      .sort((a, b) => {
+        if (b.points !== a.points) return b.points - a.points;
+        return a.todayUserCo2 - b.todayUserCo2;
+      });
+
+    const computedPoints = rankedUsers.find((user) => user.isCurrentUser)?.points ?? 0;
     profilePoints.value = computedPoints;
     profileLevel.value = Math.max(1, Math.floor(computedPoints / 100) + 1);
 
@@ -362,4 +436,14 @@ const handleLogout = () => {
 };
 
 onMounted(loadProfile);
+
+onMounted(() => {
+  refreshIntervalId = setInterval(() => {
+    loadProfile();
+  }, 5000);
+});
+
+onBeforeUnmount(() => {
+  if (refreshIntervalId) clearInterval(refreshIntervalId);
+});
 </script>

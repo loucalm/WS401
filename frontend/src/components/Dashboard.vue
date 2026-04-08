@@ -101,7 +101,7 @@
               {{ t("dashboard.points_title") }}
             </p>
             <p class="mt-1 font-ui text-[17px] font-bold text-main sm:text-[19px]">
-              {{ t("dashboard.points_value", { count: 560 }) }}
+              {{ t("dashboard.points_value", { count: currentUserPoints }) }}
             </p>
           </div>
 
@@ -287,6 +287,7 @@ const animatedDailyCo2 = ref(0);
 const dailyTargetKg = ref(200);
 const activities = ref([]);
 const leaderboard = ref([]);
+const currentUserPoints = ref(0);
 const isLeaderboardOpen = ref(false);
 const isNotifOpen = ref(false);
 const notifications = ref([]);
@@ -571,11 +572,20 @@ const ordinalRankLabel = (rank) => {
   return `${rank}th`;
 };
 
-const buildFriendRankMessage = (name, rank, co2Value) =>
+const buildFriendRankMessage = (name, rank, points) =>
   t("dashboard.friend_rank_alert", {
     name,
     rank: ordinalRankLabel(rank),
-    co2: formatKg(co2Value),
+    points,
+  });
+
+const buildFriendOvertakeMessage = (winnerName, loserName, rank, total, points) =>
+  t("dashboard.friend_overtake_alert", {
+    winner: winnerName,
+    loser: loserName,
+    rank,
+    total,
+    points,
   });
 
 const hideActiveToast = () => {
@@ -619,6 +629,7 @@ const loadDashboardData = async ({ silent = false } = {}) => {
       activities.value = [];
       dailyCo2.value = 0;
       leaderboard.value = [];
+      currentUserPoints.value = 0;
       localStorage.removeItem("jwt_token");
       router.push("/login");
       return;
@@ -631,6 +642,7 @@ const loadDashboardData = async ({ silent = false } = {}) => {
       activities.value = [];
       dailyCo2.value = 0;
       leaderboard.value = [];
+      currentUserPoints.value = 0;
       router.push("/login");
       return;
     }
@@ -641,11 +653,12 @@ const loadDashboardData = async ({ silent = false } = {}) => {
       Accept: "application/ld+json",
     };
 
-    const [users, entries, entryItems, activityTypes] = await Promise.all([
+    const [users, entries, entryItems, activityTypes, friendships] = await Promise.all([
       fetchAll("users", headers),
       fetchAll("entries", headers),
       fetchAll("entry_items", headers),
       fetchAll("activity_types", headers),
+      fetchAll("friendships", headers),
     ]);
 
     const currentUser = users.find((user) => user.email === currentEmail);
@@ -653,10 +666,24 @@ const loadDashboardData = async ({ silent = false } = {}) => {
     if (!currentUserIri) {
       activities.value = [];
       dailyCo2.value = 0;
+      currentUserPoints.value = 0;
       return;
     }
 
     dailyTargetKg.value = 200;
+
+    const acceptedFriendIris = new Set(
+      friendships
+        .filter((friendship) => friendship?.status === "accepted")
+        .flatMap((friendship) => {
+          if (friendship?.sender === currentUserIri) return [friendship?.receiver];
+          if (friendship?.receiver === currentUserIri) return [friendship?.sender];
+          return [];
+        })
+        .filter(Boolean),
+    );
+
+    const leaderboardUserIris = new Set([currentUserIri, ...acceptedFriendIris]);
 
     const entryItemsByIri = new Map(
       entryItems.map((item) => [item["@id"], item]),
@@ -685,6 +712,7 @@ const loadDashboardData = async ({ silent = false } = {}) => {
       );
 
     const rankedUsers = users
+      .filter((user) => leaderboardUserIris.has(user?.["@id"]))
       .map((user) => {
         const userIri = user?.["@id"];
         const todayUserEntries = entries.filter(
@@ -715,25 +743,66 @@ const loadDashboardData = async ({ silent = false } = {}) => {
       });
 
     leaderboard.value = rankedUsers.slice(0, 5);
+    currentUserPoints.value = rankedUsers.find((user) => user.isCurrentUser)?.points ?? 0;
 
-    const currentRanks = new Map(rankedUsers.map((user, index) => [user.id, index + 1]));
-    const rankMoversInTop3 = rankedUsers
-      .slice(0, 3)
-      .filter((user, index) => {
-        if (user.isCurrentUser) return false;
-        const newRank = index + 1;
+    const currentRanks = new Map(
+      rankedUsers.map((user, index) => [user.id, index + 1]),
+    );
+    const rankedFriendsOnly = rankedUsers.filter((user) => !user.isCurrentUser);
+    const currentFriendOnlyRanks = new Map(
+      rankedFriendsOnly.map((user, index) => [user.id, index + 1]),
+    );
+    const friendOnlyTotal = rankedFriendsOnly.length;
+
+    const overtakeEvents = [];
+    if (previousRanks.size > 0) {
+      for (const user of rankedUsers) {
         const oldRank = previousRanks.get(user.id);
-        return Number.isInteger(oldRank) && oldRank !== newRank;
-      });
+        const newRank = currentRanks.get(user.id);
+        if (!Number.isInteger(oldRank) || !Number.isInteger(newRank)) continue;
+        if (newRank >= oldRank) continue;
 
-    rankMoversInTop3.forEach((user, index) => {
+        const overtakenUsers = rankedUsers.filter((other) => {
+          if (other.id === user.id) return false;
+
+          const otherOldRank = previousRanks.get(other.id);
+          const otherNewRank = currentRanks.get(other.id);
+          if (!Number.isInteger(otherOldRank) || !Number.isInteger(otherNewRank)) {
+            return false;
+          }
+
+          // The winner was behind this user before and is now ahead of them.
+          return oldRank > otherOldRank && newRank < otherNewRank;
+        });
+
+        overtakenUsers.forEach((loser) => {
+          const winnerFriendOnlyRank = currentFriendOnlyRanks.get(user.id);
+          overtakeEvents.push({
+            winnerName: user.name,
+            loserName: loser.name,
+            winnerRank: Number.isInteger(winnerFriendOnlyRank)
+              ? winnerFriendOnlyRank
+              : newRank,
+            winnerRankTotal:
+              friendOnlyTotal > 0 ? friendOnlyTotal : rankedUsers.length,
+            winnerPoints: user.points,
+          });
+        });
+      }
+    }
+
+    overtakeEvents.forEach((event, index) => {
       setTimeout(() => {
-        const currentRank = currentRanks.get(user.id);
-        if (!currentRank || currentRank > 3) return;
         pushNotification(
-          buildFriendRankMessage(user.name, currentRank, user.todayUserCo2),
+          buildFriendOvertakeMessage(
+            event.winnerName,
+            event.loserName,
+            event.winnerRank,
+            event.winnerRankTotal,
+            event.winnerPoints,
+          ),
         );
-      }, index * 180);
+      }, index * 220);
     });
 
     previousRanks = currentRanks;
@@ -748,6 +817,7 @@ const loadDashboardData = async ({ silent = false } = {}) => {
     activities.value = [];
     dailyCo2.value = 0;
     leaderboard.value = [];
+    currentUserPoints.value = 0;
   } finally {
     if (!silent) loading.value = false;
   }
@@ -761,7 +831,7 @@ onMounted(async () => {
   await loadDashboardData();
   refreshIntervalId = setInterval(() => {
     loadDashboardData({ silent: true });
-  }, 18000);
+  }, 5000);
 });
 
 onBeforeUnmount(() => {
