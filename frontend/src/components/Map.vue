@@ -1,277 +1,197 @@
 <template>
-  <div class="min-h-screen bg-white text-black pb-40">
-    <main
-      class="mx-auto flex min-h-screen w-full max-w-105 flex-col bg-white shadow-[0_0_0_1px_rgba(0,0,0,0.04)] lg:my-0 lg:rounded-none lg:px-10"
-    >
-      <!-- Header -->
-      <div
-        class="sticky top-0 z-20 flex items-center justify-between rounded-b-3xl bg-white px-4 py-3 shadow-sm"
-      >
-        <button
-          type="button"
-          class="flex h-10 w-10 items-center justify-center rounded-lg transition-colors hover:bg-main-light"
-          @click="closeMap"
+  <div class="min-h-screen bg-white text-black font-ui">
+    <main class="mx-auto flex min-h-screen w-full max-w-105 flex-col bg-white pb-32 shadow-[0_0_0_1px_rgba(0,0,0,0.04)] relative overflow-hidden">
+      
+      <div class="sticky top-0 z-40 flex items-center justify-between bg-white px-6 py-4 shadow-sm border-b border-grey/5">
+        <div class="flex items-center gap-3">
+          <div class="h-10 w-10 bg-main-light rounded-xl flex items-center justify-center text-main">
+            <Icon icon="ph:map-trifold-bold" class="h-6 w-6" />
+          </div>
+          <h1 class="text-title-h4 text-black uppercase tracking-tight font-title"> Friends Map</h1>
+        </div>
+        
+        <button 
+          type="button" 
+          class="flex h-12 w-12 items-center justify-center rounded-2xl transition-all active:scale-90 shadow-sm"
+          :class="showLeaderboard ? 'bg-main text-white' : 'bg-main-light text-main'"
+          @click="showLeaderboard = !showLeaderboard"
         >
-          <Icon icon="material-symbols:close" class="h-6 w-6 text-black" />
-        </button>
-        <h1 class="text-title-h4 text-black">Map</h1>
-        <button
-          type="button"
-          class="flex h-10 w-10 items-center justify-center rounded-lg transition-colors hover:bg-main-light"
-          @click="toggleFriendsTab"
-        >
-          <Icon icon="material-symbols:group" class="h-6 w-6 text-black" />
+          <Icon :icon="showLeaderboard ? 'ph:users-three-fill' : 'ph:users-three-bold'" class="h-7 w-7" />
         </button>
       </div>
 
-     
-      <div class="flex-1 overflow-y-auto px-4 py-6">
-        
-        <div class="relative mx-auto w-full max-w-4xl">
-          <div class="relative">
-           
-            <div
-              class="map-container"
-              @mousedown="startDragging"
-              @mousemove="drag"
-              @mouseup="stopDragging"
-              @mouseleave="stopDragging"
-            >
-              <img
-                src="@/assets/img/svg/cartefrance.svg"
-                alt="Carte de France"
-                class="w-full h-auto drop-shadow-md map-svg"
-                :style="{
-                  transform: `scale(${zoomLevel}) translate(${translateX}px, ${translateY}px)`
-                }"
-              />
-
-              <!-- Icônes rondes sur la carte -->
-              <div
+      <Transition name="slide-down">
+        <div v-if="showLeaderboard" class="absolute inset-x-0 top-[73px] z-30 bg-white border-b border-grey/10 shadow-2xl max-h-[60vh] overflow-y-auto rounded-b-[2.5rem]">
+          <div class="p-6 space-y-4">
+            <p class="text-body-12 text-grey font-bold uppercase tracking-widest px-2">Active Friends Online</p>
+            <div class="space-y-3">
+              <article
                 v-for="friend in friends"
                 :key="friend.id"
-                :style="{
-                  position: 'absolute',
-                  top: friend.position.top,
-                  left: friend.position.left,
-                  transform: 'translate(-50%, -50%)',
-                }"
-                class="absolute h-12 w-12 rounded-full border-2 border-white shadow-md cursor-pointer"
-                @click="selectFriend(friend)"
+                @click="focusFriend(friend)"
+                class="flex items-center gap-4 rounded-2xl border border-grey/10 bg-main-light/30 px-4 py-3 active:scale-[0.98] transition-transform cursor-pointer"
               >
-                <img
-                  :src="friend.avatar"
-                  :alt="friend.name"
-                  class="h-full w-full rounded-full object-cover"
-                />
-              </div>
-            </div>
-
-          
-            <div class="absolute top-4 right-4 flex flex-col gap-2">
-              <button
-                class="p-2 bg-main text-white rounded-full shadow-md hover:bg-main-dark"
-                @click="zoomIn"
-              >
-                +
-              </button>
-              <button
-                class="p-2 bg-main text-white rounded-full shadow-md hover:bg-main-dark"
-                @click="zoomOut"
-              >
-                -
-              </button>
-            </div>
-
-         
-            <div
-              v-if="showPopup"
-              class="absolute left-1/2 top-1/3 z-10 -translate-x-1/2 rounded-2xl bg-white px-4 py-3 shadow-lg border border-grey/20"
-            >
-              <button
-                type="button"
-                class="absolute right-2 top-2 text-grey hover:text-black"
-                @click="showPopup = false"
-              >
-                <Icon icon="material-symbols:close" class="h-5 w-5" />
-              </button>
-              <div class="flex items-center gap-3 pr-6">
-                <img
-                  :src="selectedUser.avatar"
-                  :alt="selectedUser.name"
-                  class="h-12 w-12 rounded-full object-cover"
-                />
-                <div>
-                  <p class="font-bold text-black text-body-16">
-                    {{ selectedUser.name }}
-                  </p>
-                  <p class="text-grey text-body-12">{{ selectedUser.rank }}</p>
-                  <p class="font-bold text-main text-body-16">
-                    {{ selectedUser.weight }} kg
-                  </p>
+                <div class="relative h-12 w-12 shrink-0">
+                  <img :src="friend.avatar" class="h-full w-full rounded-full object-cover border-2 border-white shadow-sm" />
+                  <div v-if="friend.online" class="absolute bottom-0 right-0 h-3.5 w-3.5 rounded-full bg-main border-2 border-white"></div>
                 </div>
-              </div>
+                <div class="flex-1">
+                  <p class="font-bold text-black text-body-16 leading-tight">{{ friend.name }}</p>
+                  <p class="text-body-12 text-grey font-medium uppercase">{{ friend.rank }} Place</p>
+                </div>
+                <p class="font-title text-main font-bold text-body-16">+{{ friend.weight }}kg</p>
+              </article>
+            </div>
+          </div>
+        </div>
+      </Transition>
+
+      <div 
+        class="flex-1 relative bg-main-light/50 overflow-hidden touch-none" 
+        @mousedown="startDragging" 
+        @mousemove="drag" 
+        @mouseup="stopDragging" 
+        @mouseleave="stopDragging"
+        @touchstart="handleTouchStart"
+        @touchmove="handleTouchMove"
+        @touchend="stopDragging"
+      >
+        <div 
+          class="absolute inset-0 flex items-center justify-center transition-transform duration-300 ease-out"
+          :style="{ transform: `translate(${translateX}px, ${translateY}px) scale(${zoomLevel})` }"
+        >
+          <div class="relative inline-block">
+            <img
+              src="@/assets/img/svg/cartefrance.svg"
+              alt="France Map"
+              class="max-h-[80vh] w-auto pointer-events-none drop-shadow-2xl"
+            />
+
+            <div
+              v-for="friend in friends"
+              :key="friend.id"
+              :style="{
+                position: 'absolute',
+                top: friend.position.top,
+                left: friend.position.left,
+                transform: `translate(-50%, -50%) scale(${Math.max(0.5, 1 / (zoomLevel * 0.8))})`,
+              }"
+              class="h-14 w-14 rounded-full border-4 border-white shadow-xl cursor-pointer active:scale-95 transition-all z-10"
+              @click.stop="selectFriend(friend)"
+            >
+              <img :src="friend.avatar" :alt="friend.name" class="h-full w-full rounded-full object-cover" />
+              <div v-if="friend.online" class="absolute -bottom-1 -right-1 h-4 w-4 rounded-full bg-main border-2 border-white animate-pulse"></div>
             </div>
           </div>
         </div>
 
-     
-        <transition name="slide-fade">
-          <div
-            v-if="showLeaderboard"
-            class="relative mx-auto w-full max-w-4xl mt-8 bg-white p-4 rounded-2xl shadow-md"
-          >
-            <div class="flex justify-between items-center mb-4">
-              <h2 class="text-title-h3 text-black">Leaderboard</h2>
-              <button
-                class="text-grey hover:text-black"
-                @click="toggleLeaderboard"
-              >
-                <Icon icon="material-symbols:close" class="h-6 w-6" />
-              </button>
+        <div class="absolute bottom-10 right-6 flex flex-col gap-3 z-20">
+          <button class="h-14 w-14 bg-white text-main rounded-2xl shadow-xl flex items-center justify-center font-bold text-2xl active:scale-90 border border-grey/5" @click="zoomIn">+</button>
+          <button class="h-14 w-14 bg-white text-main rounded-2xl shadow-xl flex items-center justify-center font-bold text-2xl active:scale-90 border border-grey/5" @click="zoomOut">-</button>
+        </div>
+
+        <Transition name="fade">
+          <div v-if="showPopup" class="absolute inset-x-6 bottom-10 z-30 rounded-[2rem] bg-white p-5 shadow-2xl border border-main/10 flex items-center gap-5 animate-zoom">
+            <div class="h-20 w-20 rounded-full border-4 border-main-light overflow-hidden shrink-0 shadow-sm">
+              <img :src="selectedUser.avatar" class="h-full w-full object-cover" />
             </div>
-            <div class="space-y-3">
-              <div
-                v-for="friend in friends"
-                :key="friend.id"
-                class="flex items-center justify-between rounded-2xl bg-white p-4 border border-grey/10 shadow-sm hover:shadow-md transition-shadow"
-              >
-                <div class="flex items-center gap-3">
-                  <img
-                    :src="friend.avatar"
-                    :alt="friend.name"
-                    class="h-12 w-12 rounded-full object-cover"
-                  />
-                  <div>
-                    <p class="font-bold text-black text-body-16">
-                      {{ friend.name }}
-                    </p>
-                    <p class="text-grey text-body-12">{{ friend.weight }}</p>
-                  </div>
-                </div>
-                <div class="flex items-center gap-2">
-                  <div
-                    :class="[
-                      'h-3 w-3 rounded-full',
-                      friend.online ? 'bg-main' : 'bg-systeme',
-                    ]"
-                  ></div>
-                  <span class="text-grey text-body-12">
-                    {{ friend.online ? "Online" : "Offline" }}
-                  </span>
-                </div>
-              </div>
+            <div class="flex-1 text-black text-left">
+              <h3 class="font-title text-title-h4 uppercase leading-none">{{ selectedUser.name }}</h3>
+              <p class="text-main font-bold text-body-16 mt-1">+{{ selectedUser.weight }} kg saved</p>
+              <p class="text-grey text-body-12 uppercase font-bold mt-1 tracking-tighter">{{ selectedUser.rank }} rank</p>
             </div>
+            <button @click="showPopup = false" class="bg-grey/10 p-2 rounded-full text-grey active:scale-75 transition-transform">
+              <Icon icon="ph:x-bold" />
+            </button>
           </div>
-        </transition>
+        </Transition>
       </div>
 
-      <!-- Bottom Navigation -->
-      <BottomNav @select="handleNavSelect" />
+      <BottomNav active="map" />
     </main>
   </div>
 </template>
 
 <script setup>
 import { ref } from "vue";
-import { useRouter } from "vue-router";
+import { Icon } from "@iconify/vue";
 import BottomNav from "./BottomNav.vue";
 
-const router = useRouter();
-const zoomLevel = ref(1);
+// Import images according to your assets structure
+import rafaAvatar from "@/assets/img/persona.jpg";
+// Note: Ensure persona2.jpg and persona3.jpg exist in your img folder!
+import kenzaAvatar from "@/assets/img/persona2.jpg"; 
+import kenzoAvatar from "@/assets/img/persona3.jpg";
+
+const zoomLevel = ref(1.2);
 const translateX = ref(0);
 const translateY = ref(0);
 const isDragging = ref(false);
 const dragStart = ref({ x: 0, y: 0 });
-const showLeaderboard = ref(true);
+const showLeaderboard = ref(false);
 const showPopup = ref(false);
-const selectedUser = ref({
-  name: "",
-  rank: "",
-  weight: "",
-  avatar: "",
-});
+const selectedUser = ref({});
+
 const friends = ref([
-  {
-    id: 1,
-    name: "Kenzo",
-    rank: "6e",
-    weight: 19,
-    online: true,
-    avatar: "https://via.placeholder.com/100?text=Kenzo",
-    position: { top: "40%", left: "30%" },
-  },
-  {
-    id: 2,
-    name: "Kenza",
-    rank: "5e",
-    weight: 15,
-    online: false,
-    avatar: "https://via.placeholder.com/100?text=Kenza",
-    position: { top: "50%", left: "60%" },
-  },
+  { id: 1, name: "Rafamaru", rank: "1st", weight: 42.8, online: true, avatar: rafaAvatar, position: { top: "32%", left: "38%" } },
+  { id: 2, name: "Kenza", rank: "5th", weight: 15.2, online: false, avatar: kenzaAvatar, position: { top: "58%", left: "62%" } },
+  { id: 3, name: "Kenzo", rank: "6th", weight: 19.5, online: true, avatar: kenzoAvatar, position: { top: "45%", left: "42%" } },
 ]);
 
-function zoomIn() {
-  zoomLevel.value = Math.min(zoomLevel.value + 0.2, 3);
-}
-
-function zoomOut() {
-  zoomLevel.value = Math.max(zoomLevel.value - 0.2, 1);
-}
-
-function startDragging(event) {
+const initiateDrag = (clientX, clientY) => {
   isDragging.value = true;
-  dragStart.value = { x: event.clientX, y: event.clientY };
-}
+  dragStart.value = { x: clientX - translateX.value, y: clientY - translateY.value };
+};
 
-function drag(event) {
+const processMove = (clientX, clientY) => {
   if (!isDragging.value) return;
-  const deltaX = event.clientX - dragStart.value.x;
-  const deltaY = event.clientY - dragStart.value.y;
-  translateX.value += deltaX / zoomLevel.value;
-  translateY.value += deltaY / zoomLevel.value;
-  dragStart.value = { x: event.clientX, y: event.clientY };
-}
+  translateX.value = clientX - dragStart.value.x;
+  translateY.value = clientY - dragStart.value.y;
+};
 
-function stopDragging() {
-  isDragging.value = false;
-}
+const startDragging = (e) => initiateDrag(e.clientX, e.clientY);
+const drag = (e) => processMove(e.clientX, e.clientY);
 
-function selectFriend(friend) {
+const handleTouchStart = (e) => { if (e.touches.length === 1) initiateDrag(e.touches[0].clientX, e.touches[0].clientY); };
+const handleTouchMove = (e) => { if (e.touches.length === 1) processMove(e.touches[0].clientX, e.touches[0].clientY); };
+const stopDragging = () => isDragging.value = false;
+
+const zoomIn = () => zoomLevel.value = Math.min(zoomLevel.value + 0.4, 4);
+const zoomOut = () => zoomLevel.value = Math.max(zoomLevel.value - 0.4, 0.6);
+
+const selectFriend = (friend) => {
   selectedUser.value = friend;
   showPopup.value = true;
-}
+};
 
-function toggleLeaderboard() {
-  showLeaderboard.value = !showLeaderboard.value;
-}
-
-function handleNavSelect(target) {
-  // Autres navigations gérées par BottomNav
-}
+const focusFriend = (friend) => {
+  selectFriend(friend);
+  showLeaderboard.value = false;
+  translateX.value = 0;
+  translateY.value = 0;
+};
 </script>
 
 <style scoped>
-/* Les styles sont gérés par Tailwind et app.css */
-.map-svg {
-  background: white;
-  border-radius: 0.5rem;
-  transition: transform 0.3s ease;
+.slide-down-enter-active, .slide-down-leave-active {
+  transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
 }
-.map-container {
-  overflow: hidden;
-  position: relative;
-  width: 100%;
-  height: 100%;
-}
-.slide-fade-enter-active,
-.slide-fade-leave-active {
-  transition: all 0.3s ease;
-}
-.slide-fade-enter-from,
-.slide-fade-leave-to {
-  transform: translateY(100%);
+.slide-down-enter-from, .slide-down-leave-to {
+  transform: translateY(-100%);
   opacity: 0;
 }
+
+.fade-enter-active, .fade-leave-active { transition: opacity 0.3s ease; }
+.fade-enter-from, .fade-leave-to { opacity: 0; }
+
+.font-title { font-family: var(--font-title); }
+.text-main { color: var(--color-main); }
+.bg-main { background-color: var(--color-main); }
+.bg-main-light { background-color: var(--color-main-light); }
+
+@keyframes zoomIn {
+  from { opacity: 0; transform: scale(0.9) translateY(10px); }
+  to { opacity: 1; transform: scale(1) translateY(0); }
+}
+.animate-zoom { animation: zoomIn 0.35s cubic-bezier(0.16, 1, 0.3, 1); }
 </style>
