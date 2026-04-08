@@ -884,9 +884,14 @@ export default {
       }
     };
 
+    const normalizeToken = (rawToken) => {
+      if (typeof rawToken !== "string") return "";
+      return rawToken.trim().replace(/^"+|"+$/g, "");
+    };
+
     const resolveCurrentUserIri = async (headers, token) => {
       const payload = parseJwtPayload(token);
-      const currentEmail = payload?.username || "";
+      const currentEmail = payload?.email || payload?.username || "";
       if (!currentEmail) return null;
 
       const usersResponse = await axios.get("http://localhost:8000/api/users", {
@@ -931,9 +936,10 @@ export default {
 
     const fetchTypes = async () => {
       try {
-        const token = localStorage.getItem("jwt_token");
+        const token = normalizeToken(localStorage.getItem("jwt_token"));
         if (!token) {
           loading.value = false;
+          localStorage.removeItem("jwt_token");
           router.push("/login");
           return;
         }
@@ -1124,7 +1130,7 @@ export default {
     const confirmWizard = async () => {
       if (isSubmittingConfirmation.value) return;
 
-      const token = localStorage.getItem("jwt_token");
+      const token = normalizeToken(localStorage.getItem("jwt_token"));
       if (!token) return;
 
       const headers = {

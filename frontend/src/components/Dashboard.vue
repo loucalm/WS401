@@ -71,11 +71,15 @@
               <span
                 class="text-[18px] leading-none transition-transform duration-200"
                 :class="isLeaderboardOpen ? 'rotate-180' : ''"
-              >⌄</span>
+                >⌄</span
+              >
             </button>
 
             <transition name="leaderboard-collapse">
-              <div v-show="isLeaderboardOpen" class="leaderboard-panel border-t border-grey/15 px-3 pb-3 pt-2">
+              <div
+                v-show="isLeaderboardOpen"
+                class="leaderboard-panel border-t border-grey/15 px-3 pb-3 pt-2"
+              >
                 <p
                   v-if="leaderboard.length === 0"
                   class="py-2 text-center text-[12px] text-grey"
@@ -88,7 +92,11 @@
                     v-for="(friend, index) in leaderboard"
                     :key="friend.id"
                     class="flex items-center justify-between rounded-xl px-3 py-2"
-                    :class="friend.isCurrentUser ? 'bg-main-light ring-1 ring-main/25' : 'bg-main-light/65'"
+                    :class="
+                      friend.isCurrentUser
+                        ? 'bg-main-light ring-1 ring-main/25'
+                        : 'bg-main-light/65'
+                    "
                   >
                     <div class="flex min-w-0 items-center gap-2">
                       <span
@@ -100,13 +108,21 @@
                       <div class="min-w-0">
                         <p class="truncate text-[13px] font-medium text-black">
                           {{ friend.name }}
-                          <span v-if="friend.isCurrentUser" class="ml-1 text-[11px] font-semibold text-main">(you)</span>
+                          <span
+                            v-if="friend.isCurrentUser"
+                            class="ml-1 text-[11px] font-semibold text-main"
+                            >(you)</span
+                          >
                         </p>
-                        <p class="text-[11px] text-grey">{{ friend.activityCount }} activities today</p>
+                        <p class="text-[11px] text-grey">
+                          {{ friend.activityCount }} activities today
+                        </p>
                       </div>
                     </div>
                     <div class="text-right">
-                      <p class="text-[12px] font-semibold text-main">{{ friend.points }} pts</p>
+                      <p class="text-[12px] font-semibold text-main">
+                        {{ friend.points }} pts
+                      </p>
                       <p class="text-[11px] text-grey">{{ friend.co2 }}</p>
                     </div>
                   </li>
@@ -122,11 +138,17 @@
           Latest Activities
         </h2>
 
-        <div v-if="loading" class="mt-4 rounded-2xl border border-grey/15 bg-white px-4 py-4 text-center text-[14px] text-grey shadow-[0_6px_16px_rgba(0,0,0,0.14)]">
+        <div
+          v-if="loading"
+          class="mt-4 rounded-2xl border border-grey/15 bg-white px-4 py-4 text-center text-[14px] text-grey shadow-[0_6px_16px_rgba(0,0,0,0.14)]"
+        >
           Loading activities...
         </div>
 
-        <div v-else-if="activities.length === 0" class="mt-4 rounded-2xl border border-grey/15 bg-white px-4 py-4 text-center text-[14px] text-grey shadow-[0_6px_16px_rgba(0,0,0,0.14)]">
+        <div
+          v-else-if="activities.length === 0"
+          class="mt-4 rounded-2xl border border-grey/15 bg-white px-4 py-4 text-center text-[14px] text-grey shadow-[0_6px_16px_rgba(0,0,0,0.14)]"
+        >
           No activity yet for today. Add one from Activities.
         </div>
 
@@ -180,10 +202,12 @@
 import axios from "axios";
 import { Icon } from "@iconify/vue";
 import { computed, onBeforeUnmount, onMounted, ref, watch } from "vue";
+import { useRouter } from "vue-router";
 import mascotSrc from "../assets/mascotte_neutre.svg";
 import BottomNav from "./BottomNav.vue";
 
 const API_BASE = "http://localhost:8000/api";
+const router = useRouter();
 
 const loading = ref(true);
 const dailyCo2 = ref(0);
@@ -205,6 +229,11 @@ const parseJwtPayload = (token) => {
   } catch {
     return null;
   }
+};
+
+const normalizeToken = (rawToken) => {
+  if (typeof rawToken !== "string") return "";
+  return rawToken.trim().replace(/^"+|"+$/g, "");
 };
 
 const extractCollection = (responseData) => {
@@ -431,15 +460,28 @@ const rankBadgeClass = (index) => {
 const loadDashboardData = async () => {
   loading.value = true;
   try {
-    const token = localStorage.getItem("jwt_token");
+    const token = normalizeToken(localStorage.getItem("jwt_token"));
     if (!token) {
       activities.value = [];
       dailyCo2.value = 0;
+      leaderboard.value = [];
+      localStorage.removeItem("jwt_token");
+      router.push("/login");
       return;
     }
 
     const jwtPayload = parseJwtPayload(token);
-    const currentEmail = jwtPayload?.username || "";
+    const nowInSeconds = Math.floor(Date.now() / 1000);
+    if (!jwtPayload?.exp || jwtPayload.exp <= nowInSeconds) {
+      localStorage.removeItem("jwt_token");
+      activities.value = [];
+      dailyCo2.value = 0;
+      leaderboard.value = [];
+      router.push("/login");
+      return;
+    }
+
+    const currentEmail = jwtPayload?.email || jwtPayload?.username || "";
     const headers = {
       Authorization: `Bearer ${token}`,
       Accept: "application/ld+json",
@@ -473,15 +515,20 @@ const loadDashboardData = async () => {
       .filter((entry) => entry.owner === currentUserIri)
       .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
 
-    const todayEntries = userEntries.filter((entry) => isSameDay(entry.createdAt));
+    const todayEntries = userEntries.filter((entry) =>
+      isSameDay(entry.createdAt),
+    );
     dailyCo2.value = todayEntries.reduce(
-      (sum, entry) => sum + entryCo2(entry, entryItemsByIri, activityTypesByIri),
+      (sum, entry) =>
+        sum + entryCo2(entry, entryItemsByIri, activityTypesByIri),
       0,
     );
 
     activities.value = userEntries
       .slice(0, 3)
-      .map((entry) => toDashboardActivity(entry, entryItemsByIri, activityTypesByIri));
+      .map((entry) =>
+        toDashboardActivity(entry, entryItemsByIri, activityTypesByIri),
+      );
 
     leaderboard.value = users
       .map((user) => {
@@ -514,6 +561,12 @@ const loadDashboardData = async () => {
       })
       .slice(0, 5);
   } catch (error) {
+    if (error?.response?.status === 401) {
+      localStorage.removeItem("jwt_token");
+      router.push("/login");
+      return;
+    }
+
     console.error("Dashboard data loading error:", error);
     activities.value = [];
     dailyCo2.value = 0;
@@ -537,7 +590,10 @@ onBeforeUnmount(() => {
 <style scoped>
 .leaderboard-collapse-enter-active,
 .leaderboard-collapse-leave-active {
-  transition: opacity 0.24s ease, transform 0.24s ease, max-height 0.28s ease;
+  transition:
+    opacity 0.24s ease,
+    transform 0.24s ease,
+    max-height 0.28s ease;
   overflow: hidden;
 }
 

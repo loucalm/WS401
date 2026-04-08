@@ -8,6 +8,31 @@ import Map from "./components/Map.vue";
 import Profile from "./components/Profile.vue";
 import Data from "./components/Data.vue";
 
+const parseJwtPayload = (token) => {
+  try {
+    const payload = token.split(".")[1];
+    if (!payload) return null;
+    const normalized = payload.replace(/-/g, "+").replace(/_/g, "/");
+    const padded = normalized + "=".repeat((4 - (normalized.length % 4)) % 4);
+    return JSON.parse(atob(padded));
+  } catch {
+    return null;
+  }
+};
+
+const normalizeToken = (rawToken) => {
+  if (typeof rawToken !== "string") return "";
+  return rawToken.trim().replace(/^"+|"+$/g, "");
+};
+
+const isJwtValid = (token) => {
+  if (!token) return false;
+  const payload = parseJwtPayload(token);
+  if (!payload?.exp) return false;
+  const nowInSeconds = Math.floor(Date.now() / 1000);
+  return payload.exp > nowInSeconds;
+};
+
 const routes = [
   {
     path: "/",
@@ -68,7 +93,18 @@ const router = createRouter({
 });
 
 router.beforeEach((to) => {
-  const isAuthenticated = Boolean(localStorage.getItem("jwt_token"));
+  const storedToken = localStorage.getItem("jwt_token");
+  const token = normalizeToken(storedToken);
+
+  if (storedToken && token && storedToken !== token) {
+    localStorage.setItem("jwt_token", token);
+  }
+
+  const isAuthenticated = isJwtValid(token);
+
+  if (token && !isAuthenticated) {
+    localStorage.removeItem("jwt_token");
+  }
 
   if (to.meta.requiresAuth && !isAuthenticated) {
     return { name: "login" };
