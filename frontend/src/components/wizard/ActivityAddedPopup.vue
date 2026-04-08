@@ -7,7 +7,7 @@
       aria-modal="true"
       aria-labelledby="activity-added-title"
     >
-      <div class="popup-card">
+      <div class="popup-card" :style="cardStyle">
         <div class="popup-icon-wrap" aria-hidden="true">
           <svg viewBox="0 0 24 24" fill="none" class="popup-icon">
             <path
@@ -55,9 +55,10 @@
 </template>
 
 <script setup>
+import { computed } from "vue";
 import { useI18n } from "vue-i18n";
 
-defineProps({
+const props = defineProps({
   visible: {
     type: Boolean,
     default: false,
@@ -66,11 +67,17 @@ defineProps({
     type: String,
     default: "",
   },
+  accentColor: {
+    type: String,
+    default: "var(--color-main)",
+  },
 });
 
 defineEmits(["add-new", "go-dashboard"]);
 
 const { t } = useI18n();
+
+const cardStyle = computed(() => ({ "--popup-accent": props.accentColor }));
 </script>
 
 <style scoped>
@@ -89,9 +96,9 @@ const { t } = useI18n();
 .popup-card {
   width: min(420px, 100%);
   border-radius: 24px;
-  border: 1px solid color-mix(in srgb, var(--color-main) 20%, var(--color-white));
+  border: 1px solid color-mix(in srgb, var(--popup-accent) 20%, var(--color-white));
   background:
-    radial-gradient(circle at 18% 12%, color-mix(in srgb, var(--color-main) 18%, transparent), transparent 42%),
+    radial-gradient(circle at 18% 12%, color-mix(in srgb, var(--popup-accent) 18%, transparent), transparent 42%),
     var(--color-white);
   padding: 1.25rem 1.1rem 1.15rem;
   text-align: center;
@@ -106,9 +113,9 @@ const { t } = useI18n();
   align-items: center;
   justify-content: center;
   border-radius: 9999px;
-  color: var(--color-main);
-  background: var(--color-main-light);
-  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--color-main) 28%, transparent);
+  color: var(--popup-accent);
+  background: color-mix(in srgb, var(--popup-accent) 14%, var(--color-white));
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--popup-accent) 28%, transparent);
 }
 
 .popup-icon {
@@ -131,7 +138,7 @@ const { t } = useI18n();
 
 .popup-co2 {
   margin: 0.65rem 0 0;
-  color: var(--color-main);
+  color: var(--popup-accent);
   font-size: var(--text-body-24);
   font-weight: 700;
 }
@@ -155,14 +162,14 @@ const { t } = useI18n();
 
 .popup-button {
   border: none;
-  background: var(--color-main);
+  background: var(--popup-accent);
   color: var(--color-white);
 }
 
 .popup-button-secondary {
-  border: 1px solid color-mix(in srgb, var(--color-main) 28%, transparent);
+  border: 1px solid color-mix(in srgb, var(--popup-accent) 28%, transparent);
   background: var(--color-white);
-  color: var(--color-main);
+  color: var(--popup-accent);
 }
 
 .popup-button:hover,

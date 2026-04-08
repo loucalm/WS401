@@ -204,12 +204,8 @@
             <div
               class="mt-7 rounded-3xl border border-black/7 bg-linear-to-br from-white to-main-light/35 p-4 shadow-[0_12px_24px_rgba(15,23,42,0.1)]"
             >
-              <div class="flex items-center gap-3">
-                <div
-                  class="flex h-11 w-11 items-center justify-center rounded-2xl bg-white text-main shadow-sm"
-                >
-                  <Icon icon="tabler:clipboard-check" class="h-6 w-6" />
-                </div>
+              <div class="flex flex-col items-center text-center gap-2">
+                <Icon icon="tabler:clipboard-check" class="h-7 w-7" :class="step3TextAccentClass" />
                 <div>
                   <p
                     class="font-ui text-[13px] uppercase tracking-[0.14em] text-black/45"
@@ -225,11 +221,10 @@
 
             <div v-if="selectedCategory === 'food'" class="mt-5 space-y-3">
               <div
-                class="rounded-2xl border border-black/7 bg-white px-4 py-4 shadow-[0_8px_14px_rgba(0,0,0,0.08)]"
+                class="rounded-2xl border border-black/7 bg-white px-4 py-4 text-center shadow-[0_8px_14px_rgba(0,0,0,0.08)]"
               >
-                <p
-                  class="font-ui text-[13px] uppercase tracking-widest text-black/45"
-                >
+                <Icon icon="ph:fork-knife" class="mx-auto h-7 w-7 mb-2" :class="step3TextAccentClass" />
+                <p class="font-ui text-[13px] uppercase tracking-widest text-black/45">
                   {{ t("wizard.diet") }}
                 </p>
                 <p class="mt-1 font-ui text-[22px] leading-none text-black">
@@ -242,11 +237,10 @@
                 :key="section.id"
               >
                 <div
-                  class="rounded-2xl border border-black/7 bg-white px-4 py-4 shadow-[0_8px_14px_rgba(0,0,0,0.08)]"
+                  class="rounded-2xl border border-black/7 bg-white px-4 py-4 text-center shadow-[0_8px_14px_rgba(0,0,0,0.08)]"
                 >
-                  <p
-                    class="font-ui text-[13px] uppercase tracking-widest text-black/45"
-                  >
+                  <Icon icon="mdi:food" class="mx-auto h-7 w-7 mb-2" :class="step3TextAccentClass" />
+                  <p class="font-ui text-[13px] uppercase tracking-widest text-black/45">
                     {{ section.label }}
                   </p>
                   <p class="mt-1 font-ui text-[22px] leading-tight text-black">
@@ -261,11 +255,10 @@
               class="mt-5 space-y-3"
             >
               <div
-                class="rounded-2xl border border-black/7 bg-white px-4 py-4 shadow-[0_8px_14px_rgba(0,0,0,0.08)]"
+                class="rounded-2xl border border-black/7 bg-white px-4 py-4 text-center shadow-[0_8px_14px_rgba(0,0,0,0.08)]"
               >
-                <p
-                  class="font-ui text-[13px] uppercase tracking-widest text-black/45"
-                >
+                <Icon icon="mdi:flash" class="mx-auto h-7 w-7 mb-2" :class="step3TextAccentClass" />
+                <p class="font-ui text-[13px] uppercase tracking-widest text-black/45">
                   {{ t("wizard.consumption") }}
                 </p>
                 <p class="mt-1 font-ui text-[24px] leading-none text-black">
@@ -274,11 +267,10 @@
               </div>
               <div class="grid grid-cols-2 gap-3">
                 <div
-                  class="rounded-2xl border border-black/7 bg-white px-4 py-4 shadow-[0_8px_14px_rgba(0,0,0,0.08)]"
+                  class="rounded-2xl border border-black/7 bg-white px-4 py-4 text-center shadow-[0_8px_14px_rgba(0,0,0,0.08)]"
                 >
-                  <p
-                    class="font-ui text-[13px] uppercase tracking-widest text-black/45"
-                  >
+                  <Icon icon="ph:house" class="mx-auto h-7 w-7 mb-2" :class="step3TextAccentClass" />
+                  <p class="font-ui text-[13px] uppercase tracking-widest text-black/45">
                     {{ t("wizard.surface") }}
                   </p>
                   <p class="mt-1 font-ui text-[24px] leading-none text-black">
@@ -286,11 +278,10 @@
                   </p>
                 </div>
                 <div
-                  class="rounded-2xl border border-black/7 bg-white px-4 py-4 shadow-[0_8px_14px_rgba(0,0,0,0.08)]"
+                  class="rounded-2xl border border-black/7 bg-white px-4 py-4 text-center shadow-[0_8px_14px_rgba(0,0,0,0.08)]"
                 >
-                  <p
-                    class="font-ui text-[13px] uppercase tracking-widest text-black/45"
-                  >
+                  <Icon icon="ph:clock" class="mx-auto h-7 w-7 mb-2" :class="step3TextAccentClass" />
+                  <p class="font-ui text-[13px] uppercase tracking-widest text-black/45">
                     {{ t("wizard.duration") }}
                   </p>
                   <p class="mt-1 font-ui text-[24px] leading-none text-black">
@@ -305,11 +296,10 @@
               class="mt-5 space-y-3"
             >
               <div
-                class="rounded-2xl border border-black/7 bg-white px-4 py-4 shadow-[0_8px_14px_rgba(0,0,0,0.08)]"
+                class="rounded-2xl border border-black/7 bg-white px-4 py-4 text-center shadow-[0_8px_14px_rgba(0,0,0,0.08)]"
               >
-                <p
-                  class="font-ui text-[13px] uppercase tracking-widest text-black/45"
-                >
+                <Icon icon="ph:tag" class="mx-auto h-7 w-7 mb-2" :class="step3TextAccentClass" />
+                <p class="font-ui text-[13px] uppercase tracking-widest text-black/45">
                   {{ t("wizard.purchase_type") }}
                 </p>
                 <p class="mt-1 font-ui text-[22px] leading-none text-black">
@@ -318,11 +308,10 @@
               </div>
               <template v-for="section in clothingSections" :key="section.id">
                 <div
-                  class="rounded-2xl border border-black/7 bg-white px-4 py-4 shadow-[0_8px_14px_rgba(0,0,0,0.08)]"
+                  class="rounded-2xl border border-black/7 bg-white px-4 py-4 text-center shadow-[0_8px_14px_rgba(0,0,0,0.08)]"
                 >
-                  <p
-                    class="font-ui text-[13px] uppercase tracking-widest text-black/45"
-                  >
+                  <Icon icon="tabler:shirt-filled" class="mx-auto h-7 w-7 mb-2" :class="step3TextAccentClass" />
+                  <p class="font-ui text-[13px] uppercase tracking-widest text-black/45">
                     {{ section.label }}
                   </p>
                   <p class="mt-1 font-ui text-[22px] leading-none text-black">
@@ -334,11 +323,10 @@
 
             <div v-else class="mt-5 space-y-3">
               <div
-                class="rounded-2xl border border-black/7 bg-white px-4 py-4 shadow-[0_8px_14px_rgba(0,0,0,0.08)]"
+                class="rounded-2xl border border-black/7 bg-white px-4 py-4 text-center shadow-[0_8px_14px_rgba(0,0,0,0.08)]"
               >
-                <p
-                  class="font-ui text-[13px] uppercase tracking-widest text-black/45"
-                >
+                <Icon icon="mdi:car" class="mx-auto h-7 w-7 mb-2" :class="step3TextAccentClass" />
+                <p class="font-ui text-[13px] uppercase tracking-widest text-black/45">
                   {{ t("wizard.transport") }}
                 </p>
                 <p class="mt-1 font-ui text-[24px] leading-none text-black">
@@ -346,11 +334,10 @@
                 </p>
               </div>
               <div
-                class="rounded-2xl border border-black/7 bg-white px-4 py-4 shadow-[0_8px_14px_rgba(0,0,0,0.08)]"
+                class="rounded-2xl border border-black/7 bg-white px-4 py-4 text-center shadow-[0_8px_14px_rgba(0,0,0,0.08)]"
               >
-                <p
-                  class="font-ui text-[13px] uppercase tracking-widest text-black/45"
-                >
+                <Icon icon="ph:ruler" class="mx-auto h-7 w-7 mb-2" :class="step3TextAccentClass" />
+                <p class="font-ui text-[13px] uppercase tracking-widest text-black/45">
                   {{ t("wizard.distance") }}
                 </p>
                 <p class="mt-1 font-ui text-[24px] leading-none text-black">
@@ -360,7 +347,8 @@
             </div>
 
             <div
-              class="mt-7 rounded-3xl bg-main px-4 py-5 text-center shadow-[0_12px_20px_rgba(17,125,111,0.35)]"
+              class="mt-7 rounded-3xl px-4 py-5 text-center"
+              :class="step3EstimateCardClass"
             >
               <p
                 class="font-ui text-[13px] uppercase tracking-[0.15em] text-white/75"
@@ -368,7 +356,6 @@
                 {{ t("wizard.co2_estimate") }}
               </p>
               <p
-                :class="step3TextAccentClass"
                 class="mt-1 font-ui text-[42px] font-bold leading-none text-white"
               >
                 {{ formattedCo2 }} KG CO2E
@@ -417,6 +404,7 @@
       <ActivityAddedPopup
         :visible="showSuccessPopup"
         :co2-label="lastAddedCo2Label"
+        :accent-color="popupAccentColor"
         @add-new="startNewActivity"
         @go-dashboard="goToDashboardFromPopup"
       />
@@ -1003,6 +991,16 @@ export default {
             : "text-main",
     );
 
+    const popupAccentColor = computed(() =>
+      selectedCategory.value === "food"
+        ? "var(--color-tertiary)"
+        : selectedCategory.value === "consumption"
+          ? "var(--color-secondary)"
+          : selectedCategory.value === "clothing"
+            ? "var(--color-cloth)"
+            : "var(--color-main)",
+    );
+
     const step3EstimateCardClass = computed(() =>
       selectedCategory.value === "food"
         ? "bg-tertiary shadow-[0_12px_20px_rgba(193,165,115,0.35)]"
@@ -1455,6 +1453,7 @@ export default {
       step3GaugeRingClass,
       step3TextAccentClass,
       step3EstimateCardClass,
+      popupAccentColor,
       selectActivityType,
       selectTransportMode,
       selectConsumptionSource,
