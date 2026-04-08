@@ -12,6 +12,21 @@
     <div
       class="relative mx-auto flex min-h-[calc(100vh-1.5rem)] w-full max-w-97.5 flex-col sm:min-h-[calc(100vh-5rem)] sm:max-w-160 lg:max-w-2xl"
     >
+      <div class="flex justify-end mb-2">
+        <div class="flex items-center gap-1 rounded-xl border border-grey/20 bg-white/80 p-1 shadow-sm">
+          <button
+            @click="locale !== 'fr' && toggleLocale()"
+            class="rounded-lg px-3 py-1.5 font-ui text-[14px] font-bold uppercase tracking-wide transition-all duration-200"
+            :class="locale === 'fr' ? 'bg-main text-white shadow-sm' : 'text-grey hover:text-black'"
+          >FR</button>
+          <button
+            @click="locale !== 'en' && toggleLocale()"
+            class="rounded-lg px-3 py-1.5 font-ui text-[14px] font-bold uppercase tracking-wide transition-all duration-200"
+            :class="locale === 'en' ? 'bg-main text-white shadow-sm' : 'text-grey hover:text-black'"
+          >EN</button>
+        </div>
+      </div>
+
       <div class="flex flex-col items-center text-center">
         <img :src="logoUrl" alt="Carbon logo" class="h-24 w-auto sm:h-36" />
 
@@ -194,7 +209,12 @@ const showPassword = ref(false);
 const errorMessage = ref("");
 const successMessage = ref("");
 const router = useRouter();
-const { t } = useI18n();
+const { t, locale } = useI18n();
+
+const toggleLocale = () => {
+  locale.value = locale.value === 'fr' ? 'en' : 'fr';
+  localStorage.setItem('locale', locale.value);
+};
 
 const normalizeToken = (rawToken) => {
   if (typeof rawToken !== "string") return "";
