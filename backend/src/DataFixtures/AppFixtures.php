@@ -41,6 +41,30 @@ class AppFixtures extends Fixture
         $user2->setPassword($this->passwordHasher->hashPassword($user2, 'test'));
         $manager->persist($user2);
 
+        $fabien = new User();
+        $fabien->setEmail('fabien@test.com');
+        $fabien->setUsername('Fabien');
+        $fabien->setTargetCo2(2000);
+        $fabien->setUnitPreference('metric');
+        $fabien->setLatitude(48.8566);
+        $fabien->setLongitude(2.3522);
+        $fabien->setProfilePicture('fabien.png');
+        $fabien->setRoles([]);
+        $fabien->setPassword($this->passwordHasher->hashPassword($fabien, 'test'));
+        $manager->persist($fabien);
+
+        $brice = new User();
+        $brice->setEmail('brice@test.com');
+        $brice->setUsername('Brice');
+        $brice->setTargetCo2(2000);
+        $brice->setUnitPreference('metric');
+        $brice->setLatitude(45.7640);
+        $brice->setLongitude(4.8357);
+        $brice->setProfilePicture('brice.png');
+        $brice->setRoles([]);
+        $brice->setPassword($this->passwordHasher->hashPassword($brice, 'test'));
+        $manager->persist($brice);
+
 
         // Création des catégories principales qui regroupent les types d'activités.
         // Chaque catégorie a un nom, une icône (format Iconify) et une couleur CSS.

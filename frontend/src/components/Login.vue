@@ -105,6 +105,7 @@
 
         <button
           type="submit"
+            :disabled="isSubmitting"
           class="font-ui w-full rounded-[1.35rem] bg-main px-5 py-3 text-[0.98rem] font-bold uppercase tracking-[0.04em] text-white transition hover:brightness-105 sm:px-6 sm:py-4 sm:text-body-24"
         >
           {{ t("auth.login_button") }}
@@ -156,6 +157,8 @@
 
           <button
             type="button"
+            :disabled="isSubmitting"
+            @click="loginAsDemo('fabien')"
             class="font-ui mt-3.5 w-full rounded-[1.05rem] bg-main px-4 py-2.5 text-[0.9rem] font-bold uppercase tracking-[0.03em] text-white transition hover:brightness-105 sm:mt-5 sm:py-4 sm:text-body-24"
           >
             {{ t("auth.sign_in_as_fabien") }}
@@ -185,6 +188,8 @@
 
           <button
             type="button"
+            :disabled="isSubmitting"
+            @click="loginAsDemo('brice')"
             class="font-ui mt-3.5 w-full rounded-[1.05rem] bg-main px-4 py-2.5 text-[0.9rem] font-bold uppercase tracking-[0.03em] text-white transition hover:brightness-105 sm:mt-5 sm:py-4 sm:text-body-24"
           >
             {{ t("auth.sign_in_as_brice") }}
@@ -210,8 +215,20 @@ const password = ref("");
 const showPassword = ref(false);
 const errorMessage = ref("");
 const successMessage = ref("");
+const isSubmitting = ref(false);
 const router = useRouter();
 const { t, locale } = useI18n();
+
+const demoAccounts = {
+  fabien: {
+    email: "fabien@test.com",
+    password: "test",
+  },
+  brice: {
+    email: "brice@test.com",
+    password: "test",
+  },
+};
 
 const toggleLocale = () => {
   locale.value = locale.value === 'fr' ? 'en' : 'fr';
@@ -227,14 +244,15 @@ const goToRegister = () => {
   router.push("/register");
 };
 
-const handleLogin = async () => {
+const loginWithCredentials = async (userEmail, userPassword) => {
   errorMessage.value = "";
   successMessage.value = "";
+  isSubmitting.value = true;
 
   try {
     const response = await axios.post("http://localhost:8000/api/login_check", {
-      email: email.value,
-      password: password.value,
+      email: userEmail,
+      password: userPassword,
     });
 
     const token = normalizeToken(response.data?.token);
@@ -247,13 +265,28 @@ const handleLogin = async () => {
     localStorage.setItem("jwt_token", token);
     successMessage.value = t("auth.success.login");
 
-    router.push("/dashboard");
+    await router.push("/dashboard");
   } catch (error) {
     if (error.response && error.response.status === 401) {
       errorMessage.value = t("auth.errors.invalid_credentials");
     } else {
       errorMessage.value = t("auth.errors.server");
     }
+  } finally {
+    isSubmitting.value = false;
   }
+};
+
+const handleLogin = async () => {
+  await loginWithCredentials(email.value, password.value);
+};
+
+const loginAsDemo = async (key) => {
+  const demoAccount = demoAccounts[key];
+  if (!demoAccount) return;
+
+  email.value = demoAccount.email;
+  password.value = demoAccount.password;
+  await loginWithCredentials(demoAccount.email, demoAccount.password);
 };
 </script>
