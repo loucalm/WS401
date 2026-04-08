@@ -8,4 +8,17 @@ export default {
 		cm: 'cm',
 		in: 'po',
 	},
+
+profile: {
+        my_points: "Mes Points",
+        points_value: "+ {count} points",
+        level: "Protecteur du Climat - Lvl {lvl}",
+        friends_count: "Amis :",
+        saved_co2: "Économisé :",
+        personal_info: "Mes infos personnelles",
+        location: "Localisation",
+        security_privacy: "Sécurité et confidentialité",
+        friends: "Amis",
+        logout: "Déconnexion"
+    }
 }
