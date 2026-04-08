@@ -31,13 +31,13 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private ?string $unitPreference = 'metric'; // Préférence d'unité de mesure : 'metric' (km, kg) ou 'imperial' (miles, lbs)
 
     #[ORM\Column(nullable: true)]
-    private ?float $latitude = null;
+    private ?float $latitude = 48.24;
 
     #[ORM\Column(nullable: true)]
-    private ?float $longitude = null;
+    private ?float $longitude = 4.75;
 
     #[ORM\Column(length: 255, nullable: true)]
-    private ?string $profilePicture = null;
+    private ?string $profilePicture = 'default.jpg';
 
     /**
      * @var list<string> The user roles

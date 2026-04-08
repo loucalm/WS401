@@ -13,17 +13,31 @@
       class="relative mx-auto flex min-h-[calc(100vh-1.5rem)] w-full max-w-97.5 flex-col sm:min-h-[calc(100vh-4rem)] sm:max-w-160 lg:max-w-2xl"
     >
       <div class="flex justify-end mb-2">
-        <div class="flex items-center gap-1 rounded-xl border border-grey/20 bg-white/80 p-1 shadow-sm">
+        <div
+          class="flex items-center gap-1 rounded-xl border border-grey/20 bg-white/80 p-1 shadow-sm"
+        >
           <button
             @click="locale !== 'fr' && toggleLocale()"
             class="rounded-lg px-3 py-1.5 font-ui text-[14px] font-bold uppercase tracking-wide transition-all duration-200"
-            :class="locale === 'fr' ? 'bg-main text-white shadow-sm' : 'text-grey hover:text-black'"
-          >FR</button>
+            :class="
+              locale === 'fr'
+                ? 'bg-main text-white shadow-sm'
+                : 'text-grey hover:text-black'
+            "
+          >
+            FR
+          </button>
           <button
             @click="locale !== 'en' && toggleLocale()"
             class="rounded-lg px-3 py-1.5 font-ui text-[14px] font-bold uppercase tracking-wide transition-all duration-200"
-            :class="locale === 'en' ? 'bg-main text-white shadow-sm' : 'text-grey hover:text-black'"
-          >EN</button>
+            :class="
+              locale === 'en'
+                ? 'bg-main text-white shadow-sm'
+                : 'text-grey hover:text-black'
+            "
+          >
+            EN
+          </button>
         </div>
       </div>
 
@@ -72,16 +86,40 @@
           <button
             type="button"
             class="absolute right-4 top-1/2 -translate-y-1/2 text-grey hover:text-black"
-            :aria-label="showPassword ? t('auth.hide_password') : t('auth.show_password')"
+            :aria-label="
+              showPassword ? t('auth.hide_password') : t('auth.show_password')
+            "
             @click="showPassword = !showPassword"
           >
-            <svg v-if="!showPassword" xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
-              <circle cx="12" cy="12" r="3"/>
+            <svg
+              v-if="!showPassword"
+              xmlns="http://www.w3.org/2000/svg"
+              class="h-5 w-5"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            >
+              <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
+              <circle cx="12" cy="12" r="3" />
             </svg>
-            <svg v-else xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/>
-              <line x1="1" y1="1" x2="23" y2="23"/>
+            <svg
+              v-else
+              xmlns="http://www.w3.org/2000/svg"
+              class="h-5 w-5"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            >
+              <path
+                d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"
+              />
+              <line x1="1" y1="1" x2="23" y2="23" />
             </svg>
           </button>
         </div>
@@ -96,16 +134,42 @@
           <button
             type="button"
             class="absolute right-4 top-1/2 -translate-y-1/2 text-grey hover:text-black"
-            :aria-label="showConfirmPassword ? t('auth.hide_password') : t('auth.show_password')"
+            :aria-label="
+              showConfirmPassword
+                ? t('auth.hide_password')
+                : t('auth.show_password')
+            "
             @click="showConfirmPassword = !showConfirmPassword"
           >
-            <svg v-if="!showConfirmPassword" xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
-              <circle cx="12" cy="12" r="3"/>
+            <svg
+              v-if="!showConfirmPassword"
+              xmlns="http://www.w3.org/2000/svg"
+              class="h-5 w-5"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            >
+              <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
+              <circle cx="12" cy="12" r="3" />
             </svg>
-            <svg v-else xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/>
-              <line x1="1" y1="1" x2="23" y2="23"/>
+            <svg
+              v-else
+              xmlns="http://www.w3.org/2000/svg"
+              class="h-5 w-5"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            >
+              <path
+                d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"
+              />
+              <line x1="1" y1="1" x2="23" y2="23" />
             </svg>
           </button>
         </div>
@@ -162,8 +226,13 @@ const router = useRouter();
 const { t, locale } = useI18n();
 
 const toggleLocale = () => {
-  locale.value = locale.value === 'fr' ? 'en' : 'fr';
-  localStorage.setItem('locale', locale.value);
+  locale.value = locale.value === "fr" ? "en" : "fr";
+  localStorage.setItem("locale", locale.value);
+};
+
+const normalizeToken = (rawToken) => {
+  if (typeof rawToken !== "string") return "";
+  return rawToken.trim().replace(/^"+|"+$/g, "");
 };
 
 const retourAulogin = () => {
@@ -187,11 +256,24 @@ const handleRegister = async () => {
       password: password.value,
     });
 
-    successMessage.value = t("auth.success.register");
+    const loginResponse = await axios.post(
+      "http://localhost:8000/api/login_check",
+      {
+        email: email.value,
+        password: password.value,
+      },
+    );
 
-    setTimeout(() => {
-      router.push("/login");
-    }, 2000);
+    const token = normalizeToken(loginResponse.data?.token);
+
+    if (!token) {
+      errorMessage.value = t("auth.errors.invalid_token");
+      return;
+    }
+
+    localStorage.setItem("jwt_token", token);
+    successMessage.value = t("auth.success.login");
+    router.push("/dashboard");
   } catch (error) {
     if (error.response && error.response.status === 409) {
       errorMessage.value = t("auth.errors.email_used");

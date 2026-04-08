@@ -36,6 +36,9 @@ class RegistrationController extends AbstractController
         // Création d'un nouvel objet User et remplissage de ses champs.
         $user = new User();
         $user->setEmail($data['email']);
+        $user->setProfilePicture('default.jpg');
+        $user->setLatitude(48.24);
+        $user->setLongitude(4.75);
         
         if (isset($data['username'])) {
             $user->setUsername($data['username']);
