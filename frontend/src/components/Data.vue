@@ -120,6 +120,24 @@
           </div>
         </article>
 
+        <article @click="zoomedCard = 'progression'" class="group bg-main rounded-[2rem] p-6 shadow-lg flex flex-col cursor-pointer active:scale-95 transition-transform">
+          <div class="flex justify-between items-center mb-4">
+            <h2 class="text-white font-bold text-body-16">Progression</h2>
+            <Icon icon="ph:magnifying-glass-plus-bold" class="text-white/40 h-5 w-5 opacity-0 group-hover:opacity-100 transition-opacity" />
+          </div>
+          <div class="bg-white/95 rounded-2xl p-5 flex flex-col justify-between overflow-hidden">
+            <p class="text-body-12 text-grey font-bold italic mb-4 uppercase tracking-tighter">kg CO2</p>
+            <div class="flex items-end justify-between h-32 px-1 gap-2">
+              <div v-for="(val, index) in currentData.values" :key="index" class="w-full bg-main rounded-t-lg" :style="{ height: `${(val / currentData.max) * 100}%`, opacity: 0.4 + (index * 0.15) }"></div>
+            </div>
+            <div class="flex justify-between mt-4">
+               <div v-for="(label, index) in currentData.labels" :key="index" class="text-body-8 text-center font-bold text-black flex-1 uppercase leading-tight">
+                 {{ label }}<br/><span class="font-normal text-grey">{{ currentData.values[index] }}kg</span>
+               </div>
+            </div>
+          </div>
+        </article>
+
       </section>
     </main>
 
