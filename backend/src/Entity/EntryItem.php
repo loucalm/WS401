@@ -66,4 +66,15 @@ class EntryItem
         $this->activityType = $activityType;
         return $this;
     }
+
+    public function __toString(): string
+    {
+        $label = $this->activityType?->__toString() ?? 'Item';
+
+        if ($this->quantity === null) {
+            return $label;
+        }
+
+        return sprintf('%s x %s', $this->quantity, $label);
+    }
 }

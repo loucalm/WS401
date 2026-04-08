@@ -1,0 +1,275 @@
+{% extends '@EasyAdmin/page/content.html.twig' %}
+
+{% block content_title %}{{ 'dashboard.heading'|trans({}, 'admin') }}{% endblock %}
+
+{% block main %}
+    <style>
+        .admin-hero {
+            padding: 2rem;
+            border-radius: 28px;
+            background: linear-gradient(135deg, #112d4e 0%, #1f6f78 48%, #f0f4f8 100%);
+            color: #f8fbff;
+            display: grid;
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 24px 60px rgba(17, 45, 78, 0.18);
+        }
+
+        .admin-hero__top {
+            display: flex;
+            justify-content: space-between;
+            gap: 1rem;
+            align-items: flex-start;
+            flex-wrap: wrap;
+        }
+
+        .admin-hero h1 {
+            margin: 0;
+            font-size: clamp(2rem, 4vw, 3rem);
+            font-weight: 800;
+            letter-spacing: -0.04em;
+        }
+
+        .admin-hero p {
+            margin: 0.5rem 0 0;
+            max-width: 60ch;
+            color: rgba(248, 251, 255, 0.84);
+            font-size: 1rem;
+        }
+
+        .locale-switcher {
+            display: inline-flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+        }
+
+        .locale-switcher a {
+            padding: 0.65rem 1rem;
+            border-radius: 999px;
+            text-decoration: none;
+            background: rgba(255, 255, 255, 0.15);
+            color: #fff;
+            border: 1px solid rgba(255, 255, 255, 0.18);
+            transition: transform 0.2s ease, background 0.2s ease;
+        }
+
+        .locale-switcher a:hover,
+        .locale-switcher a.is-active {
+            background: rgba(255, 255, 255, 0.28);
+            transform: translateY(-1px);
+        }
+
+        .stats-grid,
+        .quick-links-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 1rem;
+        }
+
+        .stat-card,
+        .quick-link-card,
+        .recent-panel {
+            border-radius: 24px;
+            background: #ffffff;
+            box-shadow: 0 18px 40px rgba(15, 23, 42, 0.08);
+        }
+
+        .stat-card {
+            padding: 1.25rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .stat-card::after {
+            content: '';
+            position: absolute;
+            inset: auto -2rem -2rem auto;
+            width: 6rem;
+            height: 6rem;
+            border-radius: 50%;
+            background: rgba(31, 111, 120, 0.08);
+        }
+
+        .stat-card strong {
+            display: block;
+            font-size: 2rem;
+            line-height: 1;
+            color: #112d4e;
+        }
+
+        .stat-card span {
+            color: #52606d;
+            font-size: 0.95rem;
+        }
+
+        .section-title {
+            margin: 2rem 0 1rem;
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: #112d4e;
+        }
+
+        .quick-link-card {
+            padding: 1.25rem;
+            text-decoration: none;
+            color: inherit;
+            display: grid;
+            gap: 0.75rem;
+            border: 1px solid transparent;
+            transition: transform 0.2s ease, border-color 0.2s ease;
+        }
+
+        .quick-link-card:hover {
+            transform: translateY(-3px);
+            border-color: rgba(17, 45, 78, 0.12);
+        }
+
+        .quick-link-card__meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 1rem;
+            color: #1f6f78;
+            font-weight: 700;
+        }
+
+        .quick-link-card p {
+            margin: 0;
+            color: #52606d;
+        }
+
+        .recent-panel {
+            padding: 1.5rem;
+            margin-top: 2rem;
+        }
+
+        .recent-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .recent-table th,
+        .recent-table td {
+            padding: 0.9rem 0;
+            border-bottom: 1px solid #e5edf4;
+            text-align: left;
+        }
+
+        .recent-table th {
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+            color: #7b8794;
+        }
+
+        .recent-table td {
+            color: #243b53;
+        }
+
+        .recent-empty {
+            color: #7b8794;
+            margin: 0;
+        }
+
+        @media (max-width: 767px) {
+            .recent-table thead {
+                display: none;
+            }
+
+            .recent-table,
+            .recent-table tbody,
+            .recent-table tr,
+            .recent-table td {
+                display: block;
+                width: 100%;
+            }
+
+            .recent-table tr {
+                padding: 0.75rem 0;
+                border-bottom: 1px solid #e5edf4;
+            }
+
+            .recent-table td {
+                border-bottom: none;
+                padding: 0.25rem 0;
+            }
+        }
+    </style>
+
+    <section class="admin-hero">
+        <div class="admin-hero__top">
+            <div>
+                <h1>{{ 'dashboard.heading'|trans({}, 'admin') }}</h1>
+                <p>{{ 'dashboard.lead'|trans({}, 'admin') }}</p>
+            </div>
+
+            <nav class="locale-switcher" aria-label="{{ 'menu.international'|trans({}, 'admin') }}">
+                <a href="{{ path('admin_locale', { locale: 'fr' }) }}" class="{{ currentLocale == 'fr' ? 'is-active' : '' }}">{{ 'menu.french'|trans({}, 'admin') }}</a>
+                <a href="{{ path('admin_locale', { locale: 'en' }) }}" class="{{ currentLocale == 'en' ? 'is-active' : '' }}">{{ 'menu.english'|trans({}, 'admin') }}</a>
+            </nav>
+        </div>
+
+        <div class="stats-grid">
+            <article class="stat-card">
+                <strong>{{ stats.categories }}</strong>
+                <span>{{ 'dashboard.stats.categories'|trans({}, 'admin') }}</span>
+            </article>
+            <article class="stat-card">
+                <strong>{{ stats.activityTypes }}</strong>
+                <span>{{ 'dashboard.stats.activity_types'|trans({}, 'admin') }}</span>
+            </article>
+            <article class="stat-card">
+                <strong>{{ stats.users }}</strong>
+                <span>{{ 'dashboard.stats.users'|trans({}, 'admin') }}</span>
+            </article>
+            <article class="stat-card">
+                <strong>{{ stats.entries }}</strong>
+                <span>{{ 'dashboard.stats.entries'|trans({}, 'admin') }}</span>
+            </article>
+        </div>
+    </section>
+
+    <h2 class="section-title">{{ 'dashboard.panels.quick_actions'|trans({}, 'admin') }}</h2>
+    <section class="quick-links-grid">
+        {% for quickLink in quickLinks %}
+            <a href="{{ quickLink.url }}" class="quick-link-card">
+                <div class="quick-link-card__meta">
+                    <span><i class="{{ quickLink.icon }}"></i> {{ quickLink.label }}</span>
+                    <span>{{ quickLink.count }}</span>
+                </div>
+                <p>{{ quickLink.description }}</p>
+            </a>
+        {% endfor %}
+    </section>
+
+    <section class="recent-panel">
+        <h2 class="section-title">{{ 'dashboard.panels.recent_entries'|trans({}, 'admin') }}</h2>
+
+        {% if recentEntries is empty %}
+            <p class="recent-empty">{{ 'dashboard.empty_state'|trans({}, 'admin') }}</p>
+        {% else %}
+            <table class="recent-table">
+                <thead>
+                    <tr>
+                        <th>{{ 'fields.id'|trans({}, 'admin') }}</th>
+                        <th>{{ 'fields.owner'|trans({}, 'admin') }}</th>
+                        <th>{{ 'fields.total_co2'|trans({}, 'admin') }}</th>
+                        <th>{{ 'fields.entry_items'|trans({}, 'admin') }}</th>
+                        <th>{{ 'fields.created_at'|trans({}, 'admin') }}</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for entry in recentEntries %}
+                        <tr>
+                            <td>#{{ entry.id }}</td>
+                            <td>{{ entry.owner }}</td>
+                            <td>{{ entry.totalCo2|number_format(2, '.', ' ') }}</td>
+                            <td>{{ entry.entryItems|length }}</td>
+                            <td>{{ entry.createdAt ? entry.createdAt|date('d/m/Y H:i') : '-' }}</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        {% endif %}
+    </section>
+{% endblock %}

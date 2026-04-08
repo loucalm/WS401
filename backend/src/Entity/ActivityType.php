@@ -120,4 +120,9 @@ class ActivityType
         $this->category = $category;
         return $this;
     }
+
+    public function __toString(): string
+    {
+        return $this->name ?? 'Activity type';
+    }
 }

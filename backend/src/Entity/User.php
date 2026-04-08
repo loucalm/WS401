@@ -115,7 +115,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
    public function getUsername(): string
     {
-        return (string) $this->email;
+        return $this->username ?: (string) $this->email;
     }
 
     public function setUsername(?string $username): static
@@ -190,5 +190,10 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function eraseCredentials(): void
     {
         // @deprecated, to be removed when upgrading to Symfony 8
+    }
+
+    public function __toString(): string
+    {
+        return $this->getUsername();
     }
 }

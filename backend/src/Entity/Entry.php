@@ -136,4 +136,15 @@ class Entry
         }
         return $this;
     }
+
+    public function __toString(): string
+    {
+        if ($this->id === null) {
+            return 'Entry';
+        }
+
+        $owner = $this->owner?->__toString() ?? 'Unknown user';
+
+        return sprintf('#%d - %s', $this->id, $owner);
+    }
 }

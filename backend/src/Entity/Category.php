@@ -60,4 +60,9 @@ class Category
         $this->color = $color;
         return $this;
     }
+
+    public function __toString(): string
+    {
+        return $this->name ?? 'Category';
+    }
 }
