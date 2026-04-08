@@ -120,68 +120,6 @@
           </div>
         </article>
 
-        <article @click="zoomedCard = 'progression'" class="group bg-main rounded-[2rem] p-6 shadow-lg flex flex-col cursor-pointer active:scale-95 transition-transform">
-          <div class="flex justify-between items-center mb-4">
-            <h2 class="text-white font-bold text-body-16">Progression</h2>
-            <Icon icon="ph:magnifying-glass-plus-bold" class="text-white/40 h-5 w-5 opacity-0 group-hover:opacity-100 transition-opacity" />
-          </div>
-          <div class="bg-white/95 rounded-2xl p-5 flex flex-col justify-between overflow-hidden">
-            <p class="text-body-12 text-grey font-bold italic mb-4 uppercase tracking-tighter">kg CO2</p>
-            <div class="flex items-end justify-between h-32 px-1 gap-2">
-              <div v-for="(val, index) in currentData.values" :key="index" class="w-full bg-main rounded-t-lg" :style="{ height: `${(val / currentData.max) * 100}%`, opacity: 0.4 + (index * 0.15) }"></div>
-            </div>
-            <div class="flex justify-between mt-4">
-               <div v-for="(label, index) in currentData.labels" :key="index" class="text-body-8 text-center font-bold text-black flex-1 uppercase leading-tight">
-                 {{ label }}<br/><span class="font-normal text-grey">{{ currentData.values[index] }}kg</span>
-               </div>
-            </div>
-          </div>
-        </article>
-
-        <article @click="zoomedCard = 'challenges'" class="group bg-main rounded-[2rem] p-6 shadow-lg flex flex-col cursor-pointer active:scale-95 transition-transform">
-          <div class="flex justify-between items-center mb-5">
-            <h2 class="text-white font-bold text-body-16">Challenges & Achievement</h2>
-            <Icon icon="ph:magnifying-glass-plus-bold" class="text-white/40 h-5 w-5 opacity-0 group-hover:opacity-100 transition-opacity" />
-          </div>
-          <div class="bg-white rounded-3xl p-6 flex flex-col justify-between h-full gap-6">
-            <div class="flex flex-col gap-5">
-              <div v-for="c in challenges" :key="c.title" class="flex flex-col gap-2">
-                <div class="flex items-center gap-3 text-body-12">
-                  <Icon :icon="c.icon" class="h-6 w-6 text-main shrink-0" />
-                  <p class="font-bold text-black underline">{{ c.title }}</p>
-                </div>
-                <div class="flex items-center gap-4">
-                  <div class="flex-1 bg-grey/15 h-3 rounded-full overflow-hidden shadow-inner relative">
-                    <div class="absolute inset-y-0 left-0 bg-main h-full rounded-full transition-all duration-1000" :style="{ width: c.progress + '%' }"></div>
-                  </div>
-                  <span class="text-body-12 font-bold text-main">{{ c.progress }}%</span>
-                </div>
-              </div>
-            </div>
-            <div class="h-px bg-grey/10 w-full"></div>
-            <p class="text-body-8 font-bold text-grey uppercase tracking-widest text-center">Recent Badges</p>
-            <div class="flex justify-around items-center">
-              <div v-for="b in badges.slice(0, 3)" :key="b.name" class="h-12 w-12 rounded-full flex items-center justify-center shadow-sm" :class="b.locked ? 'bg-grey/20 opacity-40' : 'bg-main-light text-main border border-main/10'">
-                <Icon :icon="b.icon" class="h-7 w-7" />
-              </div>
-            </div>
-            <div class="bg-main-light rounded-xl p-3 border border-main/10 text-center">
-              <p class="text-body-12 text-main leading-tight italic">"Unplugging devices at night can save up to 10% energy."</p>
-            </div>
-          </div>
-        </article>
-
-        <article @click="zoomedCard = 'split'" class="group bg-main rounded-[2rem] p-6 flex flex-col shadow-lg cursor-pointer active:scale-95 transition-transform">
-          <div class="flex justify-between items-center mb-1">
-            <h2 class="text-white font-bold text-body-16 leading-tight">CO2 Split</h2>
-            <Icon icon="ph:magnifying-glass-plus-bold" class="text-white/40 h-5 w-5 opacity-0 group-hover:opacity-100 transition-opacity" />
-          </div>
-          <p class="text-body-12 text-white/70 italic uppercase mb-4 tracking-wider">Breakdown by category</p>
-          <div class="bg-white/90 rounded-2xl p-6 min-h-[250px] flex items-center justify-center">
-             <Pie :data="chartData" :options="chartOptions" />
-          </div>
-        </article>
-
       </section>
     </main>
 
