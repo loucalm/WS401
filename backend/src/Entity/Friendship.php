@@ -24,6 +24,5 @@ class Friendship
 
     #[ORM\Column(length: 20)]
     private ?string $status = 'pending'; // Statut de la demande : 'pending' (en attente) ou 'accepted' (acceptée)
-
-    // Getters et setters à ajouter si nécessaire
+ // ajouter des getters et setters ici si besoin
 }
