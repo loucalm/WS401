@@ -196,7 +196,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[\Deprecated]
     public function eraseCredentials(): void
     {
-        // Méthode dépréciée depuis Symfony 7. Elle sera supprimée lors du passage à Symfony 8.
     }
 
     // Champ virtuel utilisé uniquement dans les formulaires (EasyAdmin, inscription).
