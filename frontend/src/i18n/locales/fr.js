@@ -71,7 +71,7 @@ export default {
     activity_fallback: "Activité #{id}",
     notifications_title: "Notifications",
     notifications_empty: "Aucune notification pour l'instant.",
-    friend_rank_alert: "{name} est passé·e {rank}e avec {co2} kg de CO2 économisé !",
+    friend_rank_alert: "{name} est passé·e {rank} avec {points} pts aujourd'hui !",
   },
   data: {
     title: "Données",
