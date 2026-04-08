@@ -14,17 +14,17 @@
               
               <div v-if="zoomedCard === 'weekly'" class="w-full flex flex-col gap-6 items-center text-black">
                 <div class="p-6 bg-main-light rounded-2xl w-full text-center border border-main/10">
-                  <p class="text-body-12 font-bold text-grey uppercase tracking-widest mb-2">Total Impact</p>
+                  <p class="text-body-12 font-bold text-grey uppercase tracking-widest mb-2">{{ t("data.total_impact") }}</p>
                   <h3 class="font-title text-title-h2 text-main">+ 5.23 KG CO2</h3>
-                  <p class="text-body-12 text-grey font-medium mt-2 italic text-center">Current week analysis</p>
+                  <p class="text-body-12 text-grey font-medium mt-2 italic text-center">{{ t("data.current_week_analysis") }}</p>
                 </div>
                 <div class="w-full space-y-3">
                   <div class="flex justify-between items-center p-4 bg-secondary-light/20 rounded-2xl border border-grey/10">
-                    <div class="flex items-center gap-3 font-bold text-body-16"><Icon icon="ph:trend-down-bold" class="text-main h-6 w-6" />Performance</div>
+                    <div class="flex items-center gap-3 font-bold text-body-16"><Icon icon="ph:trend-down-bold" class="text-main h-6 w-6" />{{ t("data.performance") }}</div>
                     <span class="text-main font-bold">-12% vs last wk</span>
                   </div>
                   <div class="flex justify-between items-center p-4 bg-secondary-light/20 rounded-2xl border border-grey/10">
-                    <div class="flex items-center gap-3 font-bold text-body-16"><Icon icon="ph:users-three-bold" class="text-main h-6 w-6" />Community</div>
+                    <div class="flex items-center gap-3 font-bold text-body-16"><Icon icon="ph:users-three-bold" class="text-main h-6 w-6" />{{ t("data.community") }}</div>
                     <span class="text-grey font-bold">Top 15%</span>
                   </div>
                 </div>
@@ -32,7 +32,7 @@
 
               <div v-if="zoomedCard === 'progression'" class="w-full space-y-6">
                 <div class="flex bg-main-light rounded-full p-1">
-                  <button v-for="p in ['day', 'week', 'month']" :key="p" @click="activePeriod = p" class="flex-1 py-2 rounded-full text-body-12 font-bold uppercase" :class="activePeriod === p ? 'bg-main text-white' : 'text-main'">{{p}}</button>
+                  <button v-for="p in ['day', 'week', 'month']" :key="p" @click="activePeriod = p" class="flex-1 py-2 rounded-full text-body-12 font-bold uppercase" :class="activePeriod === p ? 'bg-main text-white' : 'text-main'">{{ t(`data.${p}`) }}</button>
                 </div>
                 <div class="h-48 flex items-end justify-between gap-3 px-2">
                   <div v-for="(val, i) in currentData.values" :key="i" class="w-full bg-main rounded-t-xl relative transition-all duration-700" :style="{ height: `${(val / currentData.max) * 100}%` }">
@@ -55,7 +55,7 @@
                   </div>
                 </div>
                 <div class="h-px bg-grey/10 w-full my-4"></div>
-                <p class="text-body-12 font-bold text-grey uppercase tracking-widest text-center">Your Achievement Badges</p>
+                <p class="text-body-12 font-bold text-grey uppercase tracking-widest text-center">{{ t("data.your_badges") }}</p>
                 <div class="flex justify-around items-center">
                   <div v-for="b in badges" :key="b.name" class="flex flex-col items-center gap-2">
                     <div class="h-14 w-14 rounded-full flex items-center justify-center text-main border-2 border-main/20" :class="b.locked ? 'bg-grey/10 grayscale opacity-40' : 'bg-main-light'">
@@ -82,16 +82,16 @@
         
         <div class="mt-4 w-full rounded-3xl p-6 shadow-xl text-center border border-grey/5 bg-white">
           <h1 class="font-title text-title-h3 uppercase leading-none text-black tracking-tight">Rafamaru Teixeira</h1>
-          <p class="text-main font-medium mt-1 text-body-16">Climate Protector - Lvl 12</p>
+          <p class="text-main font-medium mt-1 text-body-16">{{ t("data.level", { lvl: 12 }) }}</p>
           <div class="h-px bg-grey/20 w-full my-4"></div>
           <div class="flex justify-around items-center text-black">
             <div class="text-center">
-              <p class="text-body-12 font-bold uppercase">Friends :</p>
+              <p class="text-body-12 font-bold uppercase">{{ t("data.friends_label") }} :</p>
               <p class="text-body-16 font-semibold">25</p>
             </div>
             <div class="w-px bg-grey/20 h-10"></div>
             <div class="text-center">
-              <p class="text-body-12 font-bold uppercase">Saved :</p>
+              <p class="text-body-12 font-bold uppercase">{{ t("data.saved_label") }} :</p>
               <p class="text-body-16 font-semibold">+120kg CO2</p>
             </div>
           </div>
@@ -102,17 +102,17 @@
         
         <article @click="zoomedCard = 'weekly'" class="group bg-main rounded-[2rem] p-6 flex flex-col shadow-lg cursor-pointer active:scale-95 transition-transform">
           <div class="flex justify-between items-center mb-4">
-            <h2 class="text-white font-bold text-body-16">Weekly comparison</h2>
+            <h2 class="text-white font-bold text-body-16">{{ t("data.weekly_comparison") }}</h2>
             <Icon icon="ph:magnifying-glass-plus-bold" class="text-white/40 h-5 w-5 opacity-0 group-hover:opacity-100 transition-opacity" />
           </div>
           <div class="bg-white/90 rounded-2xl p-6 flex items-center justify-around text-center">
             <div>
-              <p class="text-body-12 text-black font-bold uppercase mb-1">You</p>
+              <p class="text-body-12 text-black font-bold uppercase mb-1">{{ t("data.you") }}</p>
               <div class="bg-main text-white py-3 px-6 rounded-xl font-title text-title-h4 shadow-inner">+ 5KG</div>
             </div>
             <div class="h-16 w-px bg-grey/20"></div>
             <div>
-              <p class="text-body-12 text-grey font-bold uppercase mb-1">National average</p>
+              <p class="text-body-12 text-grey font-bold uppercase mb-1">{{ t("data.national_average") }}</p>
               <div class="flex items-center justify-center gap-2 bg-main-light text-main py-3 px-5 rounded-xl font-bold text-body-16">
                 <Icon icon="ph:users-three-fill" /> + 3kg
               </div>
@@ -122,7 +122,7 @@
 
         <article @click="zoomedCard = 'progression'" class="group bg-main rounded-[2rem] p-6 shadow-lg flex flex-col cursor-pointer active:scale-95 transition-transform">
           <div class="flex justify-between items-center mb-4">
-            <h2 class="text-white font-bold text-body-16">Progression</h2>
+            <h2 class="text-white font-bold text-body-16">{{ t("data.progression") }}</h2>
             <Icon icon="ph:magnifying-glass-plus-bold" class="text-white/40 h-5 w-5 opacity-0 group-hover:opacity-100 transition-opacity" />
           </div>
           <div class="bg-white/95 rounded-2xl p-5 flex flex-col justify-between overflow-hidden">
@@ -140,7 +140,7 @@
 
         <article @click="zoomedCard = 'challenges'" class="group bg-main rounded-[2rem] p-6 shadow-lg flex flex-col cursor-pointer active:scale-95 transition-transform">
           <div class="flex justify-between items-center mb-5">
-            <h2 class="text-white font-bold text-body-16">Challenges & Achievement</h2>
+            <h2 class="text-white font-bold text-body-16">{{ t("data.challenges_achievement") }}</h2>
             <Icon icon="ph:magnifying-glass-plus-bold" class="text-white/40 h-5 w-5 opacity-0 group-hover:opacity-100 transition-opacity" />
           </div>
           <div class="bg-white rounded-3xl p-6 flex flex-col justify-between h-full gap-6">
@@ -159,24 +159,24 @@
               </div>
             </div>
             <div class="h-px bg-grey/10 w-full"></div>
-            <p class="text-body-8 font-bold text-grey uppercase tracking-widest text-center">Recent Badges</p>
+            <p class="text-body-8 font-bold text-grey uppercase tracking-widest text-center">{{ t("data.recent_badges") }}</p>
             <div class="flex justify-around items-center">
               <div v-for="b in badges.slice(0, 3)" :key="b.name" class="h-12 w-12 rounded-full flex items-center justify-center shadow-sm" :class="b.locked ? 'bg-grey/20 opacity-40' : 'bg-main-light text-main border border-main/10'">
                 <Icon :icon="b.icon" class="h-7 w-7" />
               </div>
             </div>
             <div class="bg-main-light rounded-xl p-3 border border-main/10 text-center">
-              <p class="text-body-12 text-main leading-tight italic">"Unplugging devices at night can save up to 10% energy."</p>
+              <p class="text-body-12 text-main leading-tight italic">"{{ t("data.eco_tip") }}"</p>
             </div>
           </div>
         </article>
 
         <article @click="zoomedCard = 'split'" class="group bg-main rounded-[2rem] p-6 flex flex-col shadow-lg cursor-pointer active:scale-95 transition-transform">
           <div class="flex justify-between items-center mb-1">
-            <h2 class="text-white font-bold text-body-16 leading-tight">CO2 Split</h2>
+            <h2 class="text-white font-bold text-body-16 leading-tight">{{ t("data.co2_split") }}</h2>
             <Icon icon="ph:magnifying-glass-plus-bold" class="text-white/40 h-5 w-5 opacity-0 group-hover:opacity-100 transition-opacity" />
           </div>
-          <p class="text-body-12 text-white/70 italic uppercase mb-4 tracking-wider">Breakdown by category</p>
+          <p class="text-body-12 text-white/70 italic uppercase mb-4 tracking-wider">{{ t("data.breakdown_by_category") }}</p>
           <div class="bg-white/90 rounded-2xl p-6 min-h-[250px] flex items-center justify-center">
              <Pie :data="chartData" :options="chartOptions" />
           </div>
@@ -191,6 +191,7 @@
 <script setup>
 import { ref, computed } from 'vue';
 import { Icon } from "@iconify/vue";
+import { useI18n } from "vue-i18n";
 import BottomNav from "./BottomNav.vue";
 import personaSrc from "../assets/img/persona.jpg";
 import { Pie } from 'vue-chartjs';
@@ -200,10 +201,16 @@ ChartJS.register(Title, Tooltip, Legend, ArcElement, CategoryScale);
 
 const zoomedCard = ref(null);
 const activePeriod = ref('day');
+const { t } = useI18n();
 
 const getTitle = (id) => {
-  const t = { weekly: 'Weekly comparison', progression: 'Progression Details', challenges: 'Challenges & Badges', split: 'Footprint Split' };
-  return t[id];
+  const labels = {
+    weekly: t("data.weekly_comparison"),
+    progression: t("data.progression_details"),
+    challenges: t("data.challenges_achievement"),
+    split: t("data.co2_split"),
+  };
+  return labels[id];
 };
 
 // labels matching original request
@@ -213,20 +220,20 @@ const statsData = {
   month: { labels: ['Jan.', 'Feb.', 'Mar.', 'Apr.'], values: [45, 38, 52, 30], max: 60 }
 };
 
-const challenges = [
-  { title: "1 week without a car", icon: "ph:bicycle-bold", progress: 80 },
-  { title: "3 days vegetarian", icon: "ph:leaf-bold", progress: 45 }
-];
+const challenges = computed(() => [
+  { title: t("data.challenges.car_free_week"), icon: "ph:bicycle-bold", progress: 80 },
+  { title: t("data.challenges.vegetarian_days"), icon: "ph:leaf-bold", progress: 45 }
+]);
 
-const badges = [
-  { name: 'Eco-Root', icon: 'ph:leaf-fill', locked: false },
-  { name: 'Cyclist', icon: 'ph:bicycle-fill', locked: false },
-  { name: 'Energy', icon: 'ph:lightning-fill', locked: true }
-];
+const badges = computed(() => [
+  { name: t("data.badges.eco_root"), icon: 'ph:leaf-fill', locked: false },
+  { name: t("data.badges.cyclist"), icon: 'ph:bicycle-fill', locked: false },
+  { name: t("data.badges.energy"), icon: 'ph:lightning-fill', locked: true }
+]);
 
 const currentData = computed(() => statsData[activePeriod.value]);
 const chartData = computed(() => ({
-  labels: ['Transport', 'Food', 'Shopping', 'Energy'],
+  labels: [t("data.chart.transport"), t("data.chart.food"), t("data.chart.shopping"), t("data.chart.energy")],
   datasets: [{ backgroundColor: ['#117d6f', '#19B4A0', '#4B6481', '#a1a1aa'], borderWidth: 2, borderColor: '#ffffff', data: [45, 25, 18, 12] }]
 }));
 

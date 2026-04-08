@@ -21,12 +21,12 @@
         <h1
           class="font-title mt-2 max-w-[14ch] text-[1.45rem] uppercase leading-[1.05] text-main text-balance sm:mt-4 sm:max-w-none sm:text-title-h3"
         >
-          PAGE NOT FOUND
+          {{ t("not_found.title") }}
         </h1>
         <p
           class="font-ui mt-4 max-w-[20ch] text-[0.95rem] font-bold uppercase leading-[1.18] tracking-[0.01em] text-black text-balance sm:mt-6 sm:max-w-none sm:text-body-24"
         >
-          THIS ROUTE DOES NOT EXIST
+          {{ t("not_found.subtitle") }}
         </p>
       </div>
 
@@ -44,7 +44,7 @@
         to="/login"
         class="font-ui mt-6 inline-flex w-full items-center justify-center rounded-[1.35rem] bg-main px-5 py-3 text-[0.98rem] font-bold uppercase tracking-[0.04em] text-white transition hover:brightness-105 sm:mt-8 sm:w-auto sm:px-8 sm:py-4 sm:text-body-24"
       >
-        GO BACK TO LOGIN
+        {{ t("not_found.back_login") }}
       </router-link>
     </main>
   </div>
@@ -52,4 +52,7 @@
 
 <script setup>
 import backgroundUrl from "../assets/img/background.png";
+import { useI18n } from "vue-i18n";
+
+const { t } = useI18n();
 </script>

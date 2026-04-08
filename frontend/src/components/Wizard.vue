@@ -13,7 +13,7 @@
           <button
             type="button"
             class="absolute left-0 top-1/2 flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full text-black transition hover:bg-white/45"
-            aria-label="Close"
+            :aria-label="t('common.close')"
             @click="goBack"
           >
             <svg
@@ -34,7 +34,7 @@
           <h1
             class="px-12 text-center font-ui text-[38px] leading-none text-black"
           >
-            Add activity
+            {{ t("wizard.add_activity") }}
           </h1>
         </div>
       </section>
@@ -59,17 +59,17 @@
             <h2
               class="mt-6 text-center font-ui text-[36px] leading-[0.98] text-black"
             >
-              Type of activity
+              {{ t("wizard.type_of_activity") }}
             </h2>
 
             <p class="mt-2 text-center font-ui text-body-16 text-black/55">
-              Pick one category to continue
+              {{ t("wizard.pick_category") }}
             </p>
 
             <Spinner
               v-if="loading"
               class="mt-6"
-              label="Loading activities..."
+              :label="t('wizard.loading_activities')"
               color-class="text-main"
               text-class="text-grey"
             />
@@ -194,16 +194,16 @@
             <h2
               class="mt-7 text-center font-ui text-[34px] leading-none text-black"
             >
-              Recap : {{ stepTitle }}
+              {{ t("wizard.recap", { title: stepTitle }) }}
             </h2>
 
             <p class="mt-2 text-center font-ui text-body-16 text-black/55">
-              Review your inputs before confirmation
+              {{ t("wizard.review") }}
             </p>
 
             <div v-if="selectedCategory === 'food'" class="mt-10 space-y-6">
               <p class="font-ui text-[24px] leading-none text-black">
-                Type : {{ selectedFoodConsumptionLabel }}
+                {{ t("wizard.diet") }} : {{ selectedFoodConsumptionLabel }}
               </p>
               <template
                 v-for="section in cachedFoodSections[selectedFoodConsumption] ||
@@ -222,13 +222,13 @@
               class="mt-12 space-y-10"
             >
               <p class="font-ui text-[32px] leading-none text-black">
-                Type : {{ consumptionSource }}
+                {{ t("wizard.consumption") }} : {{ translateActivityLabel(consumptionSource) }}
               </p>
               <p class="font-ui text-[32px] leading-none text-black">
-                Surface : {{ surface }} m²
+                {{ t("wizard.surface") }} : {{ surface }} m²
               </p>
               <p class="font-ui text-[32px] leading-none text-black">
-                Duration : {{ duration }}h
+                {{ t("wizard.duration") }} : {{ duration }}h
               </p>
             </div>
 
@@ -237,7 +237,7 @@
               class="mt-10 space-y-6"
             >
               <p class="font-ui text-[24px] leading-none text-black">
-                Purchase : {{ selectedClothingPurchaseLabel }}
+                {{ t("wizard.purchase_type") }} {{ selectedClothingPurchaseLabel }}
               </p>
               <template v-for="section in clothingSections" :key="section.id">
                 <p class="font-ui text-[24px] leading-none text-black">
@@ -248,10 +248,10 @@
 
             <div v-else class="mt-16 space-y-16">
               <p class="font-ui text-[32px] leading-none text-black">
-                Transport : {{ transportMode }}
+                {{ t("wizard.transport") }} : {{ translateActivityLabel(transportMode) }}
               </p>
               <p class="font-ui text-[32px] leading-none text-black">
-                Distance : {{ distance }}km
+                {{ t("wizard.distance") }} : {{ distance }}km
               </p>
             </div>
 
@@ -280,7 +280,7 @@
             :class="actionBackClass"
             @click="goToStep(currentStep === 2 ? 1 : 2, 'backward')"
           >
-            Back
+            {{ t("common.back") }}
           </button>
           <button
             type="button"
@@ -293,10 +293,10 @@
           >
             {{
               currentStep === 2
-                ? "Next"
+                ? t("common.next")
                 : isSubmittingConfirmation
-                  ? "Confirming..."
-                  : "Confirm"
+                  ? t("wizard.confirm_in_progress")
+                  : t("common.confirm")
             }}
           </button>
         </div>
@@ -316,6 +316,7 @@
 import { computed, onMounted, ref } from "vue";
 import { useRouter } from "vue-router";
 import axios from "axios";
+import { useI18n } from "vue-i18n";
 import { Icon } from "@iconify/vue";
 import Spinner from "./Spinner.vue";
 import WizardStep2Travel from "./wizard/WizardStep2Travel.vue";
@@ -345,6 +346,7 @@ export default {
   },
   setup() {
     const router = useRouter();
+    const { t, te } = useI18n();
     const loading = ref(true);
     const categories = ref([]);
     const activityTypes = ref([]);
@@ -386,15 +388,23 @@ export default {
       { id: "clothing", name: "Clothing", icon: "tshirt", color: "#831297" },
     ];
 
-    const clothingPurchaseOptions = [
-      { id: "online", label: "Online", svgMarkup: onlinePurchaseSvg },
+    const clothingPurchaseOptions = computed(() => [
+      {
+        id: "online",
+        label: t("wizard.purchase_options.online"),
+        svgMarkup: onlinePurchaseSvg,
+      },
       {
         id: "second-hand",
-        label: "Second hand",
+        label: t("wizard.purchase_options.second_hand"),
         svgMarkup: secondHandPurchaseSvg,
       },
-      { id: "store", label: "Shop", svgMarkup: shopPurchaseSvg },
-    ];
+      {
+        id: "store",
+        label: t("wizard.purchase_options.shop"),
+        svgMarkup: shopPurchaseSvg,
+      },
+    ]);
 
     const iconConfig = {
       travel: {
@@ -494,6 +504,27 @@ export default {
         .replace(/[^a-z0-9]+/g, "-")
         .replace(/^-+|-+$/g, "");
 
+    const translateCategoryLabel = (name = "") => {
+      const normalizedCategory = normalizeToCategory(name);
+      const key = `taxonomy.categories.${normalizedCategory}`;
+      return te(key) ? t(key) : name;
+    };
+
+    const translateSubCategoryLabel = (name = "") => {
+      const key = `taxonomy.subcategories.${normalizeKey(name)}`;
+      return te(key) ? t(key) : name;
+    };
+
+    const translateActivityLabel = (name = "") => {
+      const key = `taxonomy.activities.${normalizeKey(name).replace(/-/g, "_")}`;
+      return te(key) ? t(key) : name;
+    };
+
+    const translateDietLabel = (diet = "") => {
+      const key = `taxonomy.diets.${normalizeKey(diet).replace(/-/g, "_")}`;
+      return te(key) ? t(key) : diet;
+    };
+
     const resolveCategoryName = (activity) => {
       if (!activity) return "";
 
@@ -572,7 +603,7 @@ export default {
 
         return {
           id: diet,
-          label: diet,
+          label: translateDietLabel(diet),
           image: dietImageByKey[dietKey] || null,
           cardClass: "border-transparent bg-tertiary-light",
         };
@@ -587,14 +618,14 @@ export default {
         if (!groups.has(subCategory)) groups.set(subCategory, []);
         groups.get(subCategory).push({
           id: activity["@id"],
-          label: activity.name,
+          label: translateActivityLabel(activity.name),
           icon: activity.icon,
         });
       }
 
       return Array.from(groups.entries()).map(([subCategory, options]) => ({
         id: normalizeKey(subCategory),
-        label: subCategory,
+        label: translateSubCategoryLabel(subCategory),
         options,
       }));
     };
@@ -620,14 +651,14 @@ export default {
         if (!groups.has(subCategory)) groups.set(subCategory, []);
         groups.get(subCategory).push({
           id: activity["@id"],
-          label: activity.name,
+          label: translateActivityLabel(activity.name),
           icon: activity.icon,
         });
       }
 
       return Array.from(groups.entries()).map(([subCategory, options]) => ({
         id: normalizeKey(subCategory),
-        label: subCategory,
+        label: translateSubCategoryLabel(subCategory),
         options,
       }));
     });
@@ -645,8 +676,9 @@ export default {
         categories.value.length > 0 ? categories.value : fallbackTypes;
 
       return source.map((item, index) => {
-        const label = item.name || `Activity ${index + 1}`;
-        const category = normalizeToCategory(label);
+        const sourceName = item.name || `Activity ${index + 1}`;
+        const label = translateCategoryLabel(sourceName);
+        const category = normalizeToCategory(sourceName);
         const config = iconConfig[category] || iconConfig.travel;
         const iconStyles = resolveStep1IconStyles(item.color, category);
 
@@ -655,7 +687,7 @@ export default {
           label,
           raw: {
             id: item["@id"] || item.id,
-            name: label,
+            name: sourceName,
           },
           ...config,
           icon:
@@ -671,10 +703,14 @@ export default {
     const selectedCategory = computed(() =>
       normalizeToCategory(selectedType.value?.name || "travel"),
     );
-    const stepTitle = computed(() => selectedType.value?.name || "Travel");
+    const stepTitle = computed(() =>
+      translateCategoryLabel(selectedType.value?.name || "travel"),
+    );
 
     const selectedFoodConsumptionLabel = computed(() => {
-      return selectedFoodConsumption.value || "-";
+      return selectedFoodConsumption.value
+        ? translateDietLabel(selectedFoodConsumption.value)
+        : "-";
     });
 
     const getFoodSelectionLabels = (sectionId) => {
@@ -708,10 +744,10 @@ export default {
     };
 
     const selectedClothingPurchaseLabel = computed(() => {
-      const option = clothingPurchaseOptions.find(
+      const option = clothingPurchaseOptions.value.find(
         (item) => item.id === selectedClothingPurchase.value,
       );
-      return option?.label || "Second hand";
+      return option?.label || t("wizard.purchase_options.second_hand");
     });
 
     const co2Value = computed(() => {
@@ -1072,8 +1108,8 @@ export default {
       if (!canProceedToRecap.value) {
         alert(
           selectedCategory.value === "food"
-            ? "Please select at least one food item before continuing."
-            : "Please select at least one clothing item before continuing.",
+            ? t("wizard.errors.pick_food")
+            : t("wizard.errors.pick_clothing"),
         );
         return;
       }
@@ -1130,7 +1166,7 @@ export default {
 
       const ownerIri = await resolveCurrentUserIri(headers, token);
       if (!ownerIri) {
-        alert("Unable to identify the current user.");
+        alert(t("wizard.errors.user_not_found"));
         return;
       }
 
@@ -1246,7 +1282,7 @@ export default {
         showSuccessPopup.value = true;
       } catch (error) {
         console.error("Submission error:", error.response?.data || error);
-        alert("An error occurred while saving your footprint.");
+        alert(t("wizard.errors.save_failed"));
       } finally {
         isSubmittingConfirmation.value = false;
       }
@@ -1308,6 +1344,8 @@ export default {
       resetClothingSelection,
       getFoodSelectionLabels,
       getClothingLabel,
+      translateActivityLabel,
+      t,
       canProceedToRecap,
       goToStep,
       goNextStep,

@@ -21,11 +21,11 @@
         </div>
 
         <h3 id="activity-added-title" class="font-title popup-title">
-          Activity added
+          {{ t("wizard.activity_added") }}
         </h3>
 
         <p class="font-ui popup-subtitle">
-          Your carbon footprint has been saved.
+          {{ t("wizard.footprint_saved") }}
         </p>
 
         <p v-if="co2Label" class="font-ui popup-co2">
@@ -38,7 +38,7 @@
             class="font-ui popup-button-secondary"
             @click="$emit('go-dashboard')"
           >
-            OK
+            {{ t("common.ok") }}
           </button>
 
           <button
@@ -46,7 +46,7 @@
             class="font-ui popup-button"
             @click="$emit('add-new')"
           >
-            Add another activity
+            {{ t("wizard.add_another") }}
           </button>
         </div>
       </div>
@@ -55,6 +55,8 @@
 </template>
 
 <script setup>
+import { useI18n } from "vue-i18n";
+
 defineProps({
   visible: {
     type: Boolean,
@@ -67,6 +69,8 @@ defineProps({
 });
 
 defineEmits(["add-new", "go-dashboard"]);
+
+const { t } = useI18n();
 </script>
 
 <style scoped>

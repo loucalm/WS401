@@ -38,12 +38,12 @@
                 alt="Mascot"
                 class="mb-2 h-24 w-24 object-contain"
               />
-              <p class="font-title text-[40px] leading-none text-black">
+              <p class="font-title text-[37px] leading-none text-black">
                 {{ formattedAnimatedDailyCo2 }} kg
               </p>
-              <p class="mt-2 text-[22px] text-grey">CO2 / Daily</p>
-              <p class="text-body-12 mt-1" :class="gaugeProgressTextClass">
-                {{ Math.round(progressPercent) }}% of daily target
+              <p class="mt-2 text-[20px] text-grey">{{ t("dashboard.co2_daily") }}</p>
+              <p class="mt-1 text-[11px]" :class="gaugeProgressTextClass">
+                {{ t("dashboard.target_progress", { percent: Math.round(progressPercent) }) }}
               </p>
             </div>
           </div>
@@ -52,10 +52,10 @@
             class="relative z-10 mt-4 w-full rounded-2xl border border-grey/20 bg-white px-4 py-2 text-center shadow-[0_8px_18px_rgba(0,0,0,0.14)]"
           >
             <p class="font-title text-[28px] leading-none text-main">
-              MY POINTS
+              {{ t("dashboard.points_title") }}
             </p>
             <p class="mt-1 font-ui text-[18px] font-bold text-main">
-              + 560 n2e points
+              {{ t("dashboard.points_value", { count: 560 }) }}
             </p>
           </div>
 
@@ -67,7 +67,7 @@
               class="flex w-full items-center justify-between px-4 py-3 text-[13px] font-medium text-black"
               @click="isLeaderboardOpen = !isLeaderboardOpen"
             >
-              <span>Friends Leaderboard (live)</span>
+              <span>{{ t("dashboard.leaderboard_title") }}</span>
               <span
                 class="text-[18px] leading-none transition-transform duration-200"
                 :class="isLeaderboardOpen ? 'rotate-180' : ''"
@@ -84,7 +84,7 @@
                   v-if="leaderboard.length === 0"
                   class="py-2 text-center text-[12px] text-grey"
                 >
-                  No leaderboard data yet.
+                  {{ t("dashboard.leaderboard_empty") }}
                 </p>
 
                 <ul v-else class="space-y-2">
@@ -111,11 +111,11 @@
                           <span
                             v-if="friend.isCurrentUser"
                             class="ml-1 text-[11px] font-semibold text-main"
-                            >(you)</span
+                            >{{ t("dashboard.you") }}</span
                           >
                         </p>
                         <p class="text-[11px] text-grey">
-                          {{ friend.activityCount }} activities today
+                          {{ t("dashboard.activities_today", { count: friend.activityCount }) }}
                         </p>
                       </div>
                     </div>
@@ -135,21 +135,21 @@
 
       <section class="px-4 pt-5">
         <h2 class="font-ui text-[18px] font-semibold text-black">
-          Latest Activities
+          {{ t("dashboard.latest_activities") }}
         </h2>
 
         <div
           v-if="loading"
           class="mt-4 rounded-2xl border border-grey/15 bg-white px-4 py-4 text-center text-[14px] text-grey shadow-[0_6px_16px_rgba(0,0,0,0.14)]"
         >
-          Loading activities...
+          {{ t("dashboard.loading_activities") }}
         </div>
 
         <div
           v-else-if="activities.length === 0"
           class="mt-4 rounded-2xl border border-grey/15 bg-white px-4 py-4 text-center text-[14px] text-grey shadow-[0_6px_16px_rgba(0,0,0,0.14)]"
         >
-          No activity yet for today. Add one from Activities.
+          {{ t("dashboard.no_activity") }}
         </div>
 
         <div v-else class="mt-4 space-y-4">
@@ -202,12 +202,14 @@
 import axios from "axios";
 import { Icon } from "@iconify/vue";
 import { computed, onBeforeUnmount, onMounted, ref, watch } from "vue";
+import { useI18n } from "vue-i18n";
 import { useRouter } from "vue-router";
 import mascotSrc from "../assets/mascotte_neutre.svg";
 import BottomNav from "./BottomNav.vue";
 
 const API_BASE = "http://localhost:8000/api";
 const router = useRouter();
+const { t, te, locale } = useI18n();
 
 const loading = ref(true);
 const dailyCo2 = ref(0);
@@ -234,6 +236,24 @@ const parseJwtPayload = (token) => {
 const normalizeToken = (rawToken) => {
   if (typeof rawToken !== "string") return "";
   return rawToken.trim().replace(/^"+|"+$/g, "");
+};
+
+const normalizeKey = (value = "") =>
+  value
+    .toLowerCase()
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "");
+
+const translateActivityLabel = (label = "") => {
+  const key = `taxonomy.activities.${normalizeKey(label).replace(/-/g, "_")}`;
+  return te(key) ? t(key) : label;
+};
+
+const translateDietLabel = (label = "") => {
+  const key = `taxonomy.diets.${normalizeKey(label).replace(/-/g, "_")}`;
+  return te(key) ? t(key) : label;
 };
 
 const extractCollection = (responseData) => {
@@ -271,7 +291,8 @@ const fetchAll = async (resource, headers) => {
 };
 
 const formatKg = (value) => {
-  return new Intl.NumberFormat("fr-FR", {
+  const numberLocale = locale.value === "fr" ? "fr-FR" : "en-US";
+  return new Intl.NumberFormat(numberLocale, {
     minimumFractionDigits: 2,
     maximumFractionDigits: 2,
   }).format(value);
@@ -330,11 +351,13 @@ const toDashboardActivity = (entry, entryItemsByIri, activityTypesByIri) => {
   return {
     id: entry.id,
     title:
-      activityType?.name ||
-      entry?.details?.transportMode ||
-      entry?.details?.source ||
-      entry?.details?.diet ||
-      `Activity #${entry.id}`,
+      (activityType?.name ? translateActivityLabel(activityType.name) : "") ||
+      (entry?.details?.transportMode
+        ? translateActivityLabel(entry.details.transportMode)
+        : "") ||
+      (entry?.details?.source ? translateActivityLabel(entry.details.source) : "") ||
+      (entry?.details?.diet ? translateDietLabel(entry.details.diet) : "") ||
+      t("dashboard.activity_fallback", { id: entry.id }),
     icon: iconForActivity(activityType),
     points: `+${points} n2e points`,
     pointsClass: points > 0 ? "text-main" : "text-grey",

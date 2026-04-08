@@ -7,7 +7,7 @@
           <div class="h-10 w-10 bg-main-light rounded-xl flex items-center justify-center text-main">
             <Icon icon="ph:map-trifold-bold" class="h-6 w-6" />
           </div>
-          <h1 class="text-title-h4 text-black uppercase tracking-tight font-title"> Friends Map</h1>
+          <h1 class="text-title-h4 text-black uppercase tracking-tight font-title"> {{ t("map.title") }}</h1>
         </div>
         
         <button 
@@ -23,7 +23,7 @@
       <Transition name="slide-down">
         <div v-if="showLeaderboard" class="absolute inset-x-0 top-[73px] z-30 bg-white border-b border-grey/10 shadow-2xl max-h-[60vh] overflow-y-auto rounded-b-[2.5rem]">
           <div class="p-6 space-y-4">
-            <p class="text-body-12 text-grey font-bold uppercase tracking-widest px-2">Active Friends Online</p>
+            <p class="text-body-12 text-grey font-bold uppercase tracking-widest px-2">{{ t("map.active_friends_online") }}</p>
             <div class="space-y-3">
               <article
                 v-for="friend in friends"
@@ -37,9 +37,9 @@
                 </div>
                 <div class="flex-1">
                   <p class="font-bold text-black text-body-16 leading-tight">{{ friend.name }}</p>
-                  <p class="text-body-12 text-grey font-medium uppercase">{{ friend.rank }} Place</p>
+                  <p class="text-body-12 text-grey font-medium uppercase">{{ t("map.rank_place", { rank: friend.rank }) }}</p>
                 </div>
-                <p class="font-title text-main font-bold text-body-16">+{{ friend.weight }}kg</p>
+                <p class="font-title text-main font-bold text-body-16">{{ t("map.saved_kg", { weight: friend.weight }) }}</p>
               </article>
             </div>
           </div>
@@ -97,8 +97,8 @@
             </div>
             <div class="flex-1 text-black text-left">
               <h3 class="font-title text-title-h4 uppercase leading-none">{{ selectedUser.name }}</h3>
-              <p class="text-main font-bold text-body-16 mt-1">+{{ selectedUser.weight }} kg saved</p>
-              <p class="text-grey text-body-12 uppercase font-bold mt-1 tracking-tighter">{{ selectedUser.rank }} rank</p>
+              <p class="text-main font-bold text-body-16 mt-1">{{ t("map.saved_kg", { weight: selectedUser.weight }) }}</p>
+              <p class="text-grey text-body-12 uppercase font-bold mt-1 tracking-tighter">{{ t("map.rank_label", { rank: selectedUser.rank }) }}</p>
             </div>
             <button @click="showPopup = false" class="bg-grey/10 p-2 rounded-full text-grey active:scale-75 transition-transform">
               <Icon icon="ph:x-bold" />
@@ -115,6 +115,7 @@
 <script setup>
 import { ref } from "vue";
 import { Icon } from "@iconify/vue";
+import { useI18n } from "vue-i18n";
 import BottomNav from "./BottomNav.vue";
 
 // Import images according to your assets structure
@@ -122,6 +123,8 @@ import rafaAvatar from "@/assets/img/persona.jpg";
 // Note: Ensure persona2.jpg and persona3.jpg exist in your img folder!
 import kenzaAvatar from "@/assets/img/persona2.jpg"; 
 import kenzoAvatar from "@/assets/img/persona3.jpg";
+
+const { t } = useI18n();
 
 const zoomLevel = ref(1.2);
 const translateX = ref(0);

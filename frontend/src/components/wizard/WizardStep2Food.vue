@@ -11,10 +11,10 @@
     </div>
 
     <h2 class="mt-5 text-center font-ui text-[34px] leading-none text-black">
-      Food
+      {{ t("wizard.food") }}
     </h2>
 
-    <h3 class="mt-8 font-ui text-[28px] leading-none text-black">Diet</h3>
+    <h3 class="mt-8 font-ui text-[28px] leading-none text-black">{{ t("wizard.diet") }}</h3>
 
     <div class="mt-5 grid grid-cols-3 gap-4">
       <button
@@ -57,7 +57,7 @@
         class="rounded-[14px] border-2 border-tertiary bg-white px-3 py-2 font-ui text-body-16 leading-none text-tertiary transition-all duration-200 hover:bg-tertiary-light"
         @click="$emit('reset-food-selection')"
       >
-        Deselect all
+        {{ t("wizard.deselect_all") }}
       </button>
     </div>
 
@@ -101,6 +101,7 @@
 
 <script>
 import { Icon } from "@iconify/vue";
+import { useI18n } from "vue-i18n";
 
 export default {
   components: { Icon },
@@ -142,6 +143,10 @@ export default {
       type: Object,
       required: true,
     },
+  },
+  setup() {
+    const { t } = useI18n();
+    return { t };
   },
   methods: {
     resolveIcon(rawIcon) {

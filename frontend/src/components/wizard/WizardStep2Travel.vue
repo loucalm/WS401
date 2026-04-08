@@ -21,7 +21,7 @@
         @click="$emit('toggle-transport-menu')"
       >
         <span class="font-ui text-[26px] leading-none text-black">{{
-          transportMode
+          translateActivityLabel(transportMode)
         }}</span>
         <svg
           viewBox="0 0 24 24"
@@ -50,7 +50,7 @@
           @click="$emit('select-transport-mode', option)"
         >
           <span class="font-ui text-[22px] leading-none text-black">{{
-            option
+            translateActivityLabel(option)
           }}</span>
           <span
             v-if="transportMode === option"
@@ -62,7 +62,7 @@
     </div>
 
     <div class="mt-8 flex items-center gap-3">
-      <h3 class="font-ui text-[28px] leading-none text-black">Distance</h3>
+      <h3 class="font-ui text-[28px] leading-none text-black">{{ t("wizard.distance") }}</h3>
     </div>
 
     <div class="mt-8 flex justify-center">
@@ -97,14 +97,14 @@
         class="rounded-[18px] bg-main px-4 py-2 font-ui text-[18px] leading-none text-white"
         @click="applyManualDistance"
       >
-        Confirm
+        {{ t("common.confirm") }}
       </button>
       <button
         type="button"
         class="rounded-[18px] border border-main bg-white px-4 py-2 font-ui text-[18px] leading-none text-main"
         @click="cancelManualDistance"
       >
-        Cancel
+        {{ t("common.cancel") }}
       </button>
     </div>
 
@@ -151,6 +151,7 @@
 
 <script>
 import { Icon } from "@iconify/vue";
+import { useI18n } from "vue-i18n";
 
 export default {
   components: {
@@ -195,6 +196,25 @@ export default {
       type: Number,
       required: true,
     },
+  },
+  setup() {
+    const { t, te } = useI18n();
+
+    const normalizeKey = (value = "") =>
+      value
+        .toLowerCase()
+        .normalize("NFD")
+        .replace(/[\u0300-\u036f]/g, "")
+        .replace(/[^a-z0-9]+/g, "-")
+        .replace(/^-+|-+$/g, "")
+        .replace(/-/g, "_");
+
+    const translateActivityLabel = (label = "") => {
+      const key = `taxonomy.activities.${normalizeKey(label)}`;
+      return te(key) ? t(key) : label;
+    };
+
+    return { t, translateActivityLabel };
   },
   data() {
     return {

@@ -11,7 +11,7 @@
     </div>
 
     <h2 class="mt-5 text-center font-ui text-[34px] leading-none text-black">
-      Consumption
+      {{ t("wizard.consumption") }}
     </h2>
 
     <div class="relative mt-7">
@@ -21,7 +21,7 @@
         @click="$emit('toggle-consumption-menu')"
       >
         <span class="font-ui text-[26px] leading-none text-black">{{
-          consumptionSource
+          translateActivityLabel(consumptionSource)
         }}</span>
         <svg
           viewBox="0 0 24 24"
@@ -50,7 +50,7 @@
           @click="$emit('select-consumption-source', option)"
         >
           <span class="font-ui text-[22px] leading-none text-black">{{
-            option
+            translateActivityLabel(option)
           }}</span>
           <span
             v-if="consumptionSource === option"
@@ -62,7 +62,7 @@
     </div>
 
     <div class="mt-8 flex items-center gap-3">
-      <h3 class="font-ui text-[28px] leading-none text-black">Surface</h3>
+      <h3 class="font-ui text-[28px] leading-none text-black">{{ t("wizard.surface") }}</h3>
     </div>
 
     <div class="mt-8 flex justify-center">
@@ -97,14 +97,14 @@
         class="rounded-[18px] bg-secondary px-4 py-2 font-ui text-[18px] leading-none text-white"
         @click="applyManualSurface"
       >
-        Confirm
+        {{ t("common.confirm") }}
       </button>
       <button
         type="button"
         class="rounded-[18px] border border-secondary bg-white px-4 py-2 font-ui text-[18px] leading-none text-secondary"
         @click="cancelManualSurface"
       >
-        Cancel
+        {{ t("common.cancel") }}
       </button>
     </div>
 
@@ -148,7 +148,7 @@
     </div>
 
     <div class="mt-9 flex items-center justify-between gap-3">
-      <h3 class="font-ui text-[28px] leading-none text-black">Duration</h3>
+      <h3 class="font-ui text-[28px] leading-none text-black">{{ t("wizard.duration") }}</h3>
       <button
         type="button"
         class="flex h-10 w-10 items-center justify-center rounded-full bg-secondary-light text-secondary"
@@ -201,14 +201,14 @@
         class="rounded-[18px] bg-secondary px-4 py-2 font-ui text-[18px] leading-none text-white"
         @click="applyManualDuration"
       >
-        Confirm
+        {{ t("common.confirm") }}
       </button>
       <button
         type="button"
         class="rounded-[18px] border border-secondary bg-white px-4 py-2 font-ui text-[18px] leading-none text-secondary"
         @click="cancelManualDuration"
       >
-        Cancel
+        {{ t("common.cancel") }}
       </button>
     </div>
   </section>
@@ -216,6 +216,7 @@
 
 <script>
 import { Icon } from "@iconify/vue";
+import { useI18n } from "vue-i18n";
 
 export default {
   components: {
@@ -265,6 +266,25 @@ export default {
       type: Array,
       required: true,
     },
+  },
+  setup() {
+    const { t, te } = useI18n();
+
+    const normalizeKey = (value = "") =>
+      value
+        .toLowerCase()
+        .normalize("NFD")
+        .replace(/[\u0300-\u036f]/g, "")
+        .replace(/[^a-z0-9]+/g, "-")
+        .replace(/^-+|-+$/g, "")
+        .replace(/-/g, "_");
+
+    const translateActivityLabel = (label = "") => {
+      const key = `taxonomy.activities.${normalizeKey(label)}`;
+      return te(key) ? t(key) : label;
+    };
+
+    return { t, translateActivityLabel };
   },
   data() {
     return {

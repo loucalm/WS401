@@ -18,13 +18,13 @@
         <h1
           class="font-title mt-4 max-w-[15ch] text-[1.45rem] uppercase leading-[1.05] text-main text-balance sm:mt-5 sm:max-w-none sm:text-title-h3"
         >
-          CONNECT TO YOUR ZERO EMISSIONS JOURNEY
+          {{ t("auth.login_title") }}
         </h1>
 
         <p
           class="font-ui mt-5 max-w-[18ch] text-[0.95rem] font-bold uppercase leading-[1.18] tracking-[0.01em] text-black text-balance sm:mt-8 sm:max-w-none sm:text-body-24"
         >
-          LOG INTO YOUR ACCOUNT
+          {{ t("auth.login_subtitle") }}
         </p>
       </div>
 
@@ -35,7 +35,7 @@
         <input
           v-model="email"
           type="email"
-          placeholder="Email"
+          :placeholder="t('auth.email')"
           required
           class="font-ui w-full rounded-3xl border border-main bg-white px-4 py-3 text-[0.95rem] text-black shadow-[0_8px_14px_rgba(17,125,111,0.16)] outline-none placeholder:text-grey focus:border-main focus:ring-2 focus:ring-main/20 sm:px-5 sm:py-4 sm:text-body-24"
         />
@@ -43,14 +43,14 @@
           <input
             v-model="password"
             :type="showPassword ? 'text' : 'password'"
-            placeholder="Password"
+            :placeholder="t('auth.password')"
             required
             class="font-ui w-full rounded-3xl border border-main bg-[#fff8c9] px-4 py-3 pr-12 text-[0.95rem] text-black shadow-[0_8px_14px_rgba(17,125,111,0.16)] outline-none placeholder:text-grey focus:border-main focus:ring-2 focus:ring-main/20 sm:px-5 sm:py-4 sm:pr-14 sm:text-body-24"
           />
           <button
             type="button"
             class="absolute right-4 top-1/2 -translate-y-1/2 text-grey hover:text-black"
-            :aria-label="showPassword ? 'Hide password' : 'Show password'"
+            :aria-label="showPassword ? t('auth.hide_password') : t('auth.show_password')"
             @click="showPassword = !showPassword"
           >
             <svg
@@ -90,7 +90,7 @@
           type="submit"
           class="font-ui w-full rounded-[1.35rem] bg-main px-5 py-3 text-[0.98rem] font-bold uppercase tracking-[0.04em] text-white transition hover:brightness-105 sm:px-6 sm:py-4 sm:text-body-24"
         >
-          LOG IN
+          {{ t("auth.login_button") }}
         </button>
       </form>
 
@@ -112,7 +112,7 @@
         @click="goToRegister"
         class="font-ui mt-4 block w-full text-center text-[0.95rem] font-bold uppercase text-main underline underline-offset-4 sm:mt-5 sm:text-body-24"
       >
-        SIGN UP
+        {{ t("auth.go_signup") }}
       </button>
 
       <div class="mt-7 space-y-4 sm:mt-14 sm:space-y-7">
@@ -132,7 +132,7 @@
                 Fabien
               </p>
               <p class="font-ui text-body-12 text-grey sm:text-body-24">
-                pre-existing
+                {{ t("auth.account_type_preexisting") }}
               </p>
             </div>
           </div>
@@ -141,7 +141,7 @@
             type="button"
             class="font-ui mt-3.5 w-full rounded-[1.05rem] bg-main px-4 py-2.5 text-[0.9rem] font-bold uppercase tracking-[0.03em] text-white transition hover:brightness-105 sm:mt-5 sm:py-4 sm:text-body-24"
           >
-            SIGN IN AS FABIEN
+            {{ t("auth.sign_in_as_fabien") }}
           </button>
         </article>
 
@@ -161,7 +161,7 @@
                 Brice
               </p>
               <p class="font-ui text-body-12 text-grey sm:text-body-24">
-                pre-existing
+                {{ t("auth.account_type_preexisting") }}
               </p>
             </div>
           </div>
@@ -170,7 +170,7 @@
             type="button"
             class="font-ui mt-3.5 w-full rounded-[1.05rem] bg-main px-4 py-2.5 text-[0.9rem] font-bold uppercase tracking-[0.03em] text-white transition hover:brightness-105 sm:mt-5 sm:py-4 sm:text-body-24"
           >
-            SIGN IN AS BRICE
+            {{ t("auth.sign_in_as_brice") }}
           </button>
         </article>
       </div>
@@ -182,6 +182,7 @@
 import { ref } from "vue";
 import axios from "axios";
 import { useRouter } from "vue-router";
+import { useI18n } from "vue-i18n";
 import logoUrl from "../assets/logo.svg";
 import backgroundUrl from "../assets/img/background.png";
 import fabienUrl from "../assets/img/fabien.png";
@@ -193,6 +194,7 @@ const showPassword = ref(false);
 const errorMessage = ref("");
 const successMessage = ref("");
 const router = useRouter();
+const { t } = useI18n();
 
 const normalizeToken = (rawToken) => {
   if (typeof rawToken !== "string") return "";
@@ -216,19 +218,19 @@ const handleLogin = async () => {
     const token = normalizeToken(response.data?.token);
 
     if (!token) {
-      errorMessage.value = "Invalid token returned by server.";
+      errorMessage.value = t("auth.errors.invalid_token");
       return;
     }
 
     localStorage.setItem("jwt_token", token);
-    successMessage.value = "Login successful!";
+    successMessage.value = t("auth.success.login");
 
     router.push("/dashboard");
   } catch (error) {
     if (error.response && error.response.status === 401) {
-      errorMessage.value = "Invalid credentials.";
+      errorMessage.value = t("auth.errors.invalid_credentials");
     } else {
-      errorMessage.value = "Server connection error.";
+      errorMessage.value = t("auth.errors.server");
     }
   }
 };
