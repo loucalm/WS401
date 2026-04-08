@@ -49,10 +49,11 @@
             </p>
             <div class="space-y-3">
               <article
-                v-for="friend in friends"
+                v-for="friend in leaderboardUsers"
                 :key="friend.id"
                 @click="focusFriend(friend)"
-                class="flex items-center gap-4 rounded-2xl border border-grey/10 bg-main-light/30 px-4 py-3 active:scale-[0.98] transition-transform cursor-pointer"
+                class="flex items-center gap-4 rounded-2xl border border-grey/10 bg-main-light/30 px-4 py-3 transition-transform"
+                :class="friend.hasLocation ? 'active:scale-[0.98] cursor-pointer' : 'cursor-default opacity-90'"
               >
                 <div class="relative h-12 w-12 shrink-0">
                   <img
@@ -69,11 +70,11 @@
                     {{ friend.name }}
                   </p>
                   <p class="text-body-12 text-grey font-medium uppercase">
-                    {{ t("map.rank_place", { rank: friend.rank }) }}
+                    {{ t("map.rank_place", { rank: friend.rank, total: friend.total }) }}
                   </p>
                 </div>
                 <p class="font-title text-main font-bold text-body-16">
-                  {{ t("map.saved_kg", { weight: friend.weight }) }}
+                  {{ t("map.points_value", { points: friend.points }) }}
                 </p>
               </article>
             </div>
@@ -162,7 +163,7 @@
         <Transition name="fade">
           <div
             v-if="showPopup"
-            class="absolute inset-x-6 bottom-10 z-30 rounded-4xl bg-white p-5 shadow-2xl border border-main/10 flex items-center gap-5 animate-zoom"
+            class="absolute inset-x-6 bottom-28 z-30 rounded-4xl bg-white p-5 shadow-2xl border border-main/10 flex items-center gap-5 animate-zoom sm:bottom-32"
           >
             <div
               class="h-20 w-20 rounded-full border-4 border-main-light overflow-hidden shrink-0 shadow-sm"
@@ -177,12 +178,12 @@
                 {{ selectedUser.name }}
               </h3>
               <p class="text-main font-bold text-body-16 mt-1">
-                {{ t("map.saved_kg", { weight: selectedUser.weight }) }}
+                {{ t("map.points_value", { points: selectedUser.points }) }}
               </p>
               <p
                 class="text-grey text-body-12 uppercase font-bold mt-1 tracking-tighter"
               >
-                {{ t("map.rank_label", { rank: selectedUser.rank }) }}
+                {{ t("map.rank_label", { rank: selectedUser.rank, total: selectedUser.total }) }}
               </p>
             </div>
             <button
@@ -205,7 +206,7 @@ import { nextTick, ref } from "vue";
 import { Icon } from "@iconify/vue";
 import { useI18n } from "vue-i18n";
 import axios from "axios";
-import { onMounted } from "vue";
+import { onBeforeUnmount, onMounted } from "vue";
 import { useRouter } from "vue-router";
 import BottomNav from "./BottomNav.vue";
 import { resolveProfilePictureSrc } from "../utils/profilePictures";
@@ -224,8 +225,10 @@ const showPopup = ref(false);
 const selectedUser = ref({});
 const mapViewportRef = ref(null);
 const cameraAnimating = ref(false);
+let refreshIntervalId = null;
 
 const friends = ref([]);
+const leaderboardUsers = ref([]);
 
 const normalizeToken = (rawToken) => {
   if (typeof rawToken !== "string") return "";
@@ -278,6 +281,34 @@ const fetchAll = async (resource, headers) => {
   return all;
 };
 
+const isSameDay = (isoDate) => {
+  if (!isoDate) return false;
+  const date = new Date(isoDate);
+  const now = new Date();
+  return (
+    date.getFullYear() === now.getFullYear() &&
+    date.getMonth() === now.getMonth() &&
+    date.getDate() === now.getDate()
+  );
+};
+
+const entryCo2 = (entry, entryItemsByIri, activityTypesByIri) => {
+  const itemIris = Array.isArray(entry?.entryItems) ? entry.entryItems : [];
+  if (itemIris.length === 0) return Number(entry?.totalCo2 || 0);
+
+  let total = 0;
+  for (const itemIri of itemIris) {
+    const item = entryItemsByIri.get(itemIri);
+    if (!item) continue;
+    const qty = Number(item.quantity || 0);
+    const type = activityTypesByIri.get(item.activityType);
+    const factor = Number(type?.co2Factor || 0);
+    total += qty * factor;
+  }
+
+  return total;
+};
+
 const clamp = (value, min, max) => Math.min(max, Math.max(min, value));
 
 const toFranceMapPosition = (lat, lon) => {
@@ -314,6 +345,12 @@ const loadFriendsFromApi = async () => {
   }
 
   const payload = parseJwtPayload(token);
+  const nowInSeconds = Math.floor(Date.now() / 1000);
+  if (!payload?.exp || payload.exp <= nowInSeconds) {
+    localStorage.removeItem("jwt_token");
+    router.push("/login");
+    return;
+  }
   const currentEmail = payload?.email || payload?.username || "";
 
   const headers = {
@@ -322,34 +359,121 @@ const loadFriendsFromApi = async () => {
   };
 
   try {
-    const users = await fetchAll("users", headers);
-    const usersWithLocation = users
+    const [users, entries, entryItems, activityTypes, friendships] = await Promise.all([
+      fetchAll("users", headers),
+      fetchAll("entries", headers),
+      fetchAll("entry_items", headers),
+      fetchAll("activity_types", headers),
+      fetchAll("friendships", headers),
+    ]);
+
+    const currentUser = users.find((user) => user.email === currentEmail);
+    const currentUserIri = currentUser?.["@id"];
+    if (!currentUserIri) {
+      friends.value = [];
+      return;
+    }
+
+    const acceptedFriendIris = new Set(
+      friendships
+        .filter((friendship) => friendship?.status === "accepted")
+        .flatMap((friendship) => {
+          if (friendship?.sender === currentUserIri) return [friendship?.receiver];
+          if (friendship?.receiver === currentUserIri) return [friendship?.sender];
+          return [];
+        })
+        .filter(Boolean),
+    );
+
+    const leaderboardUserIris = new Set([currentUserIri, ...acceptedFriendIris]);
+
+    const entryItemsByIri = new Map(
+      entryItems.map((item) => [item["@id"], item]),
+    );
+    const activityTypesByIri = new Map(
+      activityTypes.map((type) => [type["@id"], type]),
+    );
+
+    const rankedUsers = users
+      .filter((user) => leaderboardUserIris.has(user?.["@id"]))
       .map((user) => {
-        const lat = Number(user?.latitude);
-        const lon = Number(user?.longitude);
-        const position = toFranceMapPosition(lat, lon);
-        if (!position) return null;
+        const userIri = user?.["@id"];
+        const todayUserEntries = entries.filter(
+          (entry) => entry.owner === userIri && isSameDay(entry.createdAt),
+        );
+
+        const todayUserCo2 = todayUserEntries.reduce(
+          (sum, entry) => sum + entryCo2(entry, entryItemsByIri, activityTypesByIri),
+          0,
+        );
+
+        const points = Math.max(0, Math.round(200 - todayUserCo2 * 10));
 
         return {
           id: user.id,
           name: user.username || user.email || `User #${user.id}`,
-          rank: "-",
-          weight: 0,
+          points,
+          todayUserCo2,
           online: user.email === currentEmail,
           avatar: resolveProfilePictureSrc(user.profilePicture),
-          position,
+          latitude: Number(user?.latitude),
+          longitude: Number(user?.longitude),
         };
       })
+      .sort((a, b) => {
+        if (b.points !== a.points) return b.points - a.points;
+        return a.todayUserCo2 - b.todayUserCo2;
+      });
+
+    const rankById = new Map(
+      rankedUsers.map((user, index) => [user.id, index + 1]),
+    );
+    const totalRanked = rankedUsers.length;
+
+    leaderboardUsers.value = rankedUsers.map((user) => {
+      const position = toFranceMapPosition(user.latitude, user.longitude);
+      return {
+        id: user.id,
+        name: user.name,
+        rank: rankById.get(user.id) || "-",
+        total: totalRanked,
+        points: user.points,
+        online: user.online,
+        avatar: user.avatar,
+        hasLocation: Boolean(position),
+        position,
+      };
+    });
+
+    const usersWithLocation = leaderboardUsers.value
+      .filter((user) => user.hasLocation)
       .filter(Boolean);
 
     if (usersWithLocation.length === 0) {
       friends.value = [];
+      if (showPopup.value && selectedUser.value?.id) {
+        const refreshedSelected = leaderboardUsers.value.find(
+          (user) => user.id === selectedUser.value.id,
+        );
+        if (refreshedSelected) {
+          selectedUser.value = refreshedSelected;
+        } else {
+          showPopup.value = false;
+        }
+      }
       return;
     }
-    usersWithLocation.forEach((friend, index) => {
-      friend.rank = `${index + 1}${index === 0 ? "st" : index === 1 ? "nd" : index === 2 ? "rd" : "th"}`;
-      friend.weight = Number(Math.max(0, 35 - index * 4.2).toFixed(1));
-    });
+
+    if (showPopup.value && selectedUser.value?.id) {
+      const refreshedSelected = leaderboardUsers.value.find(
+        (user) => user.id === selectedUser.value.id,
+      );
+      if (refreshedSelected) {
+        selectedUser.value = refreshedSelected;
+      } else {
+        showPopup.value = false;
+      }
+    }
 
     friends.value = usersWithLocation;
   } catch (error) {
@@ -441,6 +565,11 @@ const centerOnFriend = async (friend, showDetails = true) => {
 };
 
 const focusFriend = (friend) => {
+  if (!friend?.hasLocation) {
+    selectFriend(friend);
+    showLeaderboard.value = false;
+    return;
+  }
   centerOnFriend(friend, true);
 };
 
@@ -457,7 +586,16 @@ const recenterOnCurrentUser = () => {
   centerOnFriend(currentUser, false);
 };
 
-onMounted(loadFriendsFromApi);
+onMounted(async () => {
+  await loadFriendsFromApi();
+  refreshIntervalId = setInterval(() => {
+    loadFriendsFromApi();
+  }, 5000);
+});
+
+onBeforeUnmount(() => {
+  if (refreshIntervalId) clearInterval(refreshIntervalId);
+});
 </script>
 
 <style scoped>
