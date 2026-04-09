@@ -19,7 +19,7 @@
               v-if="unreadNotifications > 0"
               class="absolute -right-1 -top-1 inline-flex h-5 min-w-5 items-center justify-center rounded-full bg-systeme px-1 text-[10px] font-bold text-white"
             >
-              {{ unreadNotifications > 9 ? '9+' : unreadNotifications }}
+              {{ unreadNotifications > 9 ? "9+" : unreadNotifications }}
             </span>
           </button>
 
@@ -28,10 +28,15 @@
               v-if="isNotifOpen"
               class="absolute right-0 mt-2 w-72 rounded-2xl border border-grey/15 bg-white p-3 shadow-2xl"
             >
-              <p class="px-1 text-[12px] font-bold uppercase tracking-wider text-grey">
+              <p
+                class="px-1 text-[12px] font-bold uppercase tracking-wider text-grey"
+              >
                 {{ t("dashboard.notifications_title") }}
               </p>
-              <div v-if="notifications.length === 0" class="px-1 py-3 text-[12px] text-grey">
+              <div
+                v-if="notifications.length === 0"
+                class="px-1 py-3 text-[12px] text-grey"
+              >
                 {{ t("dashboard.notifications_empty") }}
               </div>
               <ul v-else class="mt-2 max-h-52 space-y-2 overflow-y-auto pr-1">
@@ -84,12 +89,23 @@
                 alt="Mascot"
                 class="mb-2 h-24 w-24 object-contain"
               />
-              <p class="font-title text-[35px] leading-none text-black sm:text-[39px]">
+              <p
+                class="font-title text-[35px] leading-none text-black sm:text-[39px]"
+              >
                 {{ formattedAnimatedDailyCo2 }} kg
               </p>
-              <p class="mt-2 text-[18px] text-grey sm:text-[21px]">{{ t("dashboard.co2_daily") }}</p>
-              <p class="mt-1 text-[11px] sm:text-[12px]" :class="gaugeProgressTextClass">
-                {{ t("dashboard.target_progress", { percent: Math.round(progressPercent) }) }}
+              <p class="mt-2 text-[18px] text-grey sm:text-[21px]">
+                {{ t("dashboard.co2_daily") }}
+              </p>
+              <p
+                class="mt-1 text-[11px] sm:text-[12px]"
+                :class="gaugeProgressTextClass"
+              >
+                {{
+                  t("dashboard.target_progress", {
+                    percent: Math.round(progressPercent),
+                  })
+                }}
               </p>
             </div>
           </div>
@@ -97,10 +113,14 @@
           <div
             class="relative z-10 mt-4 w-full rounded-2xl border border-grey/20 bg-white px-4 py-2 text-center shadow-[0_8px_18px_rgba(0,0,0,0.14)]"
           >
-            <p class="font-title text-[27px] leading-none text-main sm:text-[30px]">
+            <p
+              class="font-title text-[27px] leading-none text-main sm:text-[30px]"
+            >
               {{ t("dashboard.points_title") }}
             </p>
-            <p class="mt-1 font-ui text-[17px] font-bold text-main sm:text-[19px]">
+            <p
+              class="mt-1 font-ui text-[17px] font-bold text-main sm:text-[19px]"
+            >
               {{ t("dashboard.points_value", { count: currentUserPoints }) }}
             </p>
           </div>
@@ -152,7 +172,9 @@
                         {{ index + 1 }}
                       </span>
                       <div class="min-w-0">
-                        <p class="truncate text-[13px] font-medium text-black sm:text-[14px]">
+                        <p
+                          class="truncate text-[13px] font-medium text-black sm:text-[14px]"
+                        >
                           {{ friend.name }}
                           <span
                             v-if="friend.isCurrentUser"
@@ -161,15 +183,23 @@
                           >
                         </p>
                         <p class="text-[11px] text-grey sm:text-[12px]">
-                          {{ t("dashboard.activities_today", { count: friend.activityCount }) }}
+                          {{
+                            t("dashboard.activities_today", {
+                              count: friend.activityCount,
+                            })
+                          }}
                         </p>
                       </div>
                     </div>
                     <div class="text-right">
-                      <p class="text-[12px] font-semibold text-main sm:text-[13px]">
+                      <p
+                        class="text-[12px] font-semibold text-main sm:text-[13px]"
+                      >
                         {{ friend.points }} pts
                       </p>
-                      <p class="text-[11px] text-grey sm:text-[12px]">{{ friend.co2 }}</p>
+                      <p class="text-[11px] text-grey sm:text-[12px]">
+                        {{ friend.co2 }}
+                      </p>
                     </div>
                   </li>
                 </ul>
@@ -181,7 +211,7 @@
 
       <section class="px-4 pt-5">
         <h2 class="font-ui text-[17px] font-semibold text-black sm:text-[19px]">
-          {{ t("dashboard.latest_activities") }}
+          {{ t("dashboard.today_activities") }}
         </h2>
 
         <div
@@ -223,7 +253,9 @@
                     {{ activity.points }}
                   </p>
                 </div>
-                <p class="shrink-0 font-ui text-[17px] font-medium text-black sm:text-[19px]">
+                <p
+                  class="shrink-0 font-ui text-[17px] font-medium text-black sm:text-[19px]"
+                >
                   {{ activity.quantityLabel }}
                 </p>
               </div>
@@ -246,7 +278,9 @@
         class="fixed inset-x-4 top-5 z-[90] mx-auto w-[min(560px,calc(100%-2rem))] rounded-2xl border border-white/50 bg-white/95 px-4 py-3 shadow-[0_16px_30px_rgba(0,0,0,0.18)] backdrop-blur"
       >
         <div class="flex items-start gap-3">
-          <div class="mt-0.5 flex h-8 w-8 items-center justify-center rounded-full bg-main-light text-main">
+          <div
+            class="mt-0.5 flex h-8 w-8 items-center justify-center rounded-full bg-main-light text-main"
+          >
             <Icon icon="ph:bell-ringing" class="h-5 w-5" />
           </div>
           <div class="min-w-0 flex-1">
@@ -257,7 +291,10 @@
               {{ activeToast.message }}
             </p>
           </div>
-          <button class="rounded-full p-1 text-grey hover:bg-grey/10" @click="hideActiveToast">
+          <button
+            class="rounded-full p-1 text-grey hover:bg-grey/10"
+            @click="hideActiveToast"
+          >
             <Icon icon="ph:x-bold" class="h-4 w-4" />
           </button>
         </div>
@@ -284,7 +321,7 @@ const { t, te, locale } = useI18n();
 const loading = ref(true);
 const dailyCo2 = ref(0);
 const animatedDailyCo2 = ref(0);
-const dailyTargetKg = ref(200);
+const dailyTargetKg = ref(2);
 const activities = ref([]);
 const leaderboard = ref([]);
 const currentUserPoints = ref(0);
@@ -368,6 +405,22 @@ const fetchAll = async (resource, headers) => {
   return all;
 };
 
+const fetchGamificationSummary = async (headers) => {
+  const response = await axios.get(`${API_BASE}/me/gamification-summary`, {
+    headers,
+  });
+  return response.data || {};
+};
+
+const fetchLeaderboard = async (headers) => {
+  const response = await axios.get(
+    `${API_BASE}/leaderboard?scope=friends&period=daily`,
+    { headers },
+  );
+
+  return response.data || { users: [] };
+};
+
 const formatKg = (value) => {
   const numberLocale = locale.value === "fr" ? "fr-FR" : "en-US";
   return new Intl.NumberFormat(numberLocale, {
@@ -417,14 +470,54 @@ const entryCo2 = (entry, entryItemsByIri, activityTypesByIri) => {
   return total;
 };
 
-const toDashboardActivity = (entry, entryItemsByIri, activityTypesByIri) => {
+const scoreFromCo2 = (co2Kg, targetCo2Kg) => {
+  const target = Number(targetCo2Kg || 0);
+  const value = Number(co2Kg || 0);
+
+  if (target <= 0) {
+    return 0;
+  }
+
+  const ratio = value / target;
+
+  if (ratio <= 1) {
+    const score = 100 + 20 * (1 - ratio);
+    return Math.max(0, Math.round(score));
+  }
+
+  const score = 100 - 80 * (ratio - 1);
+  return Math.max(0, Math.round(score));
+};
+
+const entryPoints = (
+  entry,
+  entryItemsByIri,
+  activityTypesByIri,
+  targetCo2Kg,
+) => {
+  const value = entry?.value;
+  if (value !== null && value !== undefined) {
+    return Math.max(0, Math.round(Number(value)));
+  }
+
+  return scoreFromCo2(
+    entryCo2(entry, entryItemsByIri, activityTypesByIri),
+    targetCo2Kg,
+  );
+};
+
+const toDashboardActivity = (
+  entry,
+  entryItemsByIri,
+  activityTypesByIri,
+  points = 0,
+) => {
   const itemIris = Array.isArray(entry?.entryItems) ? entry.entryItems : [];
   const item = itemIris.length > 0 ? entryItemsByIri.get(itemIris[0]) : null;
   const activityType = item ? activityTypesByIri.get(item.activityType) : null;
   const co2 = entryCo2(entry, entryItemsByIri, activityTypesByIri);
   const qty = Number(item?.quantity || 0);
   const unit = activityType?.unitLabel || "unit";
-  const points = Math.max(0, Math.round((2 - co2) * 60));
 
   return {
     id: entry.id,
@@ -433,7 +526,9 @@ const toDashboardActivity = (entry, entryItemsByIri, activityTypesByIri) => {
       (entry?.details?.transportMode
         ? translateActivityLabel(entry.details.transportMode)
         : "") ||
-      (entry?.details?.source ? translateActivityLabel(entry.details.source) : "") ||
+      (entry?.details?.source
+        ? translateActivityLabel(entry.details.source)
+        : "") ||
       (entry?.details?.diet ? translateDietLabel(entry.details.diet) : "") ||
       t("dashboard.activity_fallback", { id: entry.id }),
     icon: iconForActivity(activityType),
@@ -579,7 +674,13 @@ const buildFriendRankMessage = (name, rank, points) =>
     points,
   });
 
-const buildFriendOvertakeMessage = (winnerName, loserName, rank, total, points) =>
+const buildFriendOvertakeMessage = (
+  winnerName,
+  loserName,
+  rank,
+  total,
+  points,
+) =>
   t("dashboard.friend_overtake_alert", {
     winner: winnerName,
     loser: loserName,
@@ -647,22 +748,21 @@ const loadDashboardData = async ({ silent = false } = {}) => {
       return;
     }
 
-    const currentEmail = jwtPayload?.email || jwtPayload?.username || "";
     const headers = {
       Authorization: `Bearer ${token}`,
       Accept: "application/ld+json",
     };
 
-    const [users, entries, entryItems, activityTypes, friendships] = await Promise.all([
-      fetchAll("users", headers),
-      fetchAll("entries", headers),
-      fetchAll("entry_items", headers),
-      fetchAll("activity_types", headers),
-      fetchAll("friendships", headers),
-    ]);
+    const [summary, leaderboardPayload, entries, entryItems, activityTypes] =
+      await Promise.all([
+        fetchGamificationSummary(headers),
+        fetchLeaderboard(headers),
+        fetchAll("entries", headers),
+        fetchAll("entry_items", headers),
+        fetchAll("activity_types", headers),
+      ]);
 
-    const currentUser = users.find((user) => user.email === currentEmail);
-    const currentUserIri = currentUser?.["@id"];
+    const currentUserIri = summary?.user?.["@id"];
     if (!currentUserIri) {
       activities.value = [];
       dailyCo2.value = 0;
@@ -670,20 +770,11 @@ const loadDashboardData = async ({ silent = false } = {}) => {
       return;
     }
 
-    dailyTargetKg.value = 200;
-
-    const acceptedFriendIris = new Set(
-      friendships
-        .filter((friendship) => friendship?.status === "accepted")
-        .flatMap((friendship) => {
-          if (friendship?.sender === currentUserIri) return [friendship?.receiver];
-          if (friendship?.receiver === currentUserIri) return [friendship?.sender];
-          return [];
-        })
-        .filter(Boolean),
+    dailyTargetKg.value = Number(summary?.targetCo2Kg || 2);
+    dailyCo2.value = Number(summary?.dailyCo2Kg || 0);
+    currentUserPoints.value = Number(
+      summary?.dailyPoints ?? summary?.dailyScore ?? 0,
     );
-
-    const leaderboardUserIris = new Set([currentUserIri, ...acceptedFriendIris]);
 
     const entryItemsByIri = new Map(
       entryItems.map((item) => [item["@id"], item]),
@@ -699,51 +790,34 @@ const loadDashboardData = async ({ silent = false } = {}) => {
     const todayEntries = userEntries.filter((entry) =>
       isSameDay(entry.createdAt),
     );
-    dailyCo2.value = todayEntries.reduce(
-      (sum, entry) =>
-        sum + entryCo2(entry, entryItemsByIri, activityTypesByIri),
-      0,
+
+    activities.value = todayEntries.map((entry) =>
+      toDashboardActivity(
+        entry,
+        entryItemsByIri,
+        activityTypesByIri,
+        entryPoints(
+          entry,
+          entryItemsByIri,
+          activityTypesByIri,
+          dailyTargetKg.value,
+        ),
+      ),
     );
 
-    activities.value = userEntries
-      .slice(0, 3)
-      .map((entry) =>
-        toDashboardActivity(entry, entryItemsByIri, activityTypesByIri),
-      );
-
-    const rankedUsers = users
-      .filter((user) => leaderboardUserIris.has(user?.["@id"]))
-      .map((user) => {
-        const userIri = user?.["@id"];
-        const todayUserEntries = entries.filter(
-          (entry) => entry.owner === userIri && isSameDay(entry.createdAt),
-        );
-
-        const todayUserCo2 = todayUserEntries.reduce(
-          (sum, entry) =>
-            sum + entryCo2(entry, entryItemsByIri, activityTypesByIri),
-          0,
-        );
-
-        const points = Math.max(0, Math.round(200 - todayUserCo2 * 10));
-
-        return {
+    const rankedUsers = Array.isArray(leaderboardPayload?.users)
+      ? leaderboardPayload.users.map((user) => ({
           id: user.id,
-          name: formatLeaderboardName(user),
-          points,
-          todayUserCo2,
-          activityCount: todayUserEntries.length,
-          isCurrentUser: userIri === currentUserIri,
-          co2: `${formatKg(todayUserCo2)} kg CO2`,
-        };
-      })
-      .sort((a, b) => {
-        if (b.points !== a.points) return b.points - a.points;
-        return a.todayUserCo2 - b.todayUserCo2;
-      });
+          name: user.name || formatLeaderboardName(user),
+          points: Number(user.points || 0),
+          todayUserCo2: Number(user.dailyCo2Kg || 0),
+          activityCount: Number(user.activityCount || 0),
+          isCurrentUser: Boolean(user.isCurrentUser),
+          co2: `${formatKg(Number(user.dailyCo2Kg || 0))} kg CO2`,
+        }))
+      : [];
 
     leaderboard.value = rankedUsers.slice(0, 5);
-    currentUserPoints.value = rankedUsers.find((user) => user.isCurrentUser)?.points ?? 0;
 
     const currentRanks = new Map(
       rankedUsers.map((user, index) => [user.id, index + 1]),
@@ -767,7 +841,10 @@ const loadDashboardData = async ({ silent = false } = {}) => {
 
           const otherOldRank = previousRanks.get(other.id);
           const otherNewRank = currentRanks.get(other.id);
-          if (!Number.isInteger(otherOldRank) || !Number.isInteger(otherNewRank)) {
+          if (
+            !Number.isInteger(otherOldRank) ||
+            !Number.isInteger(otherNewRank)
+          ) {
             return false;
           }
 

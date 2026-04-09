@@ -1,7 +1,11 @@
 <template>
   <div class="min-h-screen bg-white text-black font-ui">
-    <main class="mx-auto flex min-h-screen w-full max-w-125 flex-col bg-white pb-24">
-      <header class="sticky top-0 z-20 border-b border-grey/10 bg-white px-6 py-4 shadow-sm">
+    <main
+      class="mx-auto flex min-h-screen w-full max-w-105 flex-col bg-white pb-24"
+    >
+      <header
+        class="sticky top-0 z-20 border-b border-grey/10 bg-white px-6 py-4 shadow-sm"
+      >
         <div class="flex items-center justify-between gap-3">
           <div class="flex items-center gap-3">
             <button
@@ -11,7 +15,9 @@
             >
               <Icon icon="ph:arrow-left-bold" class="h-5 w-5" />
             </button>
-            <h1 class="font-title text-title-h4 uppercase tracking-tight text-black">
+            <h1
+              class="font-title text-title-h4 uppercase tracking-tight text-black"
+            >
               {{ t("friends_page.title") }}
             </h1>
           </div>
@@ -25,13 +31,15 @@
           </button>
         </div>
 
-        <div class="mt-4 flex items-center gap-2 rounded-2xl border border-grey/15 bg-main-light/35 px-3 py-2">
+        <div
+          class="mt-4 flex items-center gap-2 rounded-2xl border border-grey/15 bg-main-light/35 px-3 py-2"
+        >
           <Icon icon="ph:magnifying-glass" class="h-5 w-5 text-grey" />
           <input
             v-model.trim="searchTerm"
             type="text"
             class="w-full bg-transparent text-[14px] text-black outline-none placeholder:text-grey"
-            :placeholder="t('friends_page.search_placeholder')"
+            :placeholder="t('friends_page.search')"
           />
         </div>
       </header>
@@ -53,7 +61,9 @@
 
         <div v-else class="space-y-6">
           <div class="space-y-2">
-            <p class="px-1 text-body-12 font-bold uppercase tracking-wider text-grey">
+            <p
+              class="px-1 text-body-12 font-bold uppercase tracking-wider text-grey"
+            >
               {{ t("friends_page.received_requests") }}
             </p>
 
@@ -70,7 +80,9 @@
                 :key="request.id"
                 class="flex items-center gap-3 rounded-2xl border border-grey/15 bg-main-light/35 px-3 py-3"
               >
-                <div class="flex h-11 w-11 items-center justify-center rounded-full bg-white text-main">
+                <div
+                  class="flex h-11 w-11 items-center justify-center rounded-full bg-white text-main"
+                >
                   <Icon icon="ph:user-circle" class="h-6 w-6" />
                 </div>
 
@@ -89,14 +101,20 @@
                   :disabled="acceptingIds.has(request.id)"
                   @click="acceptFriendRequest(request)"
                 >
-                  {{ acceptingIds.has(request.id) ? t("friends_page.accepting") : t("friends_page.accept") }}
+                  {{
+                    acceptingIds.has(request.id)
+                      ? t("friends_page.accepting")
+                      : t("friends_page.accept")
+                  }}
                 </button>
               </article>
             </div>
           </div>
 
           <div class="space-y-2">
-            <p class="px-1 text-body-12 font-bold uppercase tracking-wider text-grey">
+            <p
+              class="px-1 text-body-12 font-bold uppercase tracking-wider text-grey"
+            >
               {{ t("friends_page.site_users") }}
             </p>
 
@@ -113,7 +131,9 @@
                 :key="user.id"
                 class="flex items-center gap-3 rounded-2xl border border-grey/15 bg-white px-3 py-3 shadow-[0_4px_12px_rgba(0,0,0,0.06)]"
               >
-                <div class="flex h-11 w-11 items-center justify-center rounded-full bg-main-light text-main">
+                <div
+                  class="flex h-11 w-11 items-center justify-center rounded-full bg-main-light text-main"
+                >
                   <Icon icon="ph:user" class="h-6 w-6" />
                 </div>
 
@@ -133,7 +153,11 @@
                   :disabled="sendingIds.has(user.id)"
                   @click="sendFriendRequest(user)"
                 >
-                  {{ sendingIds.has(user.id) ? t("friends_page.sending") : t("friends_page.add") }}
+                  {{
+                    sendingIds.has(user.id)
+                      ? t("friends_page.sending")
+                      : t("friends_page.add")
+                  }}
                 </button>
 
                 <span
@@ -150,7 +174,11 @@
                   :disabled="removingIds.has(user.id)"
                   @click="removeFriend(user)"
                 >
-                  {{ removingIds.has(user.id) ? t("friends_page.removing") : t("friends_page.remove") }}
+                  {{
+                    removingIds.has(user.id)
+                      ? t("friends_page.removing")
+                      : t("friends_page.remove")
+                  }}
                 </button>
               </article>
             </div>
@@ -289,14 +317,16 @@ const incomingPendingRequests = computed(() => {
 const getFriendship = (user) => {
   const me = currentUser.value?.["@id"];
   if (!me) return null;
-  return friendships.value.find((friendship) => {
-    const sender = friendship?.sender;
-    const receiver = friendship?.receiver;
-    return (
-      (sender === me && receiver === user.iri) ||
-      (sender === user.iri && receiver === me)
-    );
-  }) ?? null;
+  return (
+    friendships.value.find((friendship) => {
+      const sender = friendship?.sender;
+      const receiver = friendship?.receiver;
+      return (
+        (sender === me && receiver === user.iri) ||
+        (sender === user.iri && receiver === me)
+      );
+    }) ?? null
+  );
 };
 
 const friendshipState = (user) => {
@@ -355,7 +385,10 @@ const loadFriendsPageData = async () => {
         id: user.id,
         iri: user["@id"],
         email: user.email,
-        displayName: user.username || user.email || `User #${user.id}`,
+        displayName:
+          user.username ||
+          user.email ||
+          t("friends_page.user_fallback", { id: user.id }),
       }))
       .sort((a, b) => a.displayName.localeCompare(b.displayName));
   } catch (error) {
@@ -434,9 +467,13 @@ const acceptFriendRequest = async (request) => {
     };
 
     const patchPayload = { status: "accepted" };
-    const patchResponse = await axios.patch(toApiUrl(request.iri), patchPayload, {
-      headers: patchHeaders,
-    });
+    const patchResponse = await axios.patch(
+      toApiUrl(request.iri),
+      patchPayload,
+      {
+        headers: patchHeaders,
+      },
+    );
 
     friendships.value = friendships.value.map((friendship) =>
       friendship.id === request.id ? patchResponse.data : friendship,
@@ -466,7 +503,8 @@ const removeFriend = async (user) => {
   const relation = getFriendship(user);
   if (!relation) return;
 
-  const friendshipIri = relation["@id"] || `${API_BASE}/friendships/${relation.id}`;
+  const friendshipIri =
+    relation["@id"] || `${API_BASE}/friendships/${relation.id}`;
 
   const current = new Set(removingIds.value);
   current.add(user.id);

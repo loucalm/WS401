@@ -67,7 +67,6 @@ class Entry
                 $total += $item->getQuantity() * $item->getActivityType()->getCo2Factor();
             }
         }
-        $this->value = $total;
         $this->totalCo2 = $total;
     }
 
@@ -92,6 +91,13 @@ class Entry
     public function getTotalCo2(): ?float
     {
         return $this->totalCo2;
+    }
+
+    public function setTotalCo2(?float $totalCo2): static
+    {
+        $this->totalCo2 = $totalCo2;
+
+        return $this;
     }
 
     public function getCreatedAt(): ?\DateTimeImmutable

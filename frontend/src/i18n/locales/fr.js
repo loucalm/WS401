@@ -64,6 +64,7 @@ export default {
     leaderboard_empty: "Pas encore de données de classement.",
     you: "(toi)",
     activities_today: "{count} activités aujourd'hui",
+    today_activities: "Activité du jour",
     latest_activities: "Dernières activités",
     loading_activities: "Chargement des activités...",
     no_activity: "Aucune activité aujourd'hui. Ajoute-en dans Activités.",
@@ -71,7 +72,8 @@ export default {
     activity_fallback: "Activité #{id}",
     notifications_title: "Notifications",
     notifications_empty: "Aucune notification pour l'instant.",
-    friend_rank_alert: "{name} est passé·e {rank} avec {points} pts aujourd'hui !",
+    friend_rank_alert:
+      "{name} est passé·e {rank} avec {points} pts aujourd'hui !",
     friend_overtake_alert:
       "{winner} dépasse {loser} et passe au rang {rank}/{total} parmi ses amis avec {points} pts aujourd'hui !",
   },
@@ -125,7 +127,7 @@ export default {
   },
   profile: {
     my_points: "Mes Points",
-    points_value: "+ {count} points",
+    points_value: "+ {count} n2e points",
     level: "Protecteur du Climat - Niv {lvl}",
     friends_count: "Amis :",
     saved_co2: "Économisé :",
@@ -386,6 +388,7 @@ export default {
     pending: "En attente",
     already_friend: "Déjà ami",
     request_sent: "Demande envoyée à {name} !",
+    request_received_from: "Demande reçue de {name}",
     request_error: "Impossible d'envoyer la demande.",
     request_accepted: "Tu es maintenant ami avec {name} !",
     accept_error: "Impossible d'accepter la demande.",
@@ -394,6 +397,7 @@ export default {
     remove_success: "{name} a été retiré·e de tes amis.",
     remove_error: "Impossible de supprimer cet ami.",
     unknown_user: "Utilisateur inconnu",
+    user_fallback: "Utilisateur #{id}",
     current_user_missing: "Utilisateur courant introuvable.",
     load_error: "Erreur lors du chargement des données.",
   },

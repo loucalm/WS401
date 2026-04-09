@@ -34,7 +34,7 @@ services:
         composer install --no-interaction --prefer-dist;
       fi;
       php bin/console lexik:jwt:generate-keypair --skip-if-exists;
-      php -S 0.0.0.0:8000 -t public
+      php -S 0.0.0.0:8000 -t public public/index.php
       "
 
   frontend:

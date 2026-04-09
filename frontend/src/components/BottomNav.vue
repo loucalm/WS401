@@ -1,7 +1,7 @@
 <template>
   <nav class="fixed inset-x-0 bottom-0 z-30">
     <div
-      class="mx-auto flex w-full max-w-250 items-end justify-between rounded-t-4xl bg-main px-5 pb-3 pt-2 text-white"
+      class="mx-auto flex w-full max-w-105 items-end justify-between rounded-t-4xl bg-main px-5 pb-3 pt-2 text-white"
     >
       <button
         type="button"

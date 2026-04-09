@@ -205,7 +205,11 @@
               class="mt-7 rounded-3xl border border-black/7 bg-linear-to-br from-white to-main-light/35 p-4 shadow-[0_12px_24px_rgba(15,23,42,0.1)]"
             >
               <div class="flex flex-col items-center text-center gap-2">
-                <Icon icon="tabler:clipboard-check" class="h-7 w-7" :class="step3TextAccentClass" />
+                <Icon
+                  icon="tabler:clipboard-check"
+                  class="h-7 w-7"
+                  :class="step3TextAccentClass"
+                />
                 <div>
                   <p
                     class="font-ui text-[13px] uppercase tracking-[0.14em] text-black/45"
@@ -223,8 +227,14 @@
               <div
                 class="rounded-2xl border border-black/7 bg-white px-4 py-4 text-center shadow-[0_8px_14px_rgba(0,0,0,0.08)]"
               >
-                <Icon icon="ph:fork-knife" class="mx-auto h-7 w-7 mb-2" :class="step3TextAccentClass" />
-                <p class="font-ui text-[13px] uppercase tracking-widest text-black/45">
+                <Icon
+                  icon="ph:fork-knife"
+                  class="mx-auto h-7 w-7 mb-2"
+                  :class="step3TextAccentClass"
+                />
+                <p
+                  class="font-ui text-[13px] uppercase tracking-widest text-black/45"
+                >
                   {{ t("wizard.diet") }}
                 </p>
                 <p class="mt-1 font-ui text-[22px] leading-none text-black">
@@ -239,8 +249,14 @@
                 <div
                   class="rounded-2xl border border-black/7 bg-white px-4 py-4 text-center shadow-[0_8px_14px_rgba(0,0,0,0.08)]"
                 >
-                  <Icon icon="mdi:food" class="mx-auto h-7 w-7 mb-2" :class="step3TextAccentClass" />
-                  <p class="font-ui text-[13px] uppercase tracking-widest text-black/45">
+                  <Icon
+                    icon="mdi:food"
+                    class="mx-auto h-7 w-7 mb-2"
+                    :class="step3TextAccentClass"
+                  />
+                  <p
+                    class="font-ui text-[13px] uppercase tracking-widest text-black/45"
+                  >
                     {{ section.label }}
                   </p>
                   <p class="mt-1 font-ui text-[22px] leading-tight text-black">
@@ -257,8 +273,14 @@
               <div
                 class="rounded-2xl border border-black/7 bg-white px-4 py-4 text-center shadow-[0_8px_14px_rgba(0,0,0,0.08)]"
               >
-                <Icon icon="mdi:flash" class="mx-auto h-7 w-7 mb-2" :class="step3TextAccentClass" />
-                <p class="font-ui text-[13px] uppercase tracking-widest text-black/45">
+                <Icon
+                  icon="mdi:flash"
+                  class="mx-auto h-7 w-7 mb-2"
+                  :class="step3TextAccentClass"
+                />
+                <p
+                  class="font-ui text-[13px] uppercase tracking-widest text-black/45"
+                >
                   {{ t("wizard.consumption") }}
                 </p>
                 <p class="mt-1 font-ui text-[24px] leading-none text-black">
@@ -269,8 +291,14 @@
                 <div
                   class="rounded-2xl border border-black/7 bg-white px-4 py-4 text-center shadow-[0_8px_14px_rgba(0,0,0,0.08)]"
                 >
-                  <Icon icon="ph:house" class="mx-auto h-7 w-7 mb-2" :class="step3TextAccentClass" />
-                  <p class="font-ui text-[13px] uppercase tracking-widest text-black/45">
+                  <Icon
+                    icon="ph:house"
+                    class="mx-auto h-7 w-7 mb-2"
+                    :class="step3TextAccentClass"
+                  />
+                  <p
+                    class="font-ui text-[13px] uppercase tracking-widest text-black/45"
+                  >
                     {{ t("wizard.surface") }}
                   </p>
                   <p class="mt-1 font-ui text-[24px] leading-none text-black">
@@ -280,8 +308,14 @@
                 <div
                   class="rounded-2xl border border-black/7 bg-white px-4 py-4 text-center shadow-[0_8px_14px_rgba(0,0,0,0.08)]"
                 >
-                  <Icon icon="ph:clock" class="mx-auto h-7 w-7 mb-2" :class="step3TextAccentClass" />
-                  <p class="font-ui text-[13px] uppercase tracking-widest text-black/45">
+                  <Icon
+                    icon="ph:clock"
+                    class="mx-auto h-7 w-7 mb-2"
+                    :class="step3TextAccentClass"
+                  />
+                  <p
+                    class="font-ui text-[13px] uppercase tracking-widest text-black/45"
+                  >
                     {{ t("wizard.duration") }}
                   </p>
                   <p class="mt-1 font-ui text-[24px] leading-none text-black">
@@ -298,8 +332,14 @@
               <div
                 class="rounded-2xl border border-black/7 bg-white px-4 py-4 text-center shadow-[0_8px_14px_rgba(0,0,0,0.08)]"
               >
-                <Icon icon="ph:tag" class="mx-auto h-7 w-7 mb-2" :class="step3TextAccentClass" />
-                <p class="font-ui text-[13px] uppercase tracking-widest text-black/45">
+                <Icon
+                  icon="ph:tag"
+                  class="mx-auto h-7 w-7 mb-2"
+                  :class="step3TextAccentClass"
+                />
+                <p
+                  class="font-ui text-[13px] uppercase tracking-widest text-black/45"
+                >
                   {{ t("wizard.purchase_type") }}
                 </p>
                 <p class="mt-1 font-ui text-[22px] leading-none text-black">
@@ -310,8 +350,14 @@
                 <div
                   class="rounded-2xl border border-black/7 bg-white px-4 py-4 text-center shadow-[0_8px_14px_rgba(0,0,0,0.08)]"
                 >
-                  <Icon icon="tabler:shirt-filled" class="mx-auto h-7 w-7 mb-2" :class="step3TextAccentClass" />
-                  <p class="font-ui text-[13px] uppercase tracking-widest text-black/45">
+                  <Icon
+                    icon="tabler:shirt-filled"
+                    class="mx-auto h-7 w-7 mb-2"
+                    :class="step3TextAccentClass"
+                  />
+                  <p
+                    class="font-ui text-[13px] uppercase tracking-widest text-black/45"
+                  >
                     {{ section.label }}
                   </p>
                   <p class="mt-1 font-ui text-[22px] leading-none text-black">
@@ -325,8 +371,14 @@
               <div
                 class="rounded-2xl border border-black/7 bg-white px-4 py-4 text-center shadow-[0_8px_14px_rgba(0,0,0,0.08)]"
               >
-                <Icon icon="mdi:car" class="mx-auto h-7 w-7 mb-2" :class="step3TextAccentClass" />
-                <p class="font-ui text-[13px] uppercase tracking-widest text-black/45">
+                <Icon
+                  icon="mdi:car"
+                  class="mx-auto h-7 w-7 mb-2"
+                  :class="step3TextAccentClass"
+                />
+                <p
+                  class="font-ui text-[13px] uppercase tracking-widest text-black/45"
+                >
                   {{ t("wizard.transport") }}
                 </p>
                 <p class="mt-1 font-ui text-[24px] leading-none text-black">
@@ -336,8 +388,14 @@
               <div
                 class="rounded-2xl border border-black/7 bg-white px-4 py-4 text-center shadow-[0_8px_14px_rgba(0,0,0,0.08)]"
               >
-                <Icon icon="ph:ruler" class="mx-auto h-7 w-7 mb-2" :class="step3TextAccentClass" />
-                <p class="font-ui text-[13px] uppercase tracking-widest text-black/45">
+                <Icon
+                  icon="ph:ruler"
+                  class="mx-auto h-7 w-7 mb-2"
+                  :class="step3TextAccentClass"
+                />
+                <p
+                  class="font-ui text-[13px] uppercase tracking-widest text-black/45"
+                >
                   {{ t("wizard.distance") }}
                 </p>
                 <p class="mt-1 font-ui text-[24px] leading-none text-black">
@@ -886,6 +944,25 @@ export default {
 
     const formattedCo2 = computed(() => co2Value.value.toFixed(2));
 
+    const scoreFromCo2 = (co2Kg, targetCo2Kg) => {
+      const target = Number(targetCo2Kg || 0);
+      const value = Number(co2Kg || 0);
+
+      if (target <= 0) {
+        return 0;
+      }
+
+      const ratio = value / target;
+
+      if (ratio <= 1) {
+        const score = 100 + 20 * (1 - ratio);
+        return Math.max(0, Math.round(score));
+      }
+
+      const score = 100 - 80 * (ratio - 1);
+      return Math.max(0, Math.round(score));
+    };
+
     const headerClass = computed(() => {
       if (currentStep.value > 1 && selectedCategory.value === "food")
         return "bg-tertiary-light";
@@ -1017,35 +1094,17 @@ export default {
       return Array.isArray(responseData) ? responseData : [];
     };
 
-    const parseJwtPayload = (token) => {
-      try {
-        const payload = token.split(".")[1];
-        if (!payload) return null;
-        const normalized = payload.replace(/-/g, "+").replace(/_/g, "/");
-        const padded =
-          normalized + "=".repeat((4 - (normalized.length % 4)) % 4);
-        return JSON.parse(atob(padded));
-      } catch {
-        return null;
-      }
+    const fetchGamificationSummary = async (headers) => {
+      const response = await axios.get(
+        "http://localhost:8000/api/me/gamification-summary",
+        { headers },
+      );
+      return response.data || {};
     };
 
     const normalizeToken = (rawToken) => {
       if (typeof rawToken !== "string") return "";
       return rawToken.trim().replace(/^"+|"+$/g, "");
-    };
-
-    const resolveCurrentUserIri = async (headers, token) => {
-      const payload = parseJwtPayload(token);
-      const currentEmail = payload?.email || payload?.username || "";
-      if (!currentEmail) return null;
-
-      const usersResponse = await axios.get("http://localhost:8000/api/users", {
-        headers,
-      });
-      const users = extractCollection(usersResponse.data);
-      const currentUser = users.find((user) => user.email === currentEmail);
-      return currentUser?.["@id"] || null;
     };
 
     const fetchAllActivityTypes = async (headers) => {
@@ -1284,7 +1343,9 @@ export default {
         "Content-Type": "application/ld+json",
       };
 
-      const ownerIri = await resolveCurrentUserIri(headers, token);
+      const summary = await fetchGamificationSummary(headers);
+      const ownerIri = summary?.user?.["@id"] || null;
+      const targetCo2Kg = Number(summary?.targetCo2Kg || 2);
       if (!ownerIri) {
         alert(t("wizard.errors.user_not_found"));
         return;
@@ -1363,9 +1424,11 @@ export default {
       }
 
       // 📦 Préparation du Payload JSON
+      const entryValue = scoreFromCo2(co2Value.value, targetCo2Kg);
       const entryPayload = {
         owner: ownerIri,
         details: details,
+        value: entryValue,
       };
 
       isSubmittingConfirmation.value = true;
@@ -1396,6 +1459,20 @@ export default {
               { headers },
             ),
           ),
+        );
+
+        await axios.patch(
+          `http://localhost:8000${entryIri}`,
+          {
+            value: entryValue,
+            totalCo2: Number(co2Value.value.toFixed(6)),
+          },
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+              "Content-Type": "application/merge-patch+json",
+            },
+          },
         );
 
         lastAddedCo2Label.value = formattedCo2.value;

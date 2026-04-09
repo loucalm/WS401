@@ -1,7 +1,7 @@
 <template>
   <div class="min-h-screen bg-white text-black">
     <main
-      class="mx-auto flex min-h-screen w-full max-w-125 flex-col bg-white pb-24"
+      class="mx-auto flex min-h-screen w-full max-w-105 flex-col bg-white pb-24"
     >
       <header class="flex items-center gap-3 px-6 pb-4 pt-6">
         <button

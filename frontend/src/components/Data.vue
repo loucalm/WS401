@@ -508,15 +508,26 @@ const loadData = async () => {
       Accept: "application/ld+json",
     };
 
-    const [users, entries, entryItems, activityTypes, categories, friendships] =
-      await Promise.all([
-        fetchAll("users", headers),
-        fetchAll("entries", headers),
-        fetchAll("entry_items", headers),
-        fetchAll("activity_types", headers),
-        fetchAll("categories", headers),
-        fetchAll("friendships", headers),
-      ]);
+    const [
+      users,
+      entries,
+      entryItems,
+      activityTypes,
+      categories,
+      friendships,
+      summary,
+    ] = await Promise.all([
+      fetchAll("users", headers),
+      fetchAll("entries", headers),
+      fetchAll("entry_items", headers),
+      fetchAll("activity_types", headers),
+      fetchAll("categories", headers),
+      fetchAll("friendships", headers),
+      axios
+        .get(`${API_BASE}/me/gamification-summary`, { headers })
+        .then((response) => response.data)
+        .catch(() => null),
+    ]);
 
     const currentUser = users.find((u) => u.email === currentEmail);
     const currentUserIri = currentUser?.["@id"];
@@ -529,7 +540,7 @@ const loadData = async () => {
     const categoriesByIri = new Map(categories.map((c) => [c["@id"], c]));
 
     const userEntries = entries.filter((e) => e.owner === currentUserIri);
-    profileLevel.value = Math.max(1, Math.floor(userEntries.length / 3) + 1);
+    profileLevel.value = Number(summary?.level || 1);
 
     friendsCount.value = friendships.filter(
       (f) =>
@@ -715,11 +726,22 @@ const getTitle = (id) => {
   return labels[id];
 };
 
-
 const statsData = {
-  day: { labels: ['Morning', 'Noon', 'After.', 'Eve.'], values: [0.4, 2.1, 1.2, 0.8], max: 3 },
-  week: { labels: ['Wk.10', 'Wk.11', 'Wk.12', 'Wk.13'], values: [2, 3, 8, 12], max: 15 },
-  month: { labels: ['Jan.', 'Feb.', 'Mar.', 'Apr.'], values: [45, 38, 52, 30], max: 60 }
+  day: {
+    labels: ["Morning", "Noon", "After.", "Eve."],
+    values: [0.4, 2.1, 1.2, 0.8],
+    max: 3,
+  },
+  week: {
+    labels: ["Wk.10", "Wk.11", "Wk.12", "Wk.13"],
+    values: [2, 3, 8, 12],
+    max: 15,
+  },
+  month: {
+    labels: ["Jan.", "Feb.", "Mar.", "Apr."],
+    values: [45, 38, 52, 30],
+    max: 60,
+  },
 };
 
 const challenges = computed(() => [
@@ -786,10 +808,18 @@ const chartOptions = {
 </script>
 
 <style scoped>
-.font-title { font-family: var(--font-title); }
-.font-ui { font-family: var(--font-ui); }
-.text-main { color: var(--color-main); }
-.text-grey { color: var(--color-grey); }
+.font-title {
+  font-family: var(--font-title);
+}
+.font-ui {
+  font-family: var(--font-ui);
+}
+.text-main {
+  color: var(--color-main);
+}
+.text-grey {
+  color: var(--color-grey);
+}
 
 .fade-enter-active,
 .fade-leave-active {

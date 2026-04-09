@@ -27,7 +27,7 @@ class AppFixtures extends Fixture
         $user1->setUsername('EcoWarrior');
         $user1->setTargetCo2(2000);
         $user1->setUnitPreference('metric');
-        $user1->setProfilePicture('mascotte_neutre.svg');
+        $user1->setProfilePicture('default.jpg');
         $user1->setRoles(['ROLE_ADMIN']);
         $user1->setPassword($this->passwordHasher->hashPassword($user1, 'test'));
         $manager->persist($user1);
@@ -37,6 +37,7 @@ class AppFixtures extends Fixture
         $user2->setUsername('loucalm');
         $user2->setTargetCo2(2000);
         $user2->setUnitPreference('metric');
+        $user2->setProfilePicture('default.jpg');
         $user2->setRoles([]);
         $user2->setPassword($this->passwordHasher->hashPassword($user2, 'test'));
         $manager->persist($user2);

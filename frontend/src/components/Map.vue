@@ -4,24 +4,17 @@
       class="mx-auto flex min-h-screen w-full max-w-105 flex-col bg-white pb-0 shadow-[0_0_0_1px_rgba(0,0,0,0.04)] relative overflow-hidden"
     >
       <div
-        class="sticky top-0 z-40 flex items-center justify-between bg-white px-6 py-4 shadow-sm border-b border-grey/5"
+        class="sticky top-0 z-40 flex items-center justify-center bg-white px-6 py-4 shadow-sm border-b border-grey/5"
       >
-        <div class="flex items-center gap-3">
-          <div
-            class="h-10 w-10 bg-main-light rounded-xl flex items-center justify-center text-main"
-          >
-            <Icon icon="ph:map-trifold-bold" class="h-6 w-6" />
-          </div>
-          <h1
-            class="text-title-h4 text-black uppercase tracking-tight font-title"
-          >
-            {{ t("map.title") }}
-          </h1>
-        </div>
+        <h1
+          class="text-title-h4 text-center text-black uppercase tracking-tight font-title"
+        >
+          {{ t("map.title") }}
+        </h1>
 
         <button
           type="button"
-          class="flex h-12 w-12 items-center justify-center rounded-2xl transition-all active:scale-90 shadow-sm"
+          class="absolute right-6 flex h-12 w-12 items-center justify-center rounded-2xl transition-all active:scale-90 shadow-sm"
           :class="
             showLeaderboard ? 'bg-main text-white' : 'bg-main-light text-main'
           "
@@ -53,7 +46,11 @@
                 :key="friend.id"
                 @click="focusFriend(friend)"
                 class="flex items-center gap-4 rounded-2xl border border-grey/10 bg-main-light/30 px-4 py-3 transition-transform"
-                :class="friend.hasLocation ? 'active:scale-[0.98] cursor-pointer' : 'cursor-default opacity-90'"
+                :class="
+                  friend.hasLocation
+                    ? 'active:scale-[0.98] cursor-pointer'
+                    : 'cursor-default opacity-90'
+                "
               >
                 <div class="relative h-12 w-12 shrink-0">
                   <img
@@ -70,7 +67,12 @@
                     {{ friend.name }}
                   </p>
                   <p class="text-body-12 text-grey font-medium uppercase">
-                    {{ t("map.rank_place", { rank: friend.rank, total: friend.total }) }}
+                    {{
+                      t("map.rank_place", {
+                        rank: friend.rank,
+                        total: friend.total,
+                      })
+                    }}
                   </p>
                 </div>
                 <p class="font-title text-main font-bold text-body-16">
@@ -137,7 +139,9 @@
           </div>
         </div>
 
-        <div class="absolute bottom-28 right-6 flex flex-col gap-3 z-20 sm:bottom-32">
+        <div
+          class="absolute bottom-28 right-6 flex flex-col gap-3 z-20 sm:bottom-32"
+        >
           <button
             class="h-14 w-14 bg-main text-white rounded-2xl shadow-xl flex items-center justify-center active:scale-90 border border-main/10"
             :title="t('map.recenter')"
@@ -150,13 +154,13 @@
             class="h-14 w-14 bg-white text-main rounded-2xl shadow-xl flex items-center justify-center font-bold text-2xl active:scale-90 border border-grey/5"
             @click="zoomIn"
           >
-            +
+            <Icon icon="tabler:plus" class="h-7 w-7" />
           </button>
           <button
             class="h-14 w-14 bg-white text-main rounded-2xl shadow-xl flex items-center justify-center font-bold text-2xl active:scale-90 border border-grey/5"
             @click="zoomOut"
           >
-            -
+            <Icon icon="tabler:minus" class="h-7 w-7" />
           </button>
         </div>
 
@@ -183,7 +187,12 @@
               <p
                 class="text-grey text-body-12 uppercase font-bold mt-1 tracking-tighter"
               >
-                {{ t("map.rank_label", { rank: selectedUser.rank, total: selectedUser.total }) }}
+                {{
+                  t("map.rank_label", {
+                    rank: selectedUser.rank,
+                    total: selectedUser.total,
+                  })
+                }}
               </p>
             </div>
             <button
@@ -359,87 +368,28 @@ const loadFriendsFromApi = async () => {
   };
 
   try {
-    const [users, entries, entryItems, activityTypes, friendships] = await Promise.all([
-      fetchAll("users", headers),
-      fetchAll("entries", headers),
-      fetchAll("entry_items", headers),
-      fetchAll("activity_types", headers),
-      fetchAll("friendships", headers),
-    ]);
-
-    const currentUser = users.find((user) => user.email === currentEmail);
-    const currentUserIri = currentUser?.["@id"];
-    if (!currentUserIri) {
-      friends.value = [];
-      return;
-    }
-
-    const acceptedFriendIris = new Set(
-      friendships
-        .filter((friendship) => friendship?.status === "accepted")
-        .flatMap((friendship) => {
-          if (friendship?.sender === currentUserIri) return [friendship?.receiver];
-          if (friendship?.receiver === currentUserIri) return [friendship?.sender];
-          return [];
-        })
-        .filter(Boolean),
+    const leaderboardResponse = await axios.get(
+      `${API_BASE}/leaderboard?scope=friends&period=daily`,
+      { headers },
     );
 
-    const leaderboardUserIris = new Set([currentUserIri, ...acceptedFriendIris]);
-
-    const entryItemsByIri = new Map(
-      entryItems.map((item) => [item["@id"], item]),
+    const rankedUsers = Array.isArray(leaderboardResponse.data?.users)
+      ? leaderboardResponse.data.users
+      : [];
+    const totalRanked = Number(
+      leaderboardResponse.data?.totalUsers || rankedUsers.length,
     );
-    const activityTypesByIri = new Map(
-      activityTypes.map((type) => [type["@id"], type]),
-    );
-
-    const rankedUsers = users
-      .filter((user) => leaderboardUserIris.has(user?.["@id"]))
-      .map((user) => {
-        const userIri = user?.["@id"];
-        const todayUserEntries = entries.filter(
-          (entry) => entry.owner === userIri && isSameDay(entry.createdAt),
-        );
-
-        const todayUserCo2 = todayUserEntries.reduce(
-          (sum, entry) => sum + entryCo2(entry, entryItemsByIri, activityTypesByIri),
-          0,
-        );
-
-        const points = Math.max(0, Math.round(200 - todayUserCo2 * 10));
-
-        return {
-          id: user.id,
-          name: user.username || user.email || `User #${user.id}`,
-          points,
-          todayUserCo2,
-          online: user.email === currentEmail,
-          avatar: resolveProfilePictureSrc(user.profilePicture),
-          latitude: Number(user?.latitude),
-          longitude: Number(user?.longitude),
-        };
-      })
-      .sort((a, b) => {
-        if (b.points !== a.points) return b.points - a.points;
-        return a.todayUserCo2 - b.todayUserCo2;
-      });
-
-    const rankById = new Map(
-      rankedUsers.map((user, index) => [user.id, index + 1]),
-    );
-    const totalRanked = rankedUsers.length;
 
     leaderboardUsers.value = rankedUsers.map((user) => {
       const position = toFranceMapPosition(user.latitude, user.longitude);
       return {
         id: user.id,
         name: user.name,
-        rank: rankById.get(user.id) || "-",
+        rank: user.rank || "-",
         total: totalRanked,
-        points: user.points,
-        online: user.online,
-        avatar: user.avatar,
+        points: Number(user.points || 0),
+        online: Boolean(user.isCurrentUser),
+        avatar: resolveProfilePictureSrc(user.profilePicture),
         hasLocation: Boolean(position),
         position,
       };

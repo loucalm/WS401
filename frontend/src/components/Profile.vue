@@ -1,7 +1,7 @@
 <template>
   <div class="min-h-screen bg-white text-black">
     <main
-      class="mx-auto flex min-h-screen w-full max-w-125 flex-col bg-white pb-24"
+      class="mx-auto flex min-h-screen w-full max-w-105 flex-col bg-white pb-24"
     >
       <div class="flex items-start justify-between px-7 pt-7">
         <div
@@ -17,17 +17,55 @@
           </p>
         </div>
 
-        <div class="flex gap-3.5">
-          <div
-            class="flex h-10 w-10 items-center justify-center rounded-full bg-main-light text-main cursor-pointer"
-          >
-            <Icon icon="ph:share-network" class="h-5.5 w-5.5" />
-          </div>
-          <div
-            class="flex h-10 w-10 items-center justify-center rounded-full bg-[#F4F4F4] text-grey cursor-pointer"
+        <div class="relative">
+          <button
+            type="button"
+            class="relative flex h-10 w-10 items-center justify-center rounded-full bg-[#F4F4F4] text-grey shadow-sm transition-all active:scale-90"
+            @click="isNotifOpen = !isNotifOpen"
+            :aria-label="t('dashboard.notifications_title')"
+            :title="t('dashboard.notifications_title')"
           >
             <Icon icon="ph:bell" class="h-5.5 w-5.5" />
-          </div>
+            <span
+              v-if="unreadNotifications > 0"
+              class="absolute -right-1 -top-1 inline-flex h-5 min-w-5 items-center justify-center rounded-full bg-systeme px-1 text-[10px] font-bold text-white"
+            >
+              {{ unreadNotifications > 9 ? "9+" : unreadNotifications }}
+            </span>
+          </button>
+
+          <transition name="notif-pop">
+            <div
+              v-if="isNotifOpen"
+              class="absolute right-0 z-30 mt-2 w-72 rounded-2xl border border-grey/15 bg-white p-3 shadow-2xl"
+            >
+              <p
+                class="px-1 text-body-12 font-bold uppercase tracking-wider text-grey"
+              >
+                {{ t("dashboard.notifications_title") }}
+              </p>
+              <div
+                v-if="notifications.length === 0"
+                class="px-1 py-3 text-body-12 text-grey"
+              >
+                {{ t("dashboard.notifications_empty") }}
+              </div>
+              <ul v-else class="mt-2 max-h-52 space-y-2 overflow-y-auto pr-1">
+                <li
+                  v-for="notif in notifications"
+                  :key="notif.id"
+                  class="rounded-xl border border-grey/10 bg-main-light/35 px-3 py-2"
+                >
+                  <p class="text-body-12 font-medium leading-snug text-black">
+                    {{ notif.message }}
+                  </p>
+                  <p class="mt-1 text-[10px] uppercase tracking-wide text-grey">
+                    {{ notif.timeLabel }}
+                  </p>
+                </li>
+              </ul>
+            </div>
+          </transition>
         </div>
       </div>
 
@@ -207,7 +245,7 @@ import BottomNav from "./BottomNav.vue";
 import { useRouter } from "vue-router";
 import { useI18n } from "vue-i18n";
 import axios from "axios";
-import { computed, onBeforeUnmount, onMounted, ref } from "vue";
+import { computed, onBeforeUnmount, onMounted, ref, watch } from "vue";
 import { resolveProfilePictureSrc } from "../utils/profilePictures.js";
 
 const router = useRouter();
@@ -220,9 +258,16 @@ const profilePoints = ref(0);
 const profileLevel = ref(1);
 const friendsCount = ref(0);
 const savedCo2Kg = ref(0);
+const isNotifOpen = ref(false);
+const notifications = ref([]);
+const unreadNotifications = ref(0);
 let refreshIntervalId = null;
 
 const savedCo2Label = computed(() => `+${savedCo2Kg.value.toFixed(2)}kg CO2`);
+
+watch(isNotifOpen, (open) => {
+  if (open) unreadNotifications.value = 0;
+});
 
 const normalizeToken = (rawToken) => {
   if (typeof rawToken !== "string") return "";
@@ -324,13 +369,18 @@ const loadProfile = async () => {
       Accept: "application/ld+json",
     };
 
-    const [users, entries, entryItems, activityTypes, friendships] = await Promise.all([
-      fetchAll("users", headers),
-      fetchAll("entries", headers),
-      fetchAll("entry_items", headers),
-      fetchAll("activity_types", headers),
-      fetchAll("friendships", headers),
-    ]);
+    const [users, entries, entryItems, activityTypes, friendships, summary] =
+      await Promise.all([
+        fetchAll("users", headers),
+        fetchAll("entries", headers),
+        fetchAll("entry_items", headers),
+        fetchAll("activity_types", headers),
+        fetchAll("friendships", headers),
+        axios
+          .get(`${API_BASE}/me/gamification-summary`, { headers })
+          .then((response) => response.data)
+          .catch(() => null),
+      ]);
 
     const currentUser = users.find((user) => user.email === currentEmail);
     if (!currentUser) {
@@ -358,50 +408,15 @@ const loadProfile = async () => {
       (entry) => entry.owner === currentUserIri,
     );
     const totalCo2Kg = userEntries.reduce(
-      (sum, entry) => sum + entryCo2(entry, entryItemsByIri, activityTypesByIri),
+      (sum, entry) =>
+        sum + entryCo2(entry, entryItemsByIri, activityTypesByIri),
       0,
     );
 
-    const acceptedFriendIris = new Set(
-      friendships
-        .filter((friendship) => friendship?.status === "accepted")
-        .flatMap((friendship) => {
-          if (friendship?.sender === currentUserIri) return [friendship?.receiver];
-          if (friendship?.receiver === currentUserIri) return [friendship?.sender];
-          return [];
-        })
-        .filter(Boolean),
+    profilePoints.value = Number(
+      summary?.dailyPoints || summary?.dailyScore || 0,
     );
-
-    const leaderboardUserIris = new Set([currentUserIri, ...acceptedFriendIris]);
-
-    const rankedUsers = users
-      .filter((user) => leaderboardUserIris.has(user?.["@id"]))
-      .map((user) => {
-        const userIri = user?.["@id"];
-        const todayUserEntries = entries.filter(
-          (entry) => entry.owner === userIri && isSameDay(entry.createdAt),
-        );
-        const todayUserCo2 = todayUserEntries.reduce(
-          (sum, entry) => sum + entryCo2(entry, entryItemsByIri, activityTypesByIri),
-          0,
-        );
-
-        return {
-          id: user.id,
-          isCurrentUser: userIri === currentUserIri,
-          points: Math.max(0, Math.round(200 - todayUserCo2 * 10)),
-          todayUserCo2,
-        };
-      })
-      .sort((a, b) => {
-        if (b.points !== a.points) return b.points - a.points;
-        return a.todayUserCo2 - b.todayUserCo2;
-      });
-
-    const computedPoints = rankedUsers.find((user) => user.isCurrentUser)?.points ?? 0;
-    profilePoints.value = computedPoints;
-    profileLevel.value = Math.max(1, Math.floor(computedPoints / 100) + 1);
+    profileLevel.value = Number(summary?.level || 1);
 
     const targetRaw = Number(currentUser?.targetCo2 || 2000);
     const targetCo2Kg = targetRaw > 50 ? targetRaw / 1000 : targetRaw;
@@ -414,6 +429,37 @@ const loadProfile = async () => {
         friendship?.receiver === currentUserIri
       );
     }).length;
+
+    const usersByIri = new Map(users.map((user) => [user?.["@id"], user]));
+    const pendingReceived = friendships
+      .filter(
+        (friendship) =>
+          friendship?.status === "pending" &&
+          friendship?.receiver === currentUserIri,
+      )
+      .map((friendship) => {
+        const sender = usersByIri.get(friendship?.sender);
+        const senderName =
+          sender?.username || sender?.email || t("friends_page.unknown_user");
+
+        return {
+          id: friendship?.id || friendship?.["@id"] || Math.random(),
+          message: t("friends_page.request_received_from", {
+            name: senderName,
+          }),
+          timeLabel: friendship?.createdAt
+            ? new Date(friendship.createdAt).toLocaleTimeString(
+                locale.value === "fr" ? "fr-FR" : "en-US",
+                { hour: "2-digit", minute: "2-digit" },
+              )
+            : "--:--",
+        };
+      });
+
+    notifications.value = pendingReceived;
+    if (!isNotifOpen.value) {
+      unreadNotifications.value = pendingReceived.length;
+    }
   } catch (error) {
     if (error?.response?.status === 401) {
       localStorage.removeItem("jwt_token");
@@ -447,3 +493,16 @@ onBeforeUnmount(() => {
   if (refreshIntervalId) clearInterval(refreshIntervalId);
 });
 </script>
+
+<style scoped>
+.notif-pop-enter-active,
+.notif-pop-leave-active {
+  transition: all 0.2s ease;
+}
+
+.notif-pop-enter-from,
+.notif-pop-leave-to {
+  opacity: 0;
+  transform: translateY(-4px) scale(0.98);
+}
+</style>
