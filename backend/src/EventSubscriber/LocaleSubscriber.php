@@ -31,9 +31,11 @@ class LocaleSubscriber implements EventSubscriberInterface
         }
 
         $request = $event->getRequest();
+        $isApiRequest = str_starts_with($request->getPathInfo(), '/api');
         $locale = $this->defaultLocale;
 
-        if ($request->hasSession()) {
+        // API routes are stateless (JWT), so avoid touching session there.
+        if (!$isApiRequest && $request->hasSession()) {
             $sessionLocale = $request->getSession()->get('_locale');
             if (is_string($sessionLocale) && in_array($sessionLocale, $this->supportedLocales, true)) {
                 $locale = $sessionLocale;
@@ -44,7 +46,7 @@ class LocaleSubscriber implements EventSubscriberInterface
         if (is_string($requestLocale) && in_array($requestLocale, $this->supportedLocales, true)) {
             $locale = $requestLocale;
 
-            if ($request->hasSession()) {
+            if (!$isApiRequest && $request->hasSession()) {
                 $request->getSession()->set('_locale', $locale);
             }
         }
