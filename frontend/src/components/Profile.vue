@@ -1,5 +1,13 @@
 <template>
   <div class="min-h-screen bg-white text-black">
+    <div
+      v-if="isInitialLoading"
+      class="mx-auto flex min-h-screen w-full max-w-105 items-center justify-center bg-white"
+    >
+      <Spinner :label="t('common.loading')" />
+    </div>
+
+    <template v-else>
     <main
       class="mx-auto flex min-h-screen w-full max-w-105 flex-col bg-white pb-24"
     >
@@ -107,8 +115,8 @@
             </p>
             <div class="h-7 w-px bg-grey/20"></div>
             <p class="font-ui text-[15px] text-black">
-              <span class="font-bold">{{ t("profile.saved_co2") }}</span>
-              {{ savedCo2Label }}
+              <span class="font-bold">{{ t("profile.total_points") }}</span>
+              {{ totalPointsLabel }}
             </p>
           </div>
         </div>
@@ -236,12 +244,14 @@
     </main>
 
     <BottomNav active="profile" />
+    </template>
   </div>
 </template>
 
 <script setup>
 import { Icon } from "@iconify/vue";
 import BottomNav from "./BottomNav.vue";
+import Spinner from "./Spinner.vue";
 import { useRouter } from "vue-router";
 import { useI18n } from "vue-i18n";
 import axios from "axios";
@@ -257,13 +267,14 @@ const profilePictureSrc = ref(resolveProfilePictureSrc(null));
 const profilePoints = ref(0);
 const profileLevel = ref(1);
 const friendsCount = ref(0);
-const savedCo2Kg = ref(0);
+const totalPoints = ref(0);
 const isNotifOpen = ref(false);
 const notifications = ref([]);
 const unreadNotifications = ref(0);
+const isInitialLoading = ref(true);
 let refreshIntervalId = null;
 
-const savedCo2Label = computed(() => `+${savedCo2Kg.value.toFixed(2)}kg CO2`);
+const totalPointsLabel = computed(() => `+${totalPoints.value} pts`);
 
 watch(isNotifOpen, (open) => {
   if (open) unreadNotifications.value = 0;
@@ -348,7 +359,11 @@ const entryCo2 = (entry, entryItemsByIri, activityTypesByIri) => {
   return total;
 };
 
-const loadProfile = async () => {
+const loadProfile = async ({ showLoader = false } = {}) => {
+  if (showLoader) {
+    isInitialLoading.value = true;
+  }
+
   try {
     const token = normalizeToken(localStorage.getItem("jwt_token"));
     if (!token) {
@@ -416,11 +431,8 @@ const loadProfile = async () => {
     profilePoints.value = Number(
       summary?.dailyPoints || summary?.dailyScore || 0,
     );
+    totalPoints.value = Number(summary?.xpTotal || 0);
     profileLevel.value = Number(summary?.level || 1);
-
-    const targetRaw = Number(currentUser?.targetCo2 || 2000);
-    const targetCo2Kg = targetRaw > 50 ? targetRaw / 1000 : targetRaw;
-    savedCo2Kg.value = Math.max(0, targetCo2Kg - totalCo2Kg);
 
     friendsCount.value = friendships.filter((friendship) => {
       if (friendship?.status !== "accepted") return false;
@@ -468,6 +480,10 @@ const loadProfile = async () => {
     }
 
     console.error("Profile loading error:", error);
+  } finally {
+    if (showLoader) {
+      isInitialLoading.value = false;
+    }
   }
 };
 
@@ -481,7 +497,9 @@ const handleLogout = () => {
   router.push("/login");
 };
 
-onMounted(loadProfile);
+onMounted(() => {
+  loadProfile({ showLoader: true });
+});
 
 onMounted(() => {
   refreshIntervalId = setInterval(() => {

@@ -134,11 +134,11 @@
               @click="isLeaderboardOpen = !isLeaderboardOpen"
             >
               <span>{{ t("dashboard.leaderboard_title") }}</span>
-              <span
-                class="text-[17px] leading-none transition-transform duration-200 sm:text-[19px]"
+              <Icon
+                icon="ph:caret-down-bold"
+                class="h-5 w-5 transition-transform duration-200"
                 :class="isLeaderboardOpen ? 'rotate-180' : ''"
-                >⌄</span
-              >
+              />
             </button>
 
             <transition name="leaderboard-collapse">
@@ -371,6 +371,59 @@ const translateDietLabel = (label = "") => {
   return te(key) ? t(key) : label;
 };
 
+const normalizeText = (value = "") =>
+  value
+    .toLowerCase()
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "");
+
+const isClothingActivityType = (activityType) => {
+  if (!activityType) return false;
+
+  const unit = normalizeText(activityType?.unitLabel || "");
+  if (unit === "item" || unit === "pair") return true;
+
+  const subCategory = normalizeText(activityType?.subCategory || "");
+  return (
+    subCategory.includes("top") ||
+    subCategory.includes("bottom") ||
+    subCategory.includes("shoe") ||
+    subCategory.includes("underwear") ||
+    subCategory.includes("accessory")
+  );
+};
+
+const resolveClothingPurchaseLabel = (details = {}) => {
+  const rawPurchase =
+    typeof details?.purchaseType === "string"
+      ? details.purchaseType
+      : typeof details?.source === "string"
+        ? details.source
+        : "";
+
+  const normalized = normalizeText(rawPurchase);
+  if (!normalized) return "";
+
+  if (normalized.includes("second")) {
+    return t("wizard.purchase_options.second_hand");
+  }
+
+  if (normalized.includes("online") || normalized.includes("ligne")) {
+    return t("wizard.purchase_options.online");
+  }
+
+  if (
+    normalized.includes("shop") ||
+    normalized.includes("store") ||
+    normalized.includes("boutique") ||
+    normalized.includes("magasin")
+  ) {
+    return t("wizard.purchase_options.shop");
+  }
+
+  return rawPurchase;
+};
+
 const extractCollection = (responseData) => {
   if (responseData?.member) return responseData.member;
   if (responseData?.["hydra:member"]) return responseData["hydra:member"];
@@ -515,26 +568,56 @@ const toDashboardActivity = (
   const itemIris = Array.isArray(entry?.entryItems) ? entry.entryItems : [];
   const item = itemIris.length > 0 ? entryItemsByIri.get(itemIris[0]) : null;
   const activityType = item ? activityTypesByIri.get(item.activityType) : null;
+  const isClothingEntry =
+    itemIris.some((itemIri) => {
+      const currentItem = entryItemsByIri.get(itemIri);
+      const currentType = activityTypesByIri.get(currentItem?.activityType);
+      return isClothingActivityType(currentType);
+    }) || typeof entry?.details?.purchaseType === "string";
+
+  const purchaseLabel = isClothingEntry
+    ? resolveClothingPurchaseLabel(entry?.details)
+    : "";
+
   const co2 = entryCo2(entry, entryItemsByIri, activityTypesByIri);
   const qty = Number(item?.quantity || 0);
   const unit = activityType?.unitLabel || "unit";
 
+  const clothingCount = itemIris.length;
+  const clothingUnit = unit === "pair" ? "pair" : "item";
+  const clothingQuantityLabel =
+    clothingCount > 0
+      ? `${clothingCount} ${clothingUnit}${
+          clothingCount > 1 && clothingUnit === "item" ? "s" : ""
+        }`
+      : "-";
+
+  const defaultTitle =
+    (activityType?.name ? translateActivityLabel(activityType.name) : "") ||
+    (entry?.details?.transportMode
+      ? translateActivityLabel(entry.details.transportMode)
+      : "") ||
+    (entry?.details?.source
+      ? translateActivityLabel(entry.details.source)
+      : "") ||
+    (entry?.details?.diet ? translateDietLabel(entry.details.diet) : "") ||
+    t("dashboard.activity_fallback", { id: entry.id });
+
+  const clothingTitle = purchaseLabel
+    ? `${t("taxonomy.categories.clothing")} - ${purchaseLabel}`
+    : t("taxonomy.categories.clothing");
+
   return {
     id: entry.id,
-    title:
-      (activityType?.name ? translateActivityLabel(activityType.name) : "") ||
-      (entry?.details?.transportMode
-        ? translateActivityLabel(entry.details.transportMode)
-        : "") ||
-      (entry?.details?.source
-        ? translateActivityLabel(entry.details.source)
-        : "") ||
-      (entry?.details?.diet ? translateDietLabel(entry.details.diet) : "") ||
-      t("dashboard.activity_fallback", { id: entry.id }),
+    title: isClothingEntry ? clothingTitle : defaultTitle,
     icon: iconForActivity(activityType),
     points: `+${points} n2e points`,
     pointsClass: points > 0 ? "text-main" : "text-grey",
-    quantityLabel: qty > 0 ? `${formatKg(qty)} ${unit}` : "-",
+    quantityLabel: isClothingEntry
+      ? clothingQuantityLabel
+      : qty > 0
+        ? `${formatKg(qty)} ${unit}`
+        : "-",
     co2: `${co2 > 0 ? "+" : ""}${formatKg(co2)} kg CO2`,
     co2Class: co2 > 2 ? "text-systeme" : "text-main",
   };

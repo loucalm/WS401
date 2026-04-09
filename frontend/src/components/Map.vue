@@ -1,6 +1,14 @@
 <template>
   <div class="min-h-screen bg-white text-black font-ui">
+    <div
+      v-if="isInitialLoading"
+      class="mx-auto flex min-h-screen w-full max-w-105 items-center justify-center bg-white"
+    >
+      <Spinner :label="t('common.loading')" />
+    </div>
+
     <main
+      v-else
       class="mx-auto flex min-h-screen w-full max-w-105 flex-col bg-white pb-0 shadow-[0_0_0_1px_rgba(0,0,0,0.04)] relative overflow-hidden"
     >
       <div
@@ -106,11 +114,12 @@
             transform: `translate(${translateX}px, ${translateY}px) scale(${zoomLevel})`,
           }"
         >
-          <div class="relative inline-block">
+          <div class="relative inline-block select-none">
             <img
               src="@/assets/img/svg/cartefrance.svg"
               alt="France Map"
-              class="max-h-[80vh] w-auto pointer-events-none drop-shadow-2xl"
+              draggable="false"
+              class="max-h-[80vh] w-auto pointer-events-none drop-shadow-2xl select-none"
             />
 
             <div
@@ -218,6 +227,7 @@ import axios from "axios";
 import { onBeforeUnmount, onMounted } from "vue";
 import { useRouter } from "vue-router";
 import BottomNav from "./BottomNav.vue";
+import Spinner from "./Spinner.vue";
 import { resolveProfilePictureSrc } from "../utils/profilePictures";
 
 const { t } = useI18n();
@@ -234,6 +244,7 @@ const showPopup = ref(false);
 const selectedUser = ref({});
 const mapViewportRef = ref(null);
 const cameraAnimating = ref(false);
+const isInitialLoading = ref(true);
 let refreshIntervalId = null;
 
 const friends = ref([]);
@@ -346,28 +357,31 @@ const toFranceMapPosition = (lat, lon) => {
   };
 };
 
-const loadFriendsFromApi = async () => {
-  const token = normalizeToken(localStorage.getItem("jwt_token"));
-  if (!token) {
-    router.push("/login");
-    return;
+const loadFriendsFromApi = async ({ showLoader = false } = {}) => {
+  if (showLoader) {
+    isInitialLoading.value = true;
   }
-
-  const payload = parseJwtPayload(token);
-  const nowInSeconds = Math.floor(Date.now() / 1000);
-  if (!payload?.exp || payload.exp <= nowInSeconds) {
-    localStorage.removeItem("jwt_token");
-    router.push("/login");
-    return;
-  }
-  const currentEmail = payload?.email || payload?.username || "";
-
-  const headers = {
-    Authorization: `Bearer ${token}`,
-    Accept: "application/ld+json",
-  };
 
   try {
+    const token = normalizeToken(localStorage.getItem("jwt_token"));
+    if (!token) {
+      router.push("/login");
+      return;
+    }
+
+    const payload = parseJwtPayload(token);
+    const nowInSeconds = Math.floor(Date.now() / 1000);
+    if (!payload?.exp || payload.exp <= nowInSeconds) {
+      localStorage.removeItem("jwt_token");
+      router.push("/login");
+      return;
+    }
+
+    const headers = {
+      Authorization: `Bearer ${token}`,
+      Accept: "application/ld+json",
+    };
+
     const leaderboardResponse = await axios.get(
       `${API_BASE}/leaderboard?scope=friends&period=daily`,
       { headers },
@@ -430,6 +444,10 @@ const loadFriendsFromApi = async () => {
     if (error?.response?.status === 401) {
       localStorage.removeItem("jwt_token");
       router.push("/login");
+    }
+  } finally {
+    if (showLoader) {
+      isInitialLoading.value = false;
     }
   }
 };
@@ -537,7 +555,7 @@ const recenterOnCurrentUser = () => {
 };
 
 onMounted(async () => {
-  await loadFriendsFromApi();
+  await loadFriendsFromApi({ showLoader: true });
   refreshIntervalId = setInterval(() => {
     loadFriendsFromApi();
   }, 5000);

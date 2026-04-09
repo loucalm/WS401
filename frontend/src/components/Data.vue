@@ -1,5 +1,13 @@
 <template>
   <div class="min-h-screen bg-white text-black font-ui">
+    <div
+      v-if="isInitialLoading"
+      class="mx-auto flex min-h-screen w-full max-w-105 items-center justify-center bg-white"
+    >
+      <Spinner :label="t('common.loading')" />
+    </div>
+
+    <template v-else>
     <main
       class="mx-auto flex min-h-screen w-full max-w-105 flex-col bg-white pb-28 shadow-[0_0_0_1px_rgba(0,0,0,0.04)]"
     >
@@ -57,7 +65,7 @@
                         class="text-main h-6 w-6"
                       />{{ t("data.performance") }}
                     </div>
-                    <span class="text-main font-bold">-12% vs last wk</span>
+                    <span class="text-main font-bold">{{ weeklyTrendLabel }}</span>
                   </div>
                   <div
                     class="flex justify-between items-center p-4 bg-secondary-light/20 rounded-2xl border border-grey/10"
@@ -68,7 +76,7 @@
                         class="text-main h-6 w-6"
                       />{{ t("data.community") }}
                     </div>
-                    <span class="text-grey font-bold">Top 15%</span>
+                    <span class="text-grey font-bold">{{ communityFriendsLabel }}</span>
                   </div>
                 </div>
               </div>
@@ -117,6 +125,9 @@
                     <p>{{ c.title }}</p>
                     <p class="text-main">{{ c.progress }}%</p>
                   </div>
+                  <p class="text-body-12 text-grey font-medium">
+                    {{ c.subtitle }}
+                  </p>
                   <div
                     class="bg-grey/15 h-4 rounded-full overflow-hidden shadow-inner relative"
                   >
@@ -124,6 +135,10 @@
                       class="absolute inset-y-0 left-0 bg-main h-full rounded-full transition-all duration-1000"
                       :style="{ width: c.progress + '%' }"
                     ></div>
+                  </div>
+                  <div class="flex items-center justify-between text-body-12 font-semibold text-grey">
+                    <span>{{ c.currentLabel }}</span>
+                    <span>{{ c.goalLabel }}</span>
                   </div>
                 </div>
                 <div class="h-px bg-grey/10 w-full my-4"></div>
@@ -169,7 +184,7 @@
           class="relative h-32 w-32 rounded-full border-4 border-main overflow-hidden shadow-lg"
         >
           <img
-            :src="personaSrc"
+            :src="profilePictureSrc"
             alt="Profile"
             class="h-full w-full object-cover"
           />
@@ -197,9 +212,9 @@
             <div class="w-px bg-grey/20 h-10"></div>
             <div class="text-center">
               <p class="text-body-12 font-bold uppercase">
-                {{ t("data.saved_label") }} :
+                {{ t("data.total_points_label") }} :
               </p>
-              <p class="text-body-16 font-semibold">{{ totalCo2Label }}</p>
+              <p class="text-body-16 font-semibold">{{ totalPointsLabel }}</p>
             </div>
           </div>
         </div>
@@ -392,6 +407,7 @@
     </main>
 
     <BottomNav active="pulse" />
+    </template>
   </div>
 </template>
 
@@ -402,7 +418,8 @@ import { Icon } from "@iconify/vue";
 import { useI18n } from "vue-i18n";
 import { useRouter } from "vue-router";
 import BottomNav from "./BottomNav.vue";
-import personaSrc from "../assets/img/profil-pic/persona.jpg";
+import Spinner from "./Spinner.vue";
+import { resolveProfilePictureSrc } from "../utils/profilePictures.js";
 import { Pie } from "vue-chartjs";
 import {
   Chart as ChartJS,
@@ -422,13 +439,21 @@ const API_BASE = "http://localhost:8000/api";
 
 const zoomedCard = ref(null);
 const activePeriod = ref("week");
+const isInitialLoading = ref(true);
 
 // ─── State ────────────────────────────────────────────────────────────────
 const profileUsername = ref("");
+const profilePictureSrc = ref(resolveProfilePictureSrc(null));
 const profileLevel = ref(1);
 const friendsCount = ref(0);
+const totalPoints = ref(0);
 const totalCo2 = ref(0);
 const weeklyCo2 = ref(0);
+const dailyTargetKg = ref(2);
+const activeDaysLast7 = ref(0);
+const clothingEntriesCount = ref(0);
+const clothingSecondHandCount = ref(0);
+const weeklyTrendPercent = ref(null);
 const progressionByPeriod = ref({
   day: { labels: [], values: [], max: 1 },
   week: { labels: [], values: [], max: 1 },
@@ -486,8 +511,91 @@ const fetchAll = async (resource, headers) => {
   return all;
 };
 
+const toIri = (value) => {
+  if (typeof value === "string") return value;
+  if (value && typeof value === "object" && typeof value["@id"] === "string") {
+    return value["@id"];
+  }
+  return "";
+};
+
+const normalizeText = (value = "") =>
+  value
+    .toLowerCase()
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "");
+
+const resolveCategoryName = (activityType, categoriesByIri) => {
+  if (!activityType) return "";
+
+  if (typeof activityType.category === "object" && activityType.category?.name) {
+    return activityType.category.name;
+  }
+
+  if (typeof activityType.category === "string") {
+    return categoriesByIri.get(activityType.category)?.name || "";
+  }
+
+  return "";
+};
+
+const isClothingActivityType = (activityType, categoriesByIri) => {
+  const categoryName = normalizeText(
+    resolveCategoryName(activityType, categoriesByIri),
+  );
+  const subCategory = normalizeText(activityType?.subCategory || "");
+  const unit = normalizeText(activityType?.unitLabel || "");
+
+  return (
+    categoryName.includes("cloth") ||
+    subCategory.includes("cloth") ||
+    subCategory.includes("shoe") ||
+    subCategory.includes("top") ||
+    subCategory.includes("bottom") ||
+    subCategory.includes("underwear") ||
+    subCategory.includes("accessory") ||
+    unit === "item" ||
+    unit === "pair"
+  );
+};
+
+const resolveClothingPurchaseLabel = (details = {}) => {
+  const purchaseValue =
+    typeof details?.purchaseType === "string"
+      ? details.purchaseType
+      : typeof details?.source === "string"
+        ? details.source
+        : "";
+
+  const normalized = normalizeText(purchaseValue);
+  if (!normalized) return "";
+
+  if (normalized.includes("second")) {
+    return t("wizard.purchase_options.second_hand");
+  }
+
+  if (normalized.includes("online") || normalized.includes("ligne")) {
+    return t("wizard.purchase_options.online");
+  }
+
+  if (
+    normalized.includes("shop") ||
+    normalized.includes("store") ||
+    normalized.includes("boutique") ||
+    normalized.includes("magasin")
+  ) {
+    return t("wizard.purchase_options.shop");
+  }
+
+  return purchaseValue;
+};
+
 // ─── Data load ────────────────────────────────────────────────────────────
-const loadData = async () => {
+const loadData = async ({ showLoader = false } = {}) => {
+  if (showLoader) {
+    isInitialLoading.value = true;
+  }
+
   try {
     const token = normalizeToken(localStorage.getItem("jwt_token"));
     if (!token) {
@@ -534,17 +642,21 @@ const loadData = async () => {
     if (!currentUserIri) return;
 
     profileUsername.value = currentUser?.username || currentEmail.split("@")[0];
+    profilePictureSrc.value = resolveProfilePictureSrc(currentUser.profilePicture);
 
     const entryItemsByIri = new Map(entryItems.map((i) => [i["@id"], i]));
     const activityTypesByIri = new Map(activityTypes.map((a) => [a["@id"], a]));
     const categoriesByIri = new Map(categories.map((c) => [c["@id"], c]));
 
-    const userEntries = entries.filter((e) => e.owner === currentUserIri);
+    const userEntries = entries.filter((e) => toIri(e.owner) === currentUserIri);
     profileLevel.value = Number(summary?.level || 1);
+    totalPoints.value = Number(summary?.xpTotal || 0);
+    dailyTargetKg.value = Number(summary?.targetCo2Kg || 2);
 
     friendsCount.value = friendships.filter(
       (f) =>
-        (f.sender === currentUserIri || f.receiver === currentUserIri) &&
+        (toIri(f.sender) === currentUserIri ||
+          toIri(f.receiver) === currentUserIri) &&
         f.status === "accepted",
     ).length;
 
@@ -577,6 +689,52 @@ const loadData = async () => {
           .filter((e) => e.createdAt && new Date(e.createdAt) >= startOfWeek)
           .reduce((s, e) => s + calcCo2(e), 0) * 10,
       ) / 10;
+
+    const sevenDaysAgo = new Date(now);
+    sevenDaysAgo.setDate(now.getDate() - 6);
+    sevenDaysAgo.setHours(0, 0, 0, 0);
+
+    const previousWeekStart = new Date(startOfWeek);
+    previousWeekStart.setDate(startOfWeek.getDate() - 7);
+
+    const activeDayKeys = new Set();
+    let previousWeekTotal = 0;
+    let clothingTotal = 0;
+    let clothingSecondHandTotal = 0;
+
+    for (const entry of userEntries) {
+      const createdAt = entry.createdAt ? new Date(entry.createdAt) : null;
+      if (createdAt && createdAt >= sevenDaysAgo) {
+        activeDayKeys.add(entry.createdAt.slice(0, 10));
+      }
+
+      if (createdAt && createdAt >= previousWeekStart && createdAt < startOfWeek) {
+        previousWeekTotal += calcCo2(entry);
+      }
+
+      const entryItemIris = Array.isArray(entry.entryItems) ? entry.entryItems : [];
+      const isClothingEntry = entryItemIris.some((iri) => {
+        const item = entryItemsByIri.get(iri);
+        const type = activityTypesByIri.get(item?.activityType);
+        return isClothingActivityType(type, categoriesByIri);
+      });
+
+      if (!isClothingEntry) continue;
+
+      clothingTotal += 1;
+      const purchaseLabel = normalizeText(resolveClothingPurchaseLabel(entry.details));
+      if (purchaseLabel.includes("second")) {
+        clothingSecondHandTotal += 1;
+      }
+    }
+
+    activeDaysLast7.value = activeDayKeys.size;
+    clothingEntriesCount.value = clothingTotal;
+    clothingSecondHandCount.value = clothingSecondHandTotal;
+    weeklyTrendPercent.value =
+      previousWeekTotal > 0
+        ? Math.round(((weeklyCo2.value - previousWeekTotal) / previousWeekTotal) * 100)
+        : null;
 
     // CO2 par catégorie (camembert)
     const catMap = { transport: 0, food: 0, clothing: 0, consumption: 0 };
@@ -703,15 +861,37 @@ const loadData = async () => {
     } else {
       console.error("Data page load error:", err);
     }
+  } finally {
+    if (showLoader) {
+      isInitialLoading.value = false;
+    }
   }
 };
 
-onMounted(loadData);
-watch(locale, loadData);
+onMounted(() => {
+  loadData({ showLoader: true });
+});
+
+watch(locale, () => {
+  loadData();
+});
 
 // ─── Computed UI ──────────────────────────────────────────────────────────
-const totalCo2Label = computed(() => `+${totalCo2.value} kg CO2`);
+const totalPointsLabel = computed(() => `+${totalPoints.value} pts`);
 const weeklyCo2Label = computed(() => `+ ${weeklyCo2.value} kg`);
+const weeklyTrendLabel = computed(() => {
+  if (weeklyTrendPercent.value === null) {
+    return t("data.challenges.no_previous_week");
+  }
+
+  const value = Math.abs(weeklyTrendPercent.value);
+  return weeklyTrendPercent.value <= 0
+    ? t("data.challenges.trend_down", { value })
+    : t("data.challenges.trend_up", { value });
+});
+const communityFriendsLabel = computed(() =>
+  t("data.community_friends", { count: friendsCount.value }),
+);
 const currentData = computed(
   () => progressionByPeriod.value[activePeriod.value],
 );
@@ -726,36 +906,65 @@ const getTitle = (id) => {
   return labels[id];
 };
 
-const statsData = {
-  day: {
-    labels: ["Morning", "Noon", "After.", "Eve."],
-    values: [0.4, 2.1, 1.2, 0.8],
-    max: 3,
-  },
-  week: {
-    labels: ["Wk.10", "Wk.11", "Wk.12", "Wk.13"],
-    values: [2, 3, 8, 12],
-    max: 15,
-  },
-  month: {
-    labels: ["Jan.", "Feb.", "Mar.", "Apr."],
-    values: [45, 38, 52, 30],
-    max: 60,
-  },
-};
+const challenges = computed(() => {
+  const activeDaysGoal = 4;
+  const weeklyGoal = Math.max(1, dailyTargetKg.value * 7);
+  const secondHandGoal = 60;
 
-const challenges = computed(() => [
-  {
-    title: t("data.challenges.car_free_week"),
-    icon: "ph:bicycle-bold",
-    progress: 80,
-  },
-  {
-    title: t("data.challenges.vegetarian_days"),
-    icon: "ph:leaf-bold",
-    progress: 45,
-  },
-]);
+  const secondHandShare =
+    clothingEntriesCount.value > 0
+      ? Math.round(
+          (clothingSecondHandCount.value / clothingEntriesCount.value) * 100,
+        )
+      : 0;
+
+  return [
+    {
+      title: t("data.challenges.active_days_title"),
+      subtitle: t("data.challenges.active_days_subtitle"),
+      icon: "ph:calendar-check-bold",
+      progress: Math.min(
+        100,
+        Math.round((activeDaysLast7.value / activeDaysGoal) * 100),
+      ),
+      currentLabel: t("data.challenges.active_days_current", {
+        current: activeDaysLast7.value,
+        goal: activeDaysGoal,
+      }),
+      goalLabel: t("data.challenges.active_days_goal", { goal: activeDaysGoal }),
+    },
+    {
+      title: t("data.challenges.weekly_target_title"),
+      subtitle: t("data.challenges.weekly_target_subtitle"),
+      icon: "ph:trend-down-bold",
+      progress:
+        weeklyCo2.value <= weeklyGoal
+          ? 100
+          : Math.max(
+              0,
+              Math.round(100 - ((weeklyCo2.value - weeklyGoal) / weeklyGoal) * 100),
+            ),
+      currentLabel: t("data.challenges.weekly_target_current", {
+        current: weeklyCo2.value.toFixed(1),
+        goal: weeklyGoal.toFixed(1),
+      }),
+      goalLabel: t("data.challenges.weekly_target_goal"),
+    },
+    {
+      title: t("data.challenges.second_hand_title"),
+      subtitle: t("data.challenges.second_hand_subtitle"),
+      icon: "ph:tag-bold",
+      progress: Math.min(100, Math.round((secondHandShare / secondHandGoal) * 100)),
+      currentLabel: t("data.challenges.second_hand_current", {
+        current: secondHandShare,
+        goal: secondHandGoal,
+      }),
+      goalLabel: t("data.challenges.second_hand_goal", {
+        goal: secondHandGoal,
+      }),
+    },
+  ];
+});
 
 const badges = computed(() => [
   { name: t("data.badges.eco_root"), icon: "ph:leaf-fill", locked: false },
