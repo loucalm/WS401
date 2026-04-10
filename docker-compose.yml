@@ -32,9 +32,10 @@ services:
         echo 'Database not ready yet, retrying migration in 2s...';
         sleep 2;
       done;
-      php bin/console assets:install public --symlink --relative;
+      php bin/console assets:install public;
       php bin/console cache:clear --env=prod;
-      php -S 0.0.0.0:8000 -t public public/index.php
+      echo '<?php if (is_file(__DIR__ . parse_url(\\$$_SERVER[\"REQUEST_URI\"], PHP_URL_PATH))) return false; require \"index.php\";' > public/router.php;
+      php -S 0.0.0.0:8000 -t public public/router.php
       "
 
   frontend:
