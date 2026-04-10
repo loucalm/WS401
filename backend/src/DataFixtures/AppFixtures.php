@@ -4,6 +4,9 @@ namespace App\DataFixtures;
 
 use App\Entity\ActivityType;
 use App\Entity\Category;
+use App\Entity\Entry;
+use App\Entity\EntryItem;
+use App\Entity\Friendship;
 use App\Entity\User;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Persistence\ObjectManager;
@@ -20,51 +23,55 @@ class AppFixtures extends Fixture
 
     public function load(ObjectManager $manager): void
     {
-        // Création de deux utilisateurs de test avec des mots de passe hachés.
-        // Ces utilisateurs servent à tester l'authentification sans créer de compte manuellement.
-        $user1 = new User();
-        $user1->setEmail('admin@test.com');
-        $user1->setUsername('EcoWarrior');
-        $user1->setTargetCo2(2000);
-        $user1->setUnitPreference('metric');
-        $user1->setProfilePicture('default.jpg');
-        $user1->setRoles(['ROLE_ADMIN']);
-        $user1->setPassword($this->passwordHasher->hashPassword($user1, 'test'));
-        $manager->persist($user1);
+        $admin = $this->createUser(
+            $manager,
+            'admin@test.com',
+            'EcoWarrior',
+            'default.jpg',
+            ['ROLE_ADMIN'],
+            48.85,
+            2.35,
+        );
 
-        $user2 = new User();
-        $user2->setEmail('lou@test.com');
-        $user2->setUsername('loucalm');
-        $user2->setTargetCo2(2000);
-        $user2->setUnitPreference('metric');
-        $user2->setProfilePicture('default.jpg');
-        $user2->setRoles([]);
-        $user2->setPassword($this->passwordHasher->hashPassword($user2, 'test'));
-        $manager->persist($user2);
+        $fabien = $this->createUser(
+            $manager,
+            'fabien@test.com',
+            'Fabien',
+            'fabien.png',
+            [],
+            48.8566,
+            2.3522,
+        );
 
-        $fabien = new User();
-        $fabien->setEmail('fabien@test.com');
-        $fabien->setUsername('Fabien');
-        $fabien->setTargetCo2(2000);
-        $fabien->setUnitPreference('metric');
-        $fabien->setLatitude(48.8566);
-        $fabien->setLongitude(2.3522);
-        $fabien->setProfilePicture('fabien.png');
-        $fabien->setRoles([]);
-        $fabien->setPassword($this->passwordHasher->hashPassword($fabien, 'test'));
-        $manager->persist($fabien);
+        $brice = $this->createUser(
+            $manager,
+            'brice@test.com',
+            'Brice',
+            'brice.png',
+            [],
+            45.7640,
+            4.8357,
+        );
 
-        $brice = new User();
-        $brice->setEmail('brice@test.com');
-        $brice->setUsername('Brice');
-        $brice->setTargetCo2(2000);
-        $brice->setUnitPreference('metric');
-        $brice->setLatitude(45.7640);
-        $brice->setLongitude(4.8357);
-        $brice->setProfilePicture('brice.png');
-        $brice->setRoles([]);
-        $brice->setPassword($this->passwordHasher->hashPassword($brice, 'test'));
-        $manager->persist($brice);
+        $frank = $this->createUser(
+            $manager,
+            'frank@test.com',
+            'Frank',
+            'persona3.jpg',
+            [],
+            43.2965,
+            5.3698,
+        );
+
+        $nora = $this->createUser(
+            $manager,
+            'nora@test.com',
+            'Nora',
+            'persona2.jpg',
+            [],
+            47.2184,
+            -1.5536,
+        );
 
 
         // Création des catégories principales qui regroupent les types d'activités.
@@ -163,6 +170,7 @@ class AppFixtures extends Fixture
             ['Clothing', 'Accessory', null, 'Scarf', 3.0, 'item', 'mingcute:scarf-fill'],
         ];
 
+        $allActivityTypes = [];
         foreach ($activities as $act) {
             $activityType = new ActivityType();
             $activityType->setCategory($categories[$act[0]]);
@@ -173,9 +181,145 @@ class AppFixtures extends Fixture
             $activityType->setUnitLabel($act[5]);
             $activityType->setIcon($act[6] ?? null);
             $manager->persist($activityType);
+            $allActivityTypes[] = $activityType;
         }
+
+        // Admin account intentionally left without friendships and entries.
+        $this->createAcceptedFriendship($manager, $fabien, $brice);
+        $this->createAcceptedFriendship($manager, $fabien, $frank);
+        $this->createAcceptedFriendship($manager, $fabien, $nora);
+        $this->createAcceptedFriendship($manager, $brice, $frank);
+        $this->createAcceptedFriendship($manager, $brice, $nora);
+        $this->createAcceptedFriendship($manager, $frank, $nora);
+
+        $travelTypes = array_values(array_filter($allActivityTypes, static fn (ActivityType $t) => $t->getCategory()?->getName() === 'Travel'));
+        $foodTypes = array_values(array_filter($allActivityTypes, static fn (ActivityType $t) => $t->getCategory()?->getName() === 'Food'));
+        $consumptionTypes = array_values(array_filter($allActivityTypes, static fn (ActivityType $t) => $t->getCategory()?->getName() === 'Consumption'));
+        $clothingTypes = array_values(array_filter($allActivityTypes, static fn (ActivityType $t) => $t->getCategory()?->getName() === 'Clothing'));
+
+        $this->seedMonthlyEntries($manager, $fabien, $travelTypes, $foodTypes, $consumptionTypes, $clothingTypes, 18, 32);
+        $this->seedMonthlyEntries($manager, $brice, $travelTypes, $foodTypes, $consumptionTypes, $clothingTypes, 20, 30);
+        $this->seedMonthlyEntries($manager, $frank, $travelTypes, $foodTypes, $consumptionTypes, $clothingTypes, 12, 24);
+        $this->seedMonthlyEntries($manager, $nora, $travelTypes, $foodTypes, $consumptionTypes, $clothingTypes, 10, 20);
 
         // On sauvegarde toutes les entités créées en base de données en une seule opération.
         $manager->flush();
+    }
+
+    private function createUser(
+        ObjectManager $manager,
+        string $email,
+        string $username,
+        string $profilePicture,
+        array $roles,
+        float $latitude,
+        float $longitude,
+    ): User {
+        $user = new User();
+        $user->setEmail($email);
+        $user->setUsername($username);
+        $user->setTargetCo2(20);
+        $user->setUnitPreference('metric');
+        $user->setLatitude($latitude);
+        $user->setLongitude($longitude);
+        $user->setProfilePicture($profilePicture);
+        $user->setRoles($roles);
+        $user->setPassword($this->passwordHasher->hashPassword($user, 'test'));
+        $manager->persist($user);
+
+        return $user;
+    }
+
+    private function createAcceptedFriendship(ObjectManager $manager, User $sender, User $receiver): void
+    {
+        $friendship = new Friendship();
+        $friendship->setSender($sender);
+        $friendship->setReceiver($receiver);
+        $friendship->setStatus('accepted');
+        $manager->persist($friendship);
+    }
+
+    /**
+     * @param ActivityType[] $travelTypes
+     * @param ActivityType[] $foodTypes
+     * @param ActivityType[] $consumptionTypes
+     * @param ActivityType[] $clothingTypes
+     */
+    private function seedMonthlyEntries(
+        ObjectManager $manager,
+        User $owner,
+        array $travelTypes,
+        array $foodTypes,
+        array $consumptionTypes,
+        array $clothingTypes,
+        int $activeDays,
+        int $maxDaysBack,
+    ): void {
+        $today = new \DateTimeImmutable('today');
+        $dayOffsets = range(0, $maxDaysBack);
+        shuffle($dayOffsets);
+        $activeDays = max(1, min($activeDays, count($dayOffsets)));
+        $dayOffsets = array_slice($dayOffsets, 0, $activeDays);
+        if (!in_array(0, $dayOffsets, true)) {
+            $dayOffsets[0] = 0;
+        }
+        $dayOffsets = array_values(array_unique($dayOffsets));
+        sort($dayOffsets);
+
+        foreach ($dayOffsets as $offset) {
+            $date = $today->sub(new \DateInterval(sprintf('P%dD', $offset)));
+            $entriesToday = random_int(1, 2);
+
+            for ($i = 0; $i < $entriesToday; $i++) {
+                $roll = random_int(1, 100);
+
+                if ($roll <= 40) {
+                    $type = $travelTypes[array_rand($travelTypes)];
+                    $quantity = (float) random_int(2, 25);
+                } elseif ($roll <= 72) {
+                    $type = $foodTypes[array_rand($foodTypes)];
+                    $quantity = (float) random_int(1, 3);
+                } elseif ($roll <= 92) {
+                    $type = $consumptionTypes[array_rand($consumptionTypes)];
+                    $quantity = (float) random_int(4, 18);
+                } else {
+                    $type = $clothingTypes[array_rand($clothingTypes)];
+                    $quantity = 1.0;
+                }
+
+                $entry = new Entry();
+                $entry->setOwner($owner);
+                $entry->setCreatedAt($date->setTime(random_int(7, 21), random_int(0, 59)));
+
+                $item = new EntryItem();
+                $item->setActivityType($type);
+                $item->setQuantity($quantity);
+                $entry->addEntryItem($item);
+
+                $co2 = $quantity * (float) $type->getCo2Factor();
+                $entry->setValue((float) $this->scoreFromCo2($co2, 2.0));
+
+                $manager->persist($entry);
+            }
+        }
+    }
+
+    private function scoreFromCo2(float $dailyCo2Kg, float $targetCo2Kg): int
+    {
+        if ($targetCo2Kg <= 0) {
+            return 0;
+        }
+
+        $ratio = $dailyCo2Kg / $targetCo2Kg;
+
+        if ($ratio <= 1) {
+            $score = 100 + 20 * (1 - $ratio);
+
+            return max(0, (int) round($score));
+        }
+
+        $score = 100 - 80 * ($ratio - 1);
+
+        return max(0, (int) round($score));
     }
 }

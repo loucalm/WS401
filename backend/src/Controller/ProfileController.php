@@ -77,7 +77,7 @@ class ProfileController extends AbstractController
         }
 
         $user->setUsername($username);
-        $user->setTargetCo2($targetCo2Kg * 1000);
+        $user->setTargetCo2($targetCo2Kg);
 
         $this->entityManager->flush();
 

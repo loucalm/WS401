@@ -188,7 +188,7 @@ class GamificationService
     {
         $value = (float) ($targetCo2Raw ?? 0.0);
         if ($value <= 0) {
-            return 2.0;
+            return 20.0;
         }
 
         // Legacy compatibility: historical records can store kg values directly.

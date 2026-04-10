@@ -17,6 +17,14 @@ export default {
     ok: "OK",
     loading: "Loading...",
   },
+  session: {
+    expiring_title: "Session Expiring Soon",
+    expiring_message:
+      "Your session will expire in {minutes}m {seconds}s. Do you want to stay connected?",
+    stay_connected: "Stay connected",
+    renewing: "Renewing...",
+    logout_now: "Log out",
+  },
   nav: {
     home: "Home",
     data: "Data",
@@ -108,15 +116,18 @@ export default {
     },
     challenges: {
       active_days_title: "4 active days this week",
-      active_days_subtitle: "Create at least one entry on 4 different days over the last 7 days.",
+      active_days_subtitle:
+        "Create at least one entry on 4 different days over the last 7 days.",
       active_days_current: "{current}/{goal} days",
       active_days_goal: "Goal {goal} days",
       weekly_target_title: "Stay under the weekly target",
-      weekly_target_subtitle: "Keep your weekly CO2 below 7 times your daily target.",
+      weekly_target_subtitle:
+        "Keep your weekly CO2 below 7 times your daily target.",
       weekly_target_current: "{current}/{goal} kg",
       weekly_target_goal: "Below the cap",
       second_hand_title: "Second-hand clothing purchases",
-      second_hand_subtitle: "Increase the share of clothing bought second-hand.",
+      second_hand_subtitle:
+        "Increase the share of clothing bought second-hand.",
       second_hand_current: "{current}% / {goal}%",
       second_hand_goal: "Target {goal}%",
       no_previous_week: "Not enough data",

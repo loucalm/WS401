@@ -8,242 +8,229 @@
     </div>
 
     <template v-else>
-    <main
-      class="mx-auto flex min-h-screen w-full max-w-105 flex-col bg-white pb-24"
-    >
-      <div class="flex items-start justify-between px-7 pt-7">
-        <div
-          class="rounded-xl border border-grey/20 bg-white px-4 py-2.5 shadow-[0_3px_8px_rgba(0,0,0,0.08)]"
-        >
-          <p
-            class="font-ui text-[14px] font-bold text-main leading-none uppercase tracking-wide"
+      <main
+        class="mx-auto flex min-h-screen w-full max-w-105 flex-col bg-white pb-24"
+      >
+        <div class="flex items-start justify-between px-7 pt-7">
+          <div
+            class="rounded-xl border border-grey/20 bg-white px-4 py-2.5 shadow-[0_3px_8px_rgba(0,0,0,0.08)]"
           >
-            {{ t("profile.my_points") }}
-          </p>
-          <p class="mt-1 font-ui text-[15px] font-bold text-main leading-none">
-            {{ t("profile.points_value", { count: profilePoints }) }}
-          </p>
-        </div>
-
-        <div class="relative">
-          <button
-            type="button"
-            class="relative flex h-10 w-10 items-center justify-center rounded-full bg-[#F4F4F4] text-grey shadow-sm transition-all active:scale-90"
-            @click="isNotifOpen = !isNotifOpen"
-            :aria-label="t('dashboard.notifications_title')"
-            :title="t('dashboard.notifications_title')"
-          >
-            <Icon icon="ph:bell" class="h-5.5 w-5.5" />
-            <span
-              v-if="unreadNotifications > 0"
-              class="absolute -right-1 -top-1 inline-flex h-5 min-w-5 items-center justify-center rounded-full bg-systeme px-1 text-[10px] font-bold text-white"
+            <p
+              class="font-ui text-[14px] font-bold text-main leading-none uppercase tracking-wide"
             >
-              {{ unreadNotifications > 9 ? "9+" : unreadNotifications }}
-            </span>
-          </button>
-
-          <transition name="notif-pop">
-            <div
-              v-if="isNotifOpen"
-              class="absolute right-0 z-30 mt-2 w-72 rounded-2xl border border-grey/15 bg-white p-3 shadow-2xl"
+              {{ t("profile.my_points") }}
+            </p>
+            <p
+              class="mt-1 font-ui text-[15px] font-bold text-main leading-none"
             >
-              <p
-                class="px-1 text-body-12 font-bold uppercase tracking-wider text-grey"
+              {{ t("profile.points_value", { count: profilePoints }) }}
+            </p>
+          </div>
+
+          <div class="relative">
+            <button
+              type="button"
+              class="relative flex h-10 w-10 items-center justify-center rounded-full bg-[#F4F4F4] text-grey shadow-sm transition-all active:scale-90"
+              @click="isNotifOpen = !isNotifOpen"
+              :aria-label="t('dashboard.notifications_title')"
+              :title="t('dashboard.notifications_title')"
+            >
+              <Icon icon="ph:bell" class="h-5.5 w-5.5" />
+              <span
+                v-if="unreadNotifications > 0"
+                class="absolute -right-1 -top-1 inline-flex h-5 min-w-5 items-center justify-center rounded-full bg-systeme px-1 text-[10px] font-bold text-white"
               >
-                {{ t("dashboard.notifications_title") }}
-              </p>
+                {{ unreadNotifications > 9 ? "9+" : unreadNotifications }}
+              </span>
+            </button>
+
+            <transition name="notif-pop">
               <div
-                v-if="notifications.length === 0"
-                class="px-1 py-3 text-body-12 text-grey"
+                v-if="isNotifOpen"
+                class="absolute right-0 z-30 mt-2 w-72 rounded-2xl border border-grey/15 bg-white p-3 shadow-2xl"
               >
-                {{ t("dashboard.notifications_empty") }}
-              </div>
-              <ul v-else class="mt-2 max-h-52 space-y-2 overflow-y-auto pr-1">
-                <li
-                  v-for="notif in notifications"
-                  :key="notif.id"
-                  class="rounded-xl border border-grey/10 bg-main-light/35 px-3 py-2"
+                <p
+                  class="px-1 text-body-12 font-bold uppercase tracking-wider text-grey"
                 >
-                  <p class="text-body-12 font-medium leading-snug text-black">
-                    {{ notif.message }}
-                  </p>
-                  <p class="mt-1 text-[10px] uppercase tracking-wide text-grey">
-                    {{ notif.timeLabel }}
-                  </p>
-                </li>
-              </ul>
+                  {{ t("dashboard.notifications_title") }}
+                </p>
+                <div
+                  v-if="notifications.length === 0"
+                  class="px-1 py-3 text-body-12 text-grey"
+                >
+                  {{ t("dashboard.notifications_empty") }}
+                </div>
+                <ul v-else class="mt-2 max-h-52 space-y-2 overflow-y-auto pr-1">
+                  <li
+                    v-for="notif in notifications"
+                    :key="notif.id"
+                    class="rounded-xl border border-grey/10 bg-main-light/35 px-3 py-2"
+                  >
+                    <p class="text-body-12 font-medium leading-snug text-black">
+                      {{ notif.message }}
+                    </p>
+                    <p
+                      class="mt-1 text-[10px] uppercase tracking-wide text-grey"
+                    >
+                      {{ notif.timeLabel }}
+                    </p>
+                  </li>
+                </ul>
+              </div>
+            </transition>
+          </div>
+        </div>
+
+        <div class="flex justify-center mt-6">
+          <div
+            class="h-36 w-36 rounded-full border-4 border-main/85 bg-white shadow-md overflow-hidden flex items-center justify-center"
+          >
+            <img
+              :src="profilePictureSrc"
+              alt="Profile Avatar"
+              class="h-full w-full object-cover scale-125 grayscale"
+            />
+          </div>
+        </div>
+
+        <section class="px-7 mt-6">
+          <div
+            class="rounded-2xl border border-grey/15 bg-white px-7 py-6 text-center shadow-[0_4px_12px_rgba(0,0,0,0.06)]"
+          >
+            <h1
+              class="font-title leading-tight text-black tracking-tight"
+              style="font-size: 40px"
+            >
+              {{ profileDisplayName }}
+            </h1>
+            <p
+              class="font-ui font-medium text-main mt-1.5"
+              style="font-size: 16px"
+            >
+              {{ t("profile.level", { lvl: profileLevel }) }}
+            </p>
+
+            <div
+              class="mt-5 flex items-center justify-around border-t border-grey/10 pt-5"
+            >
+              <p class="font-ui text-[15px] text-black">
+                <span class="font-bold">{{ t("profile.friends_count") }}</span>
+                {{ friendsCount }}
+              </p>
+              <div class="h-7 w-px bg-grey/20"></div>
+              <p class="font-ui text-[15px] text-black">
+                <span class="font-bold">{{ t("profile.total_points") }}</span>
+                {{ totalPointsLabel }}
+              </p>
             </div>
-          </transition>
-        </div>
-      </div>
-
-      <div class="flex justify-center mt-6">
-        <div
-          class="h-36 w-36 rounded-full border-4 border-main/85 bg-white shadow-md overflow-hidden flex items-center justify-center"
-        >
-          <img
-            :src="profilePictureSrc"
-            alt="Profile Avatar"
-            class="h-full w-full object-cover scale-125 grayscale"
-          />
-        </div>
-      </div>
-
-      <section class="px-7 mt-6">
-        <div
-          class="rounded-2xl border border-grey/15 bg-white px-7 py-6 text-center shadow-[0_4px_12px_rgba(0,0,0,0.06)]"
-        >
-          <h1
-            class="font-title leading-tight text-black tracking-tight"
-            style="font-size: 40px"
-          >
-            {{ profileDisplayName }}
-          </h1>
-          <p
-            class="font-ui font-medium text-main mt-1.5"
-            style="font-size: 16px"
-          >
-            {{ t("profile.level", { lvl: profileLevel }) }}
-          </p>
-
-          <div
-            class="mt-5 flex items-center justify-around border-t border-grey/10 pt-5"
-          >
-            <p class="font-ui text-[15px] text-black">
-              <span class="font-bold">{{ t("profile.friends_count") }}</span>
-              {{ friendsCount }}
-            </p>
-            <div class="h-7 w-px bg-grey/20"></div>
-            <p class="font-ui text-[15px] text-black">
-              <span class="font-bold">{{ t("profile.total_points") }}</span>
-              {{ totalPointsLabel }}
-            </p>
           </div>
-        </div>
-      </section>
+        </section>
 
-      <section class="flex flex-col gap-4 px-7 mt-7">
-        <router-link
-          to="/profile/edit"
-          class="flex items-center rounded-xl border border-grey/15 bg-white px-4.5 py-4 shadow-[0_4px_10px_rgba(0,0,0,0.05)] transition-transform active:scale-[0.98]"
-        >
-          <div
-            class="flex h-11 w-11 items-center justify-center rounded-lg bg-[#EFEFEF] text-main"
+        <section class="flex flex-col gap-4 px-7 mt-7">
+          <router-link
+            to="/profile/edit"
+            class="flex items-center rounded-xl border border-grey/15 bg-white px-4.5 py-4 shadow-[0_4px_10px_rgba(0,0,0,0.05)] transition-transform active:scale-[0.98]"
           >
-            <Icon icon="ph:gear" class="h-6 w-6" />
-          </div>
-          <span
-            class="ml-4.5 flex-1 font-ui text-body-16 font-semibold text-black italic"
-          >
-            {{ t("profile.personal_info") }}
-          </span>
-          <Icon icon="ph:caret-right" class="text-grey h-5 w-5" />
-        </router-link>
-
-        <router-link
-          to="/profile/location"
-          class="flex items-center rounded-xl border border-grey/15 bg-white px-4.5 py-4 shadow-[0_4px_10px_rgba(0,0,0,0.05)] transition-transform active:scale-[0.98]"
-        >
-          <div
-            class="flex h-11 w-11 items-center justify-center rounded-lg bg-[#EFEFEF] text-main"
-          >
-            <Icon icon="ph:map-pin" class="h-6 w-6" />
-          </div>
-          <span
-            class="ml-4.5 flex-1 font-ui text-body-16 font-semibold text-black italic"
-          >
-            {{ t("profile.location") }}
-          </span>
-          <Icon icon="ph:caret-right" class="text-grey h-5 w-5" />
-        </router-link>
-
-        <router-link
-          to="/profile/security"
-          class="flex items-center rounded-xl border border-grey/15 bg-white px-4.5 py-4 shadow-[0_4px_10px_rgba(0,0,0,0.05)] transition-transform active:scale-[0.98]"
-        >
-          <div
-            class="flex h-11 w-11 items-center justify-center rounded-lg bg-[#EFEFEF] text-main"
-          >
-            <Icon icon="ph:shield-check" class="h-6 w-6" />
-          </div>
-          <span
-            class="ml-4.5 flex-1 font-ui text-body-16 font-semibold text-black italic"
-          >
-            {{ t("profile.security_privacy") }}
-          </span>
-          <Icon icon="ph:caret-right" class="text-grey h-5 w-5" />
-        </router-link>
-
-        <router-link
-          to="/friends"
-          class="flex items-center rounded-xl border border-grey/15 bg-white px-4.5 py-4 shadow-[0_4px_10px_rgba(0,0,0,0.05)] transition-transform active:scale-[0.98]"
-        >
-          <div
-            class="flex h-11 w-11 items-center justify-center rounded-lg bg-[#EFEFEF] text-main"
-          >
-            <Icon icon="ph:user-plus" class="h-6 w-6" />
-          </div>
-          <span
-            class="ml-4.5 flex-1 font-ui text-body-16 font-semibold text-black italic"
-          >
-            {{ t("profile.friends") }}
-          </span>
-          <Icon icon="ph:caret-right" class="text-grey h-5 w-5" />
-        </router-link>
-
-        <div
-          class="flex items-center rounded-xl border border-grey/15 bg-white px-4.5 py-4 shadow-[0_4px_10px_rgba(0,0,0,0.05)]"
-        >
-          <div
-            class="flex h-11 w-11 items-center justify-center rounded-lg bg-[#EFEFEF] text-main"
-          >
-            <Icon icon="ph:globe" class="h-6 w-6" />
-          </div>
-          <span
-            class="ml-4.5 flex-1 text-left font-ui text-body-16 font-semibold text-black italic"
-          >
-            {{ t("profile.language") }}
-          </span>
-          <div
-            class="flex items-center gap-1 rounded-xl border border-grey/20 bg-[#F4F4F4] p-1"
-          >
-            <button
-              @click="locale !== 'fr' && toggleLocale()"
-              class="rounded-lg px-3 py-1.5 font-ui text-[14px] font-bold uppercase tracking-wide transition-all duration-200"
-              :class="
-                locale === 'fr'
-                  ? 'bg-main text-white shadow-sm'
-                  : 'text-grey hover:text-black'
-              "
+            <div
+              class="flex h-11 w-11 items-center justify-center rounded-lg bg-[#EFEFEF] text-main"
             >
-              FR
-            </button>
-            <button
-              @click="locale !== 'en' && toggleLocale()"
-              class="rounded-lg px-3 py-1.5 font-ui text-[14px] font-bold uppercase tracking-wide transition-all duration-200"
-              :class="
-                locale === 'en'
-                  ? 'bg-main text-white shadow-sm'
-                  : 'text-grey hover:text-black'
-              "
+              <Icon icon="ph:gear" class="h-6 w-6" />
+            </div>
+            <span
+              class="ml-4.5 flex-1 font-ui text-body-16 font-semibold text-black italic"
             >
-              EN
-            </button>
+              {{ t("profile.personal_info") }}
+            </span>
+            <Icon icon="ph:caret-right" class="text-grey h-5 w-5" />
+          </router-link>
+
+          <router-link
+            to="/profile/location"
+            class="flex items-center rounded-xl border border-grey/15 bg-white px-4.5 py-4 shadow-[0_4px_10px_rgba(0,0,0,0.05)] transition-transform active:scale-[0.98]"
+          >
+            <div
+              class="flex h-11 w-11 items-center justify-center rounded-lg bg-[#EFEFEF] text-main"
+            >
+              <Icon icon="ph:map-pin" class="h-6 w-6" />
+            </div>
+            <span
+              class="ml-4.5 flex-1 font-ui text-body-16 font-semibold text-black italic"
+            >
+              {{ t("profile.location") }}
+            </span>
+            <Icon icon="ph:caret-right" class="text-grey h-5 w-5" />
+          </router-link>
+
+          <router-link
+            to="/friends"
+            class="flex items-center rounded-xl border border-grey/15 bg-white px-4.5 py-4 shadow-[0_4px_10px_rgba(0,0,0,0.05)] transition-transform active:scale-[0.98]"
+          >
+            <div
+              class="flex h-11 w-11 items-center justify-center rounded-lg bg-[#EFEFEF] text-main"
+            >
+              <Icon icon="ph:user-plus" class="h-6 w-6" />
+            </div>
+            <span
+              class="ml-4.5 flex-1 font-ui text-body-16 font-semibold text-black italic"
+            >
+              {{ t("profile.friends") }}
+            </span>
+            <Icon icon="ph:caret-right" class="text-grey h-5 w-5" />
+          </router-link>
+
+          <div
+            class="flex items-center rounded-xl border border-grey/15 bg-white px-4.5 py-4 shadow-[0_4px_10px_rgba(0,0,0,0.05)]"
+          >
+            <div
+              class="flex h-11 w-11 items-center justify-center rounded-lg bg-[#EFEFEF] text-main"
+            >
+              <Icon icon="ph:globe" class="h-6 w-6" />
+            </div>
+            <span
+              class="ml-4.5 flex-1 text-left font-ui text-body-16 font-semibold text-black italic"
+            >
+              {{ t("profile.language") }}
+            </span>
+            <div
+              class="flex items-center gap-1 rounded-xl border border-grey/20 bg-[#F4F4F4] p-1"
+            >
+              <button
+                @click="locale !== 'fr' && toggleLocale()"
+                class="rounded-lg px-3 py-1.5 font-ui text-[14px] font-bold uppercase tracking-wide transition-all duration-200"
+                :class="
+                  locale === 'fr'
+                    ? 'bg-main text-white shadow-sm'
+                    : 'text-grey hover:text-black'
+                "
+              >
+                FR
+              </button>
+              <button
+                @click="locale !== 'en' && toggleLocale()"
+                class="rounded-lg px-3 py-1.5 font-ui text-[14px] font-bold uppercase tracking-wide transition-all duration-200"
+                :class="
+                  locale === 'en'
+                    ? 'bg-main text-white shadow-sm'
+                    : 'text-grey hover:text-black'
+                "
+              >
+                EN
+              </button>
+            </div>
           </div>
-        </div>
-      </section>
+        </section>
 
-      <section class="px-7 mt-8 mb-4">
-        <button
-          @click="handleLogout"
-          class="w-full rounded-2xl border-2 border-systeme py-4 font-ui text-[18px] font-bold uppercase tracking-wider text-systeme transition-colors active:bg-systeme/10"
-        >
-          {{ t("profile.logout") }}
-        </button>
-      </section>
-    </main>
+        <section class="px-7 mt-8 mb-4">
+          <button
+            @click="handleLogout"
+            class="w-full rounded-2xl border-2 border-systeme py-4 font-ui text-[18px] font-bold uppercase tracking-wider text-systeme transition-colors active:bg-systeme/10"
+          >
+            {{ t("profile.logout") }}
+          </button>
+        </section>
+      </main>
 
-    <BottomNav active="profile" />
+      <BottomNav active="profile" />
     </template>
   </div>
 </template>

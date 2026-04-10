@@ -256,7 +256,7 @@ const pictureDirty = ref(false);
 
 const form = reactive({
   username: "",
-  targetCo2Kg: 2,
+  targetCo2Kg: 20,
   currentPassword: "",
   newPassword: "",
   confirmPassword: "",
@@ -344,7 +344,7 @@ const loadProfile = async () => {
     }
 
     form.username = currentUser.username || "";
-    const targetRaw = Number(currentUser.targetCo2 ?? 2000);
+    const targetRaw = Number(currentUser.targetCo2 ?? 20000);
     form.targetCo2Kg = targetRaw > 50 ? targetRaw / 1000 : targetRaw;
     const currentPictureFile =
       (currentUser.profilePicture || "").split("/").pop() || "";
@@ -454,6 +454,8 @@ const handleSubmit = async () => {
     form.newPassword = "";
     form.confirmPassword = "";
     pictureDirty.value = false;
+
+    await router.push("/profile");
   } catch (error) {
     if (error?.response?.status === 401) {
       localStorage.removeItem("jwt_token");

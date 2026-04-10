@@ -94,14 +94,11 @@
 
       <div
         ref="mapViewportRef"
-        class="flex-1 relative bg-main-light/50 overflow-hidden touch-none"
-        @mousedown="startDragging"
-        @mousemove="drag"
-        @mouseup="stopDragging"
-        @mouseleave="stopDragging"
-        @touchstart="handleTouchStart"
-        @touchmove="handleTouchMove"
-        @touchend="stopDragging"
+        class="flex-1 relative bg-main-light/50 overflow-hidden touch-none cursor-grab active:cursor-grabbing"
+        @pointerdown="handlePointerDown"
+        @pointermove="handlePointerMove"
+        @pointerup="stopDragging"
+        @pointercancel="stopDragging"
       >
         <div
           class="absolute inset-0 flex items-center justify-center will-change-transform"
@@ -126,6 +123,7 @@
               v-for="friend in friends"
               :key="friend.id"
               :data-user-id="friend.id"
+              data-map-interactive="true"
               :style="{
                 position: 'absolute',
                 top: friend.position.top,
@@ -134,11 +132,14 @@
               }"
               class="h-14 w-14 rounded-full border-4 border-white shadow-xl cursor-pointer active:scale-95 transition-all z-10"
               @click.stop="focusFriend(friend)"
+              @dragstart.prevent
             >
               <img
                 :src="friend.avatar"
                 :alt="friend.name"
-                class="h-full w-full rounded-full object-cover"
+                draggable="false"
+                class="h-full w-full rounded-full object-cover select-none"
+                style="-webkit-user-drag: none"
               />
               <div
                 v-if="friend.online"
@@ -149,6 +150,7 @@
         </div>
 
         <div
+          data-map-interactive="true"
           class="absolute bottom-28 right-6 flex flex-col gap-3 z-20 sm:bottom-32"
         >
           <button
@@ -176,6 +178,7 @@
         <Transition name="fade">
           <div
             v-if="showPopup"
+            data-map-interactive="true"
             class="absolute inset-x-6 bottom-28 z-30 rounded-4xl bg-white p-5 shadow-2xl border border-main/10 flex items-center gap-5 animate-zoom sm:bottom-32"
           >
             <div
@@ -239,6 +242,7 @@ const translateX = ref(0);
 const translateY = ref(0);
 const isDragging = ref(false);
 const dragStart = ref({ x: 0, y: 0 });
+const activePointerId = ref(null);
 const showLeaderboard = ref(false);
 const showPopup = ref(false);
 const selectedUser = ref({});
@@ -467,18 +471,37 @@ const processMove = (clientX, clientY) => {
   translateY.value = clientY - dragStart.value.y;
 };
 
-const startDragging = (e) => initiateDrag(e.clientX, e.clientY);
-const drag = (e) => processMove(e.clientX, e.clientY);
+const handlePointerDown = (e) => {
+  if (e.button !== 0) return;
 
-const handleTouchStart = (e) => {
-  if (e.touches.length === 1)
-    initiateDrag(e.touches[0].clientX, e.touches[0].clientY);
+  const target = e.target;
+  if (
+    target instanceof Element &&
+    target.closest('[data-map-interactive="true"]')
+  ) {
+    return;
+  }
+
+  activePointerId.value = e.pointerId;
+  e.currentTarget?.setPointerCapture?.(e.pointerId);
+  initiateDrag(e.clientX, e.clientY);
 };
-const handleTouchMove = (e) => {
-  if (e.touches.length === 1)
-    processMove(e.touches[0].clientX, e.touches[0].clientY);
+
+const handlePointerMove = (e) => {
+  if (activePointerId.value !== e.pointerId) return;
+  if (!isDragging.value) return;
+  e.preventDefault();
+  processMove(e.clientX, e.clientY);
 };
-const stopDragging = () => (isDragging.value = false);
+
+const stopDragging = (e) => {
+  if (e?.pointerId != null && activePointerId.value !== e.pointerId) return;
+  if (e?.pointerId != null) {
+    e.currentTarget?.releasePointerCapture?.(e.pointerId);
+  }
+  activePointerId.value = null;
+  isDragging.value = false;
+};
 
 const zoomIn = () => (zoomLevel.value = Math.min(zoomLevel.value + 0.4, 4));
 const zoomOut = () => (zoomLevel.value = Math.max(zoomLevel.value - 0.4, 0.6));

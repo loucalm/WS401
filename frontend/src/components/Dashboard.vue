@@ -321,7 +321,7 @@ const { t, te, locale } = useI18n();
 const loading = ref(true);
 const dailyCo2 = ref(0);
 const animatedDailyCo2 = ref(0);
-const dailyTargetKg = ref(2);
+const dailyTargetKg = ref(20);
 const activities = ref([]);
 const leaderboard = ref([]);
 const currentUserPoints = ref(0);
@@ -853,7 +853,7 @@ const loadDashboardData = async ({ silent = false } = {}) => {
       return;
     }
 
-    dailyTargetKg.value = Number(summary?.targetCo2Kg || 2);
+    dailyTargetKg.value = Number(summary?.targetCo2Kg || 20);
     dailyCo2.value = Number(summary?.dailyCo2Kg || 0);
     currentUserPoints.value = Number(
       summary?.dailyPoints ?? summary?.dailyScore ?? 0,

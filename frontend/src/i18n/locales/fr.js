@@ -17,6 +17,14 @@ export default {
     ok: "OK",
     loading: "Chargement...",
   },
+  session: {
+    expiring_title: "Session bientôt expirée",
+    expiring_message:
+      "Votre session expire dans {minutes} min {seconds} s. Voulez-vous rester connecté ?",
+    stay_connected: "Rester connecté",
+    renewing: "Renouvellement...",
+    logout_now: "Se déconnecter",
+  },
   nav: {
     home: "Accueil",
     data: "Données",
@@ -110,15 +118,18 @@ export default {
     },
     challenges: {
       active_days_title: "4 jours actifs cette semaine",
-      active_days_subtitle: "Crée au moins une entrée sur 4 jours différents dans les 7 derniers jours.",
+      active_days_subtitle:
+        "Crée au moins une entrée sur 4 jours différents dans les 7 derniers jours.",
       active_days_current: "{current}/{goal} jours",
       active_days_goal: "Objectif {goal} jours",
       weekly_target_title: "Rester sous l'objectif hebdomadaire",
-      weekly_target_subtitle: "Garde ton CO2 de la semaine sous 7 fois ton objectif journalier.",
+      weekly_target_subtitle:
+        "Garde ton CO2 de la semaine sous 7 fois ton objectif journalier.",
       weekly_target_current: "{current}/{goal} kg",
       weekly_target_goal: "Sous le plafond",
       second_hand_title: "Achats textile en seconde main",
-      second_hand_subtitle: "Fais monter la part d'achats vestimentaires issus de la seconde main.",
+      second_hand_subtitle:
+        "Fais monter la part d'achats vestimentaires issus de la seconde main.",
       second_hand_current: "{current}% / {goal}%",
       second_hand_goal: "Cible {goal}%",
       no_previous_week: "Pas assez de données",

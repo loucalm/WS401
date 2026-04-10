@@ -9,7 +9,6 @@ import Profile from "./components/Profile.vue";
 import ProfileEdit from "./components/ProfileEdit.vue";
 import ProfileLocation from "./components/ProfileLocation.vue";
 import Data from "./components/Data.vue";
-import SecurityPrivacy from "./components/SecurityPrivacy.vue";
 import Friends from "./components/Friends.vue";
 
 /**
@@ -103,12 +102,6 @@ const routes = [
     path: "/data",
     name: "data",
     component: Data,
-    meta: { requiresAuth: true },
-  },
-  {
-    path: "/profile/security",
-    name: "security-privacy",
-    component: SecurityPrivacy,
     meta: { requiresAuth: true },
   },
   {

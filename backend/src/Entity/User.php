@@ -25,7 +25,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private ?string $username = null;
 
     #[ORM\Column(nullable: true)]
-    private ?float $targetCo2 = 2000.0; // Objectif CO2 journalier de l'utilisateur, en grammes. Par défaut 2000g soit 2kg.
+    private ?float $targetCo2 = 20.0; // Objectif CO2 journalier de l'utilisateur, en kg. Par défaut 20kg.
 
     #[ORM\Column(length: 20)]
     private ?string $unitPreference = 'metric'; // Préférence d'unité de mesure : 'metric' (km, kg) ou 'imperial' (miles, lbs)

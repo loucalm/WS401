@@ -8,405 +8,423 @@
     </div>
 
     <template v-else>
-    <main
-      class="mx-auto flex min-h-screen w-full max-w-105 flex-col bg-white pb-28 shadow-[0_0_0_1px_rgba(0,0,0,0.04)]"
-    >
-      <Transition name="fade">
-        <div
-          v-if="zoomedCard"
-          class="fixed inset-0 z-[100] bg-black/60 backdrop-blur-md flex items-center justify-center p-4"
-        >
-          <button
-            @click="zoomedCard = null"
-            class="absolute top-8 right-6 z-[110] bg-white rounded-full p-3 shadow-xl active:scale-90 transition-transform"
-          >
-            <Icon icon="ph:x-bold" class="h-8 w-8 text-main" />
-          </button>
-
+      <main
+        class="mx-auto flex min-h-screen w-full max-w-105 flex-col bg-white pb-28 shadow-[0_0_0_1px_rgba(0,0,0,0.04)]"
+      >
+        <Transition name="fade">
           <div
-            class="w-full max-w-lg bg-main rounded-[2.5rem] p-6 shadow-2xl animate-zoom"
+            v-if="zoomedCard"
+            class="fixed inset-0 z-[100] bg-black/60 backdrop-blur-md flex items-center justify-center p-4"
           >
-            <h2
-              class="text-white font-title text-title-h4 uppercase text-center mb-6"
+            <button
+              @click="zoomedCard = null"
+              class="absolute top-8 right-6 z-[110] bg-white rounded-full p-3 shadow-xl active:scale-90 transition-transform"
             >
-              {{ getTitle(zoomedCard) }}
-            </h2>
+              <Icon icon="ph:x-bold" class="h-8 w-8 text-main" />
+            </button>
+
             <div
-              class="bg-white rounded-3xl p-6 min-h-[380px] flex flex-col justify-center"
+              class="w-full max-w-lg bg-main rounded-[2.5rem] p-6 shadow-2xl animate-zoom"
             >
+              <h2
+                class="text-white font-title text-title-h4 uppercase text-center mb-6"
+              >
+                {{ getTitle(zoomedCard) }}
+              </h2>
               <div
-                v-if="zoomedCard === 'weekly'"
-                class="w-full flex flex-col gap-6 items-center text-black"
+                class="bg-white rounded-3xl p-6 min-h-[380px] flex flex-col justify-center"
               >
                 <div
-                  class="p-6 bg-main-light rounded-2xl w-full text-center border border-main/10"
+                  v-if="zoomedCard === 'weekly'"
+                  class="w-full flex flex-col gap-6 items-center text-black"
                 >
-                  <p
-                    class="text-body-12 font-bold text-grey uppercase tracking-widest mb-2"
-                  >
-                    {{ t("data.total_impact") }}
-                  </p>
-                  <h3 class="font-title text-title-h2 text-main">
-                    {{ weeklyCo2Label }} CO2
-                  </h3>
-                  <p
-                    class="text-body-12 text-grey font-medium mt-2 italic text-center"
-                  >
-                    {{ t("data.current_week_analysis") }}
-                  </p>
-                </div>
-                <div class="w-full space-y-3">
                   <div
-                    class="flex justify-between items-center p-4 bg-secondary-light/20 rounded-2xl border border-grey/10"
+                    class="p-6 bg-main-light rounded-2xl w-full text-center border border-main/10"
                   >
-                    <div class="flex items-center gap-3 font-bold text-body-16">
-                      <Icon
-                        icon="ph:trend-down-bold"
-                        class="text-main h-6 w-6"
-                      />{{ t("data.performance") }}
-                    </div>
-                    <span class="text-main font-bold">{{ weeklyTrendLabel }}</span>
-                  </div>
-                  <div
-                    class="flex justify-between items-center p-4 bg-secondary-light/20 rounded-2xl border border-grey/10"
-                  >
-                    <div class="flex items-center gap-3 font-bold text-body-16">
-                      <Icon
-                        icon="ph:users-three-bold"
-                        class="text-main h-6 w-6"
-                      />{{ t("data.community") }}
-                    </div>
-                    <span class="text-grey font-bold">{{ communityFriendsLabel }}</span>
-                  </div>
-                </div>
-              </div>
-
-              <div v-if="zoomedCard === 'progression'" class="w-full space-y-6">
-                <div class="flex bg-main-light rounded-full p-1">
-                  <button
-                    v-for="p in ['day', 'week', 'month']"
-                    :key="p"
-                    @click="activePeriod = p"
-                    class="flex-1 py-2 rounded-full text-body-12 font-bold uppercase"
-                    :class="
-                      activePeriod === p ? 'bg-main text-white' : 'text-main'
-                    "
-                  >
-                    {{ t(`data.${p}`) }}
-                  </button>
-                </div>
-                <div class="h-48 flex items-end justify-between gap-3 px-2">
-                  <div
-                    v-for="(val, i) in currentData.values"
-                    :key="i"
-                    class="w-full bg-main rounded-t-xl relative transition-all duration-700"
-                    :style="{ height: `${(val / currentData.max) * 100}%` }"
-                  >
-                    <span
-                      class="absolute -top-7 left-1/2 -translate-x-1/2 text-body-12 font-bold text-main whitespace-nowrap"
-                      >{{ val }} kg</span
+                    <p
+                      class="text-body-12 font-bold text-grey uppercase tracking-widest mb-2"
                     >
+                      {{ t("data.total_impact") }}
+                    </p>
+                    <h3 class="font-title text-title-h2 text-main">
+                      {{ weeklyCo2Label }} CO2
+                    </h3>
+                    <p
+                      class="text-body-12 text-grey font-medium mt-2 italic text-center"
+                    >
+                      {{ t("data.current_week_analysis") }}
+                    </p>
+                  </div>
+                  <div class="w-full space-y-3">
+                    <div
+                      class="flex justify-between items-center p-4 bg-secondary-light/20 rounded-2xl border border-grey/10"
+                    >
+                      <div
+                        class="flex items-center gap-3 font-bold text-body-16"
+                      >
+                        <Icon
+                          icon="ph:trend-down-bold"
+                          class="text-main h-6 w-6"
+                        />{{ t("data.performance") }}
+                      </div>
+                      <span class="text-main font-bold">{{
+                        weeklyTrendLabel
+                      }}</span>
+                    </div>
+                    <div
+                      class="flex justify-between items-center p-4 bg-secondary-light/20 rounded-2xl border border-grey/10"
+                    >
+                      <div
+                        class="flex items-center gap-3 font-bold text-body-16"
+                      >
+                        <Icon
+                          icon="ph:users-three-bold"
+                          class="text-main h-6 w-6"
+                        />{{ t("data.community") }}
+                      </div>
+                      <span class="text-grey font-bold">{{
+                        communityFriendsLabel
+                      }}</span>
+                    </div>
                   </div>
                 </div>
+
                 <div
-                  class="flex justify-between font-bold text-body-12 text-main uppercase"
+                  v-if="zoomedCard === 'progression'"
+                  class="w-full space-y-6"
                 >
-                  <span v-for="l in currentData.labels" :key="l">{{ l }}</span>
+                  <div class="flex bg-main-light rounded-full p-1">
+                    <button
+                      v-for="p in ['day', 'week', 'month']"
+                      :key="p"
+                      @click="activePeriod = p"
+                      class="flex-1 py-2 rounded-full text-body-12 font-bold uppercase"
+                      :class="
+                        activePeriod === p ? 'bg-main text-white' : 'text-main'
+                      "
+                    >
+                      {{ t(`data.${p}`) }}
+                    </button>
+                  </div>
+                  <div class="h-48 flex items-end justify-between gap-3 px-2">
+                    <div
+                      v-for="(val, i) in currentData.values"
+                      :key="i"
+                      class="w-full bg-main rounded-t-xl relative transition-all duration-700"
+                      :style="{ height: `${(val / currentData.max) * 100}%` }"
+                    >
+                      <span
+                        class="absolute -top-7 left-1/2 -translate-x-1/2 text-body-12 font-bold text-main whitespace-nowrap"
+                        >{{ val }} kg</span
+                      >
+                    </div>
+                  </div>
+                  <div
+                    class="flex justify-between font-bold text-body-12 text-main uppercase"
+                  >
+                    <span v-for="l in currentData.labels" :key="l">{{
+                      l
+                    }}</span>
+                  </div>
+                </div>
+
+                <div
+                  v-if="zoomedCard === 'challenges'"
+                  class="w-full space-y-6"
+                >
+                  <div
+                    v-for="c in challenges"
+                    :key="c.title"
+                    class="space-y-2 text-black text-body-16"
+                  >
+                    <div class="flex justify-between font-bold">
+                      <p>{{ c.title }}</p>
+                      <p class="text-main">{{ c.progress }}%</p>
+                    </div>
+                    <p class="text-body-12 text-grey font-medium">
+                      {{ c.subtitle }}
+                    </p>
+                    <div
+                      class="bg-grey/15 h-4 rounded-full overflow-hidden shadow-inner relative"
+                    >
+                      <div
+                        class="absolute inset-y-0 left-0 bg-main h-full rounded-full transition-all duration-1000"
+                        :style="{ width: c.progress + '%' }"
+                      ></div>
+                    </div>
+                    <div
+                      class="flex items-center justify-between text-body-12 font-semibold text-grey"
+                    >
+                      <span>{{ c.currentLabel }}</span>
+                      <span>{{ c.goalLabel }}</span>
+                    </div>
+                  </div>
+                  <div class="h-px bg-grey/10 w-full my-4"></div>
+                  <p
+                    class="text-body-12 font-bold text-grey uppercase tracking-widest text-center"
+                  >
+                    {{ t("data.your_badges") }}
+                  </p>
+                  <div class="flex justify-around items-center">
+                    <div
+                      v-for="b in badges"
+                      :key="b.name"
+                      class="flex flex-col items-center gap-2"
+                    >
+                      <div
+                        class="h-14 w-14 rounded-full flex items-center justify-center text-main border-2 border-main/20"
+                        :class="
+                          b.locked
+                            ? 'bg-grey/10 grayscale opacity-40'
+                            : 'bg-main-light'
+                        "
+                      >
+                        <Icon :icon="b.icon" class="h-8 w-8" />
+                      </div>
+                      <span
+                        class="text-body-8 font-bold text-black text-center uppercase"
+                        >{{ b.name }}</span
+                      >
+                    </div>
+                  </div>
+                </div>
+
+                <div v-if="zoomedCard === 'split'" class="h-80 w-full">
+                  <Pie :data="chartData" :options="chartOptions" />
                 </div>
               </div>
+            </div>
+          </div>
+        </Transition>
 
-              <div v-if="zoomedCard === 'challenges'" class="w-full space-y-6">
+        <header class="flex flex-col items-center pt-8 px-4 relative z-10">
+          <div
+            class="relative h-32 w-32 rounded-full border-4 border-main overflow-hidden shadow-lg"
+          >
+            <img
+              :src="profilePictureSrc"
+              alt="Profile"
+              class="h-full w-full object-cover"
+            />
+          </div>
+
+          <div
+            class="mt-4 w-full rounded-3xl p-6 shadow-xl text-center border border-grey/5 bg-white"
+          >
+            <h1
+              class="font-title text-title-h3 uppercase leading-none text-black tracking-tight"
+            >
+              {{ profileUsername }}
+            </h1>
+            <p class="text-main font-medium mt-1 text-body-16">
+              {{ t("data.level", { lvl: profileLevel }) }}
+            </p>
+            <div class="h-px bg-grey/20 w-full my-4"></div>
+            <div class="flex justify-around items-center text-black">
+              <div class="text-center">
+                <p class="text-body-12 font-bold uppercase">
+                  {{ t("data.friends_label") }} :
+                </p>
+                <p class="text-body-16 font-semibold">{{ friendsCount }}</p>
+              </div>
+              <div class="w-px bg-grey/20 h-10"></div>
+              <div class="text-center">
+                <p class="text-body-12 font-bold uppercase">
+                  {{ t("data.total_points_label") }} :
+                </p>
+                <p class="text-body-16 font-semibold">{{ totalPointsLabel }}</p>
+              </div>
+            </div>
+          </div>
+        </header>
+
+        <section class="mt-8 px-4 grid grid-cols-1 gap-6 relative z-20">
+          <article
+            @click="zoomedCard = 'weekly'"
+            class="group bg-main rounded-[2rem] p-6 flex flex-col shadow-lg cursor-pointer active:scale-95 transition-transform"
+          >
+            <div class="flex justify-between items-center mb-4">
+              <h2 class="text-white font-bold text-body-16">
+                {{ t("data.weekly_comparison") }}
+              </h2>
+              <Icon
+                icon="ph:magnifying-glass-plus-bold"
+                class="text-white/40 h-5 w-5 opacity-0 group-hover:opacity-100 transition-opacity"
+              />
+            </div>
+            <div
+              class="bg-white/90 rounded-2xl p-6 flex items-center justify-around text-center"
+            >
+              <div>
+                <p class="text-body-12 text-black font-bold uppercase mb-1">
+                  {{ t("data.you") }}
+                </p>
+                <div
+                  class="bg-main text-white py-3 px-6 rounded-xl font-title text-title-h4 shadow-inner"
+                >
+                  {{ weeklyCo2Label }}
+                </div>
+              </div>
+              <div class="h-16 w-px bg-grey/20"></div>
+              <div>
+                <p class="text-body-12 text-grey font-bold uppercase mb-1">
+                  {{ t("data.national_average") }}
+                </p>
+                <div
+                  class="flex items-center justify-center gap-2 bg-main-light text-main py-3 px-5 rounded-xl font-bold text-body-16"
+                >
+                  <Icon icon="ph:users-three-fill" /> + 3kg
+                </div>
+              </div>
+            </div>
+          </article>
+
+          <article
+            @click="zoomedCard = 'progression'"
+            class="group bg-main rounded-[2rem] p-6 shadow-lg flex flex-col cursor-pointer active:scale-95 transition-transform"
+          >
+            <div class="flex justify-between items-center mb-4">
+              <h2 class="text-white font-bold text-body-16">
+                {{ t("data.progression") }}
+              </h2>
+              <Icon
+                icon="ph:magnifying-glass-plus-bold"
+                class="text-white/40 h-5 w-5 opacity-0 group-hover:opacity-100 transition-opacity"
+              />
+            </div>
+            <div
+              class="bg-white/95 rounded-2xl p-5 flex flex-col justify-between overflow-hidden"
+            >
+              <p
+                class="text-body-14 text-grey font-bold italic mb-4 uppercase tracking-tighter"
+              >
+                kg CO2
+              </p>
+              <div class="flex items-end justify-between h-32 px-1 gap-2">
+                <div
+                  v-for="(val, index) in currentData.values"
+                  :key="index"
+                  class="w-full bg-main rounded-t-lg"
+                  :style="{
+                    height: `${(val / currentData.max) * 100}%`,
+                    opacity: 0.4 + index * 0.15,
+                  }"
+                ></div>
+              </div>
+              <div class="flex justify-between mt-4">
+                <div
+                  v-for="(label, index) in currentData.labels"
+                  :key="index"
+                  class="text-body-10 text-center font-bold text-black flex-1 uppercase leading-tight"
+                >
+                  {{ label }}<br /><span
+                    class="text-body-10 font-normal text-grey"
+                    >{{ currentData.values[index] }}kg</span
+                  >
+                </div>
+              </div>
+            </div>
+          </article>
+
+          <article
+            @click="zoomedCard = 'challenges'"
+            class="group bg-main rounded-[2rem] p-6 shadow-lg flex flex-col cursor-pointer active:scale-95 transition-transform"
+          >
+            <div class="flex justify-between items-center mb-5">
+              <h2 class="text-white font-bold text-body-16">
+                {{ t("data.challenges_achievement") }}
+              </h2>
+              <Icon
+                icon="ph:magnifying-glass-plus-bold"
+                class="text-white/40 h-5 w-5 opacity-0 group-hover:opacity-100 transition-opacity"
+              />
+            </div>
+            <div
+              class="bg-white rounded-3xl p-6 flex flex-col justify-between h-full gap-6"
+            >
+              <div class="flex flex-col gap-5">
                 <div
                   v-for="c in challenges"
                   :key="c.title"
-                  class="space-y-2 text-black text-body-16"
+                  class="flex flex-col gap-2"
                 >
-                  <div class="flex justify-between font-bold">
-                    <p>{{ c.title }}</p>
-                    <p class="text-main">{{ c.progress }}%</p>
+                  <div class="flex items-center gap-3 text-body-12">
+                    <Icon :icon="c.icon" class="h-6 w-6 text-main shrink-0" />
+                    <p class="font-bold text-black underline">{{ c.title }}</p>
                   </div>
-                  <p class="text-body-12 text-grey font-medium">
-                    {{ c.subtitle }}
-                  </p>
-                  <div
-                    class="bg-grey/15 h-4 rounded-full overflow-hidden shadow-inner relative"
-                  >
+                  <div class="flex items-center gap-4">
                     <div
-                      class="absolute inset-y-0 left-0 bg-main h-full rounded-full transition-all duration-1000"
-                      :style="{ width: c.progress + '%' }"
-                    ></div>
-                  </div>
-                  <div class="flex items-center justify-between text-body-12 font-semibold text-grey">
-                    <span>{{ c.currentLabel }}</span>
-                    <span>{{ c.goalLabel }}</span>
-                  </div>
-                </div>
-                <div class="h-px bg-grey/10 w-full my-4"></div>
-                <p
-                  class="text-body-12 font-bold text-grey uppercase tracking-widest text-center"
-                >
-                  {{ t("data.your_badges") }}
-                </p>
-                <div class="flex justify-around items-center">
-                  <div
-                    v-for="b in badges"
-                    :key="b.name"
-                    class="flex flex-col items-center gap-2"
-                  >
-                    <div
-                      class="h-14 w-14 rounded-full flex items-center justify-center text-main border-2 border-main/20"
-                      :class="
-                        b.locked
-                          ? 'bg-grey/10 grayscale opacity-40'
-                          : 'bg-main-light'
-                      "
+                      class="flex-1 bg-grey/15 h-3 rounded-full overflow-hidden shadow-inner relative"
                     >
-                      <Icon :icon="b.icon" class="h-8 w-8" />
+                      <div
+                        class="absolute inset-y-0 left-0 bg-main h-full rounded-full transition-all duration-1000"
+                        :style="{ width: c.progress + '%' }"
+                      ></div>
                     </div>
-                    <span
-                      class="text-body-8 font-bold text-black text-center uppercase"
-                      >{{ b.name }}</span
+                    <span class="text-body-12 font-bold text-main"
+                      >{{ c.progress }}%</span
                     >
                   </div>
                 </div>
               </div>
-
-              <div v-if="zoomedCard === 'split'" class="h-80 w-full">
-                <Pie :data="chartData" :options="chartOptions" />
-              </div>
-            </div>
-          </div>
-        </div>
-      </Transition>
-
-      <header class="flex flex-col items-center pt-8 px-4 relative z-10">
-        <div
-          class="relative h-32 w-32 rounded-full border-4 border-main overflow-hidden shadow-lg"
-        >
-          <img
-            :src="profilePictureSrc"
-            alt="Profile"
-            class="h-full w-full object-cover"
-          />
-        </div>
-
-        <div
-          class="mt-4 w-full rounded-3xl p-6 shadow-xl text-center border border-grey/5 bg-white"
-        >
-          <h1
-            class="font-title text-title-h3 uppercase leading-none text-black tracking-tight"
-          >
-            {{ profileUsername }}
-          </h1>
-          <p class="text-main font-medium mt-1 text-body-16">
-            {{ t("data.level", { lvl: profileLevel }) }}
-          </p>
-          <div class="h-px bg-grey/20 w-full my-4"></div>
-          <div class="flex justify-around items-center text-black">
-            <div class="text-center">
-              <p class="text-body-12 font-bold uppercase">
-                {{ t("data.friends_label") }} :
-              </p>
-              <p class="text-body-16 font-semibold">{{ friendsCount }}</p>
-            </div>
-            <div class="w-px bg-grey/20 h-10"></div>
-            <div class="text-center">
-              <p class="text-body-12 font-bold uppercase">
-                {{ t("data.total_points_label") }} :
-              </p>
-              <p class="text-body-16 font-semibold">{{ totalPointsLabel }}</p>
-            </div>
-          </div>
-        </div>
-      </header>
-
-      <section class="mt-8 px-4 grid grid-cols-1 gap-6 relative z-20">
-        <article
-          @click="zoomedCard = 'weekly'"
-          class="group bg-main rounded-[2rem] p-6 flex flex-col shadow-lg cursor-pointer active:scale-95 transition-transform"
-        >
-          <div class="flex justify-between items-center mb-4">
-            <h2 class="text-white font-bold text-body-16">
-              {{ t("data.weekly_comparison") }}
-            </h2>
-            <Icon
-              icon="ph:magnifying-glass-plus-bold"
-              class="text-white/40 h-5 w-5 opacity-0 group-hover:opacity-100 transition-opacity"
-            />
-          </div>
-          <div
-            class="bg-white/90 rounded-2xl p-6 flex items-center justify-around text-center"
-          >
-            <div>
-              <p class="text-body-12 text-black font-bold uppercase mb-1">
-                {{ t("data.you") }}
-              </p>
-              <div
-                class="bg-main text-white py-3 px-6 rounded-xl font-title text-title-h4 shadow-inner"
+              <div class="h-px bg-grey/10 w-full"></div>
+              <p
+                class="text-body-8 font-bold text-grey uppercase tracking-widest text-center"
               >
-                {{ weeklyCo2Label }}
-              </div>
-            </div>
-            <div class="h-16 w-px bg-grey/20"></div>
-            <div>
-              <p class="text-body-12 text-grey font-bold uppercase mb-1">
-                {{ t("data.national_average") }}
+                {{ t("data.recent_badges") }}
               </p>
-              <div
-                class="flex items-center justify-center gap-2 bg-main-light text-main py-3 px-5 rounded-xl font-bold text-body-16"
-              >
-                <Icon icon="ph:users-three-fill" /> + 3kg
-              </div>
-            </div>
-          </div>
-        </article>
-
-        <article
-          @click="zoomedCard = 'progression'"
-          class="group bg-main rounded-[2rem] p-6 shadow-lg flex flex-col cursor-pointer active:scale-95 transition-transform"
-        >
-          <div class="flex justify-between items-center mb-4">
-            <h2 class="text-white font-bold text-body-16">
-              {{ t("data.progression") }}
-            </h2>
-            <Icon
-              icon="ph:magnifying-glass-plus-bold"
-              class="text-white/40 h-5 w-5 opacity-0 group-hover:opacity-100 transition-opacity"
-            />
-          </div>
-          <div
-            class="bg-white/95 rounded-2xl p-5 flex flex-col justify-between overflow-hidden"
-          >
-            <p
-              class="text-body-14 text-grey font-bold italic mb-4 uppercase tracking-tighter"
-            >
-              kg CO2
-            </p>
-            <div class="flex items-end justify-between h-32 px-1 gap-2">
-              <div
-                v-for="(val, index) in currentData.values"
-                :key="index"
-                class="w-full bg-main rounded-t-lg"
-                :style="{
-                  height: `${(val / currentData.max) * 100}%`,
-                  opacity: 0.4 + index * 0.15,
-                }"
-              ></div>
-            </div>
-            <div class="flex justify-between mt-4">
-              <div
-                v-for="(label, index) in currentData.labels"
-                :key="index"
-                class="text-body-10 text-center font-bold text-black flex-1 uppercase leading-tight"
-              >
-                {{ label }}<br /><span
-                  class="text-body-10 font-normal text-grey"
-                  >{{ currentData.values[index] }}kg</span
+              <div class="flex justify-around items-center">
+                <div
+                  v-for="b in badges.slice(0, 3)"
+                  :key="b.name"
+                  class="h-12 w-12 rounded-full flex items-center justify-center shadow-sm"
+                  :class="
+                    b.locked
+                      ? 'bg-grey/20 opacity-40'
+                      : 'bg-main-light text-main border border-main/10'
+                  "
                 >
+                  <Icon :icon="b.icon" class="h-7 w-7" />
+                </div>
               </div>
-            </div>
-          </div>
-        </article>
-
-        <article
-          @click="zoomedCard = 'challenges'"
-          class="group bg-main rounded-[2rem] p-6 shadow-lg flex flex-col cursor-pointer active:scale-95 transition-transform"
-        >
-          <div class="flex justify-between items-center mb-5">
-            <h2 class="text-white font-bold text-body-16">
-              {{ t("data.challenges_achievement") }}
-            </h2>
-            <Icon
-              icon="ph:magnifying-glass-plus-bold"
-              class="text-white/40 h-5 w-5 opacity-0 group-hover:opacity-100 transition-opacity"
-            />
-          </div>
-          <div
-            class="bg-white rounded-3xl p-6 flex flex-col justify-between h-full gap-6"
-          >
-            <div class="flex flex-col gap-5">
               <div
-                v-for="c in challenges"
-                :key="c.title"
-                class="flex flex-col gap-2"
+                class="bg-main-light rounded-xl p-3 border border-main/10 text-center"
               >
-                <div class="flex items-center gap-3 text-body-12">
-                  <Icon :icon="c.icon" class="h-6 w-6 text-main shrink-0" />
-                  <p class="font-bold text-black underline">{{ c.title }}</p>
-                </div>
-                <div class="flex items-center gap-4">
-                  <div
-                    class="flex-1 bg-grey/15 h-3 rounded-full overflow-hidden shadow-inner relative"
-                  >
-                    <div
-                      class="absolute inset-y-0 left-0 bg-main h-full rounded-full transition-all duration-1000"
-                      :style="{ width: c.progress + '%' }"
-                    ></div>
-                  </div>
-                  <span class="text-body-12 font-bold text-main"
-                    >{{ c.progress }}%</span
-                  >
-                </div>
+                <p class="text-body-12 text-main leading-tight italic">
+                  "{{ t("data.eco_tip") }}"
+                </p>
               </div>
             </div>
-            <div class="h-px bg-grey/10 w-full"></div>
+          </article>
+
+          <article
+            @click="zoomedCard = 'split'"
+            class="group bg-main rounded-[2rem] p-6 flex flex-col shadow-lg cursor-pointer active:scale-95 transition-transform"
+          >
+            <div class="flex justify-between items-center mb-1">
+              <h2 class="text-white font-bold text-body-16 leading-tight">
+                {{ t("data.co2_split") }}
+              </h2>
+              <Icon
+                icon="ph:magnifying-glass-plus-bold"
+                class="text-white/40 h-5 w-5 opacity-0 group-hover:opacity-100 transition-opacity"
+              />
+            </div>
             <p
-              class="text-body-8 font-bold text-grey uppercase tracking-widest text-center"
+              class="text-body-12 text-white/70 italic uppercase mb-4 tracking-wider"
             >
-              {{ t("data.recent_badges") }}
+              {{ t("data.breakdown_by_category") }}
             </p>
-            <div class="flex justify-around items-center">
-              <div
-                v-for="b in badges.slice(0, 3)"
-                :key="b.name"
-                class="h-12 w-12 rounded-full flex items-center justify-center shadow-sm"
-                :class="
-                  b.locked
-                    ? 'bg-grey/20 opacity-40'
-                    : 'bg-main-light text-main border border-main/10'
-                "
-              >
-                <Icon :icon="b.icon" class="h-7 w-7" />
-              </div>
-            </div>
             <div
-              class="bg-main-light rounded-xl p-3 border border-main/10 text-center"
+              class="bg-white/90 rounded-2xl p-6 min-h-[250px] flex items-center justify-center"
             >
-              <p class="text-body-12 text-main leading-tight italic">
-                "{{ t("data.eco_tip") }}"
-              </p>
+              <Pie :data="chartData" :options="chartOptions" />
             </div>
-          </div>
-        </article>
+          </article>
+        </section>
+      </main>
 
-        <article
-          @click="zoomedCard = 'split'"
-          class="group bg-main rounded-[2rem] p-6 flex flex-col shadow-lg cursor-pointer active:scale-95 transition-transform"
-        >
-          <div class="flex justify-between items-center mb-1">
-            <h2 class="text-white font-bold text-body-16 leading-tight">
-              {{ t("data.co2_split") }}
-            </h2>
-            <Icon
-              icon="ph:magnifying-glass-plus-bold"
-              class="text-white/40 h-5 w-5 opacity-0 group-hover:opacity-100 transition-opacity"
-            />
-          </div>
-          <p
-            class="text-body-12 text-white/70 italic uppercase mb-4 tracking-wider"
-          >
-            {{ t("data.breakdown_by_category") }}
-          </p>
-          <div
-            class="bg-white/90 rounded-2xl p-6 min-h-[250px] flex items-center justify-center"
-          >
-            <Pie :data="chartData" :options="chartOptions" />
-          </div>
-        </article>
-      </section>
-    </main>
-
-    <BottomNav active="pulse" />
+      <BottomNav active="pulse" />
     </template>
   </div>
 </template>
@@ -449,7 +467,7 @@ const friendsCount = ref(0);
 const totalPoints = ref(0);
 const totalCo2 = ref(0);
 const weeklyCo2 = ref(0);
-const dailyTargetKg = ref(2);
+const dailyTargetKg = ref(20);
 const activeDaysLast7 = ref(0);
 const clothingEntriesCount = ref(0);
 const clothingSecondHandCount = ref(0);
@@ -528,7 +546,10 @@ const normalizeText = (value = "") =>
 const resolveCategoryName = (activityType, categoriesByIri) => {
   if (!activityType) return "";
 
-  if (typeof activityType.category === "object" && activityType.category?.name) {
+  if (
+    typeof activityType.category === "object" &&
+    activityType.category?.name
+  ) {
     return activityType.category.name;
   }
 
@@ -642,16 +663,20 @@ const loadData = async ({ showLoader = false } = {}) => {
     if (!currentUserIri) return;
 
     profileUsername.value = currentUser?.username || currentEmail.split("@")[0];
-    profilePictureSrc.value = resolveProfilePictureSrc(currentUser.profilePicture);
+    profilePictureSrc.value = resolveProfilePictureSrc(
+      currentUser.profilePicture,
+    );
 
     const entryItemsByIri = new Map(entryItems.map((i) => [i["@id"], i]));
     const activityTypesByIri = new Map(activityTypes.map((a) => [a["@id"], a]));
     const categoriesByIri = new Map(categories.map((c) => [c["@id"], c]));
 
-    const userEntries = entries.filter((e) => toIri(e.owner) === currentUserIri);
+    const userEntries = entries.filter(
+      (e) => toIri(e.owner) === currentUserIri,
+    );
     profileLevel.value = Number(summary?.level || 1);
     totalPoints.value = Number(summary?.xpTotal || 0);
-    dailyTargetKg.value = Number(summary?.targetCo2Kg || 2);
+    dailyTargetKg.value = Number(summary?.targetCo2Kg || 20);
 
     friendsCount.value = friendships.filter(
       (f) =>
@@ -708,11 +733,17 @@ const loadData = async ({ showLoader = false } = {}) => {
         activeDayKeys.add(entry.createdAt.slice(0, 10));
       }
 
-      if (createdAt && createdAt >= previousWeekStart && createdAt < startOfWeek) {
+      if (
+        createdAt &&
+        createdAt >= previousWeekStart &&
+        createdAt < startOfWeek
+      ) {
         previousWeekTotal += calcCo2(entry);
       }
 
-      const entryItemIris = Array.isArray(entry.entryItems) ? entry.entryItems : [];
+      const entryItemIris = Array.isArray(entry.entryItems)
+        ? entry.entryItems
+        : [];
       const isClothingEntry = entryItemIris.some((iri) => {
         const item = entryItemsByIri.get(iri);
         const type = activityTypesByIri.get(item?.activityType);
@@ -722,7 +753,9 @@ const loadData = async ({ showLoader = false } = {}) => {
       if (!isClothingEntry) continue;
 
       clothingTotal += 1;
-      const purchaseLabel = normalizeText(resolveClothingPurchaseLabel(entry.details));
+      const purchaseLabel = normalizeText(
+        resolveClothingPurchaseLabel(entry.details),
+      );
       if (purchaseLabel.includes("second")) {
         clothingSecondHandTotal += 1;
       }
@@ -733,7 +766,9 @@ const loadData = async ({ showLoader = false } = {}) => {
     clothingSecondHandCount.value = clothingSecondHandTotal;
     weeklyTrendPercent.value =
       previousWeekTotal > 0
-        ? Math.round(((weeklyCo2.value - previousWeekTotal) / previousWeekTotal) * 100)
+        ? Math.round(
+            ((weeklyCo2.value - previousWeekTotal) / previousWeekTotal) * 100,
+          )
         : null;
 
     // CO2 par catégorie (camembert)
@@ -931,7 +966,9 @@ const challenges = computed(() => {
         current: activeDaysLast7.value,
         goal: activeDaysGoal,
       }),
-      goalLabel: t("data.challenges.active_days_goal", { goal: activeDaysGoal }),
+      goalLabel: t("data.challenges.active_days_goal", {
+        goal: activeDaysGoal,
+      }),
     },
     {
       title: t("data.challenges.weekly_target_title"),
@@ -942,7 +979,9 @@ const challenges = computed(() => {
           ? 100
           : Math.max(
               0,
-              Math.round(100 - ((weeklyCo2.value - weeklyGoal) / weeklyGoal) * 100),
+              Math.round(
+                100 - ((weeklyCo2.value - weeklyGoal) / weeklyGoal) * 100,
+              ),
             ),
       currentLabel: t("data.challenges.weekly_target_current", {
         current: weeklyCo2.value.toFixed(1),
@@ -954,7 +993,10 @@ const challenges = computed(() => {
       title: t("data.challenges.second_hand_title"),
       subtitle: t("data.challenges.second_hand_subtitle"),
       icon: "ph:tag-bold",
-      progress: Math.min(100, Math.round((secondHandShare / secondHandGoal) * 100)),
+      progress: Math.min(
+        100,
+        Math.round((secondHandShare / secondHandGoal) * 100),
+      ),
       currentLabel: t("data.challenges.second_hand_current", {
         current: secondHandShare,
         goal: secondHandGoal,
