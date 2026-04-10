@@ -18,4 +18,8 @@ export default defineConfig({
       interval: 500,
     },
   },
+  preview: {
+    host: true,
+    allowedHosts: ["sae401.mmi24b07.mmi-troyes.fr", "localhost", "127.0.0.1"],
+  },
 });
