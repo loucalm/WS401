@@ -32,6 +32,7 @@ services:
         echo 'Database not ready yet, retrying migration in 2s...';
         sleep 2;
       done;
+      php bin/console assets:install public --symlink --relative;
       php bin/console cache:clear --env=prod;
       php -S 0.0.0.0:8000 -t public public/index.php
       "
