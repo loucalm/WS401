@@ -7,6 +7,7 @@ use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Filters;
+use EasyCorp\Bundle\EasyAdminBundle\Field\ArrayField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\ChoiceField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\EmailField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\IdField;
@@ -40,12 +41,17 @@ class UserCrudController extends AbstractAdminCrudController
         yield IdField::new('id', $this->trans('fields.id'))->hideOnForm();
         yield EmailField::new('email', $this->trans('fields.email'));
         yield TextField::new('username', $this->trans('fields.username'));
+        yield ArrayField::new('roles', $this->trans('fields.roles'))
+            ->onlyOnIndex();
+
         yield ChoiceField::new('roles', $this->trans('fields.roles'))
             ->setChoices([
                 $this->trans('choices.role_admin') => 'ROLE_ADMIN',
                 $this->trans('choices.role_user') => 'ROLE_USER',
             ])
-            ->allowMultipleChoices();
+            ->setFormTypeOption('multiple', true)
+            ->setFormTypeOption('expanded', false)
+            ->onlyOnForms();
         yield NumberField::new('targetCo2', $this->trans('fields.target_co2'))->setNumDecimals(2);
         yield ChoiceField::new('unitPreference', $this->trans('fields.unit_preference'))
             ->setChoices([
