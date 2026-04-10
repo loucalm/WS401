@@ -1,0 +1,8 @@
+services:
+  backend:
+    environment:
+      CORS_ALLOW_ORIGIN: ${CORS_ALLOW_ORIGIN:-^https://(sae401\.mmi24b07\.mmi-troyes\.fr)$}
+
+  frontend:
+    environment:
+      VITE_API_ORIGIN: ${VITE_API_ORIGIN:-https://sae401.mmi24b07.mmi-troyes.fr}

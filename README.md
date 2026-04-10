@@ -10,6 +10,33 @@
 
 Cet environnement de développement est entièrement dockerisé. **Vous n'avez pas besoin d'installer PHP, Node.js ou MySQL sur votre machine physique** — seul Docker Desktop est requis.
 
+## Production (Docker)
+
+1. Préparer les variables sensibles
+
+```bash
+cp .env.prod.example .env
+# puis remplacer toutes les valeurs par des secrets forts
+```
+
+2. Lancer en mode production
+
+```bash
+docker compose up -d --build
+```
+
+3. Optionnel: activer Adminer uniquement en debug
+
+```bash
+docker compose --profile debug up -d adminer
+```
+
+4. URLs en mode production local
+
+- Frontend (build + preview) : http://localhost:4173
+- Backend (API Platform) : http://localhost:8000/api
+- Back-office (EasyAdmin) : http://localhost:8000/admin
+
 ## 🛠 Prérequis
 
 - Docker Desktop installé et lancé en arrière-plan.
@@ -132,12 +159,12 @@ docker compose exec -u 0 backend php bin/console doctrine:migrations:migrate --n
 docker compose exec -u 0 backend php bin/console doctrine:fixtures:load
 ```
 
-🌍 URLs utiles
+🌍 URLs utiles (dev/local)
 
-- Frontend (Vue 3 / Vite) : http://localhost:5173
+- Frontend (Vue 3 / Vite) : http://localhost:4173
 - Backend (API Platform) : http://localhost:8000/api
 - Back-office (EasyAdmin) : http://localhost:8000/admin
-- Gestion BDD (Adminer) : http://localhost:8080
+- Gestion BDD (Adminer) : http://localhost:8080 (profil `debug`)
 
 Identifiants de la base
 

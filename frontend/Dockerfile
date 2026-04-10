@@ -1,13 +1,13 @@
 FROM node:22-alpine
 
-
 WORKDIR /app
 
+COPY package.json package-lock.json* ./
 
-RUN apk add --no-cache git
+RUN npm ci
 
+COPY . .
 
-EXPOSE 5173
+EXPOSE 4173
 
-
-CMD ["npm", "run", "dev"]
+CMD ["sh", "-lc", "npm run build && npm run preview -- --host 0.0.0.0 --port 4173"]

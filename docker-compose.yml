@@ -2,61 +2,54 @@ services:
   database:
     image: mysql:8.0
     environment:
-      MYSQL_DATABASE: app_db
-      MYSQL_ROOT_PASSWORD: rootpassword
-      MYSQL_USER: user
-      MYSQL_PASSWORD: password
+      MYSQL_DATABASE: ${DB_NAME:-app_db}
+      MYSQL_ROOT_PASSWORD: ${DB_ROOT_PASSWORD:-rootpassword}
+      MYSQL_USER: ${DB_USER:-user}
+      MYSQL_PASSWORD: ${DB_PASSWORD:-password}
     volumes:
       - db-data:/var/lib/mysql
-    ports:
-      - "3307:3306"
 
   backend:
     build:
       context: ./backend
       dockerfile: Dockerfile
-    volumes:
-      - ./backend:/srv/app
-      - backend-vendor:/srv/app/vendor
-      - backend-var:/srv/app/var
     environment:
-      DATABASE_URL: "mysql://user:password@database:3306/app_db?serverVersion=8.0&charset=utf8mb4"
-      APP_ENV: dev
-      APP_DEBUG: "1"
-      PHP_CLI_SERVER_WORKERS: "8"
+      DATABASE_URL: "mysql://${DB_USER:-user}:${DB_PASSWORD:-password}@database:3306/${DB_NAME:-app_db}?serverVersion=8.0.32&charset=utf8mb4"
+      APP_ENV: prod
+      APP_DEBUG: "0"
+      APP_SECRET: ${APP_SECRET:-ChangeThisSymfonySecret_2026_Prod}
+      JWT_PASSPHRASE: ${JWT_PASSPHRASE:-ChangeThisJwtPassphrase_2026_Prod}
+      CORS_ALLOW_ORIGIN: ${CORS_ALLOW_ORIGIN:-^https?://(localhost|127\.0\.0\.1)(:[0-9]+)?$}
     depends_on:
       - database
     ports:
-      - "8000:8000"
+      - "127.0.0.1:8000:8000"
     command: >-
       sh -lc "
-      if [ ! -f vendor/autoload_runtime.php ]; then
-        composer install --no-interaction --prefer-dist;
-      fi;
       php bin/console lexik:jwt:generate-keypair --skip-if-exists;
+      for i in $(seq 1 30); do
+        php bin/console doctrine:migrations:migrate --no-interaction --allow-no-migration && break;
+        echo 'Database not ready yet, retrying migration in 2s...';
+        sleep 2;
+      done;
+      php bin/console cache:clear --env=prod;
       php -S 0.0.0.0:8000 -t public public/index.php
       "
 
   frontend:
-    image: node:22-alpine
-    working_dir: /app
-    volumes:
-      - ./frontend:/app
-      - frontend-node-modules:/app/node_modules
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    environment:
+      VITE_API_ORIGIN: ${VITE_API_ORIGIN:-http://localhost:8000}
     ports:
-      - "5173:5173"
-    command: >-
-      sh -lc "
-      if [ ! -x node_modules/.bin/vite ] || [ ! -f node_modules/@tailwindcss/vite/package.json ]; then
-        npm install;
-      fi;
-      npm run dev -- --host
-      "
+      - "127.0.0.1:4173:4173"
     depends_on:
       - backend
 
   adminer:
     image: adminer
+    profiles: ["debug"]
     ports:
       - "8080:8080"
     depends_on:
@@ -64,6 +57,3 @@ services:
 
 volumes:
   db-data:
-  backend-vendor:
-  backend-var:
-  frontend-node-modules:
