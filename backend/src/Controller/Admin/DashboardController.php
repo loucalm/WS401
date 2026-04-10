@@ -4,7 +4,6 @@ namespace App\Controller\Admin;
 
 use App\Entity\ActivityType;
 use App\Entity\Category;
-use App\Entity\User;
 use EasyCorp\Bundle\EasyAdminBundle\Attribute\AdminDashboard;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Dashboard;
 use EasyCorp\Bundle\EasyAdminBundle\Config\MenuItem;
@@ -38,9 +37,9 @@ class DashboardController extends AbstractDashboardController
     {
         yield MenuItem::linkToDashboard('Dashboard', 'fa fa-home');
         yield MenuItem::section('Utilisateurs');
-        yield MenuItem::linkToCrud('Users', 'fa fa-users', User::class);
+        yield MenuItem::linkToRoute('Users', 'fa fa-users', 'admin_user_index');
         yield MenuItem::section('Activites');
-        yield MenuItem::linkToCrud('Activity Types', 'fa fa-list', ActivityType::class);
-        yield MenuItem::linkToCrud('Categories', 'fa fa-tags', Category::class);
+        yield MenuItem::linkToRoute('Activity Types', 'fa fa-list', 'admin_activity_type_index');
+        yield MenuItem::linkToRoute('Categories', 'fa fa-tags', 'admin_category_index');
     }
 }
