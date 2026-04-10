@@ -81,14 +81,6 @@
               </p>
             </button>
           </div>
-
-          <button
-            type="button"
-            @click="clearPicture"
-            class="mt-4 rounded-xl border border-grey/15 px-4 py-2.5 font-ui text-[14px] font-semibold text-grey-700"
-          >
-            {{ t("profile_edit.remove_photo") }}
-          </button>
         </div>
       </section>
 
@@ -373,12 +365,6 @@ const selectPicture = (value) => {
   selectedPicture.value = value;
   pictureDirty.value = true;
   picturePreviewSrc.value = resolveProfilePictureSrc(value);
-};
-
-const clearPicture = () => {
-  selectedPicture.value = "";
-  pictureDirty.value = true;
-  picturePreviewSrc.value = resolveProfilePictureSrc(null);
 };
 
 const handleSubmit = async () => {

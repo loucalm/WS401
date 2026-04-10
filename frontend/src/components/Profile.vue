@@ -88,7 +88,7 @@
             <img
               :src="profilePictureSrc"
               alt="Profile Avatar"
-              class="h-full w-full object-cover scale-125 grayscale"
+              class="h-full w-full object-cover scale-125"
             />
           </div>
         </div>

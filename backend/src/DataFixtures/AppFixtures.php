@@ -218,7 +218,7 @@ class AppFixtures extends Fixture
         $user = new User();
         $user->setEmail($email);
         $user->setUsername($username);
-        $user->setTargetCo2(20);
+        $user->setTargetCo2(10);
         $user->setUnitPreference('metric');
         $user->setLatitude($latitude);
         $user->setLongitude($longitude);

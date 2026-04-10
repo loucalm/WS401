@@ -106,7 +106,10 @@
                       {{ t(`data.${p}`) }}
                     </button>
                   </div>
-                  <div class="h-48 flex items-end justify-between gap-3 px-2">
+                  <div
+                    v-if="hasProgressionData"
+                    class="h-48 flex items-end justify-between gap-3 px-2"
+                  >
                     <div
                       v-for="(val, i) in currentData.values"
                       :key="i"
@@ -119,6 +122,12 @@
                       >
                     </div>
                   </div>
+                  <p
+                    v-else
+                    class="rounded-2xl border border-grey/15 bg-main-light/40 py-10 text-center font-ui text-body-14 font-semibold text-grey"
+                  >
+                    {{ t("data.no_data") }}
+                  </p>
                   <div
                     class="flex justify-between font-bold text-body-12 text-main uppercase"
                   >
@@ -189,8 +198,19 @@
                   </div>
                 </div>
 
-                <div v-if="zoomedCard === 'split'" class="h-80 w-full">
+                <div
+                  v-if="zoomedCard === 'split' && hasPieData"
+                  class="h-80 w-full"
+                >
                   <Pie :data="chartData" :options="chartOptions" />
+                </div>
+                <div
+                  v-else-if="zoomedCard === 'split'"
+                  class="flex h-80 w-full items-center justify-center rounded-2xl border border-grey/15 bg-main-light/30"
+                >
+                  <p class="font-ui text-body-16 font-semibold text-grey">
+                    {{ t("data.no_data") }}
+                  </p>
                 </div>
               </div>
             </div>
@@ -300,7 +320,10 @@
               >
                 kg CO2
               </p>
-              <div class="flex items-end justify-between h-32 px-1 gap-2">
+              <div
+                v-if="hasProgressionData"
+                class="flex items-end justify-between h-32 px-1 gap-2"
+              >
                 <div
                   v-for="(val, index) in currentData.values"
                   :key="index"
@@ -310,6 +333,14 @@
                     opacity: 0.4 + index * 0.15,
                   }"
                 ></div>
+              </div>
+              <div
+                v-else
+                class="flex h-32 items-center justify-center rounded-2xl border border-grey/15 bg-main-light/40"
+              >
+                <p class="font-ui text-body-14 font-semibold text-grey">
+                  {{ t("data.no_data") }}
+                </p>
               </div>
               <div class="flex justify-between mt-4">
                 <div
@@ -418,11 +449,155 @@
             <div
               class="bg-white/90 rounded-2xl p-6 min-h-[250px] flex items-center justify-center"
             >
-              <Pie :data="chartData" :options="chartOptions" />
+              <Pie
+                v-if="hasPieData"
+                :data="chartData"
+                :options="chartOptions"
+              />
+              <p v-else class="font-ui text-body-16 font-semibold text-grey">
+                {{ t("data.no_data") }}
+              </p>
             </div>
           </article>
         </section>
+
+        <section class="mt-8 px-4 pb-2">
+          <div class="mb-4 flex items-center justify-between">
+            <h2 class="font-title text-title-h4 uppercase text-black">
+              {{ t("data.all_activities") }}
+            </h2>
+            <p class="font-ui text-body-12 text-grey">
+              {{ dataActivities.length }}
+            </p>
+          </div>
+
+          <div
+            v-if="dataActivities.length === 0"
+            class="rounded-2xl border border-grey/15 bg-white px-4 py-6 text-center text-body-14 font-semibold text-grey shadow-[0_6px_16px_rgba(0,0,0,0.1)]"
+          >
+            {{ t("data.no_data") }}
+          </div>
+
+          <div v-else class="space-y-3">
+            <article
+              v-for="activity in dataActivities"
+              :key="activity.id"
+              class="rounded-2xl border border-grey/15 bg-white px-4 py-3 shadow-[0_6px_16px_rgba(0,0,0,0.1)]"
+            >
+              <div class="flex items-start gap-3">
+                <div
+                  class="mt-0.5 flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-main-light text-main"
+                >
+                  <Icon :icon="activity.icon" class="h-7 w-7" />
+                </div>
+
+                <div class="min-w-0 flex-1">
+                  <div class="flex items-start justify-between gap-3">
+                    <div class="min-w-0 flex-1">
+                      <p
+                        class="truncate font-ui text-body-16 font-semibold text-black"
+                      >
+                        {{ activity.title }}
+                      </p>
+                      <p class="mt-0.5 font-ui text-body-12 text-grey">
+                        {{ activity.dateLabel }}
+                      </p>
+                    </div>
+                    <p
+                      class="shrink-0 font-ui text-body-14 font-semibold text-black"
+                    >
+                      {{ activity.quantityLabel }}
+                    </p>
+                  </div>
+
+                  <div class="mt-1 flex items-center justify-between">
+                    <p
+                      class="font-ui text-body-14 font-semibold"
+                      :class="activity.pointsClass"
+                    >
+                      {{ activity.points }}
+                    </p>
+                    <p
+                      class="font-ui text-body-14 font-semibold"
+                      :class="activity.co2Class"
+                    >
+                      {{ activity.co2 }}
+                    </p>
+                  </div>
+
+                  <div class="mt-2 flex justify-end">
+                    <button
+                      type="button"
+                      class="text-body-12 font-semibold uppercase tracking-wide text-systeme disabled:cursor-not-allowed disabled:opacity-50"
+                      :disabled="deletingActivityIds.includes(activity.id)"
+                      @click="requestDeleteActivity(activity)"
+                    >
+                      {{
+                        deletingActivityIds.includes(activity.id)
+                          ? t("data.deleting_activity")
+                          : t("data.delete_activity")
+                      }}
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </article>
+          </div>
+        </section>
       </main>
+
+      <Transition name="fade">
+        <div
+          v-if="isDeleteModalOpen"
+          class="fixed inset-0 z-120 flex items-end justify-center bg-black/45 p-4 backdrop-blur-sm sm:items-center"
+        >
+          <div
+            class="w-full max-w-sm rounded-3xl border border-white/60 bg-white p-5 shadow-2xl"
+          >
+            <div class="flex items-start gap-3">
+              <div
+                class="mt-0.5 flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-systeme/12 text-systeme"
+              >
+                <Icon icon="ph:warning-circle-bold" class="h-6 w-6" />
+              </div>
+              <div class="min-w-0 flex-1">
+                <h3 class="font-title text-title-h4 leading-none text-black">
+                  {{ t("data.delete_activity_title") }}
+                </h3>
+                <p class="mt-2 font-ui text-body-14 leading-5 text-grey">
+                  {{ t("data.delete_activity_confirm") }}
+                </p>
+                <p class="mt-2 font-ui text-body-12 font-semibold text-black">
+                  {{ activityToDelete?.title || "" }}
+                </p>
+              </div>
+            </div>
+
+            <div class="mt-5 flex gap-3">
+              <button
+                type="button"
+                class="flex-1 rounded-2xl border border-grey/20 px-4 py-3 font-ui text-body-14 font-semibold text-grey transition active:scale-[0.99] disabled:opacity-50"
+                :disabled="isDeleteInProgress"
+                @click="closeDeleteModal"
+              >
+                {{ t("data.delete_activity_cancel") }}
+              </button>
+              <button
+                type="button"
+                class="flex-1 rounded-2xl bg-systeme px-4 py-3 font-ui text-body-14 font-bold text-white shadow-[0_8px_18px_rgba(0,0,0,0.2)] transition active:scale-[0.99] disabled:opacity-50"
+                :disabled="isDeleteInProgress"
+                @click="confirmDeleteActivity"
+              >
+                {{
+                  isDeleteInProgress
+                    ? t("data.deleting_activity")
+                    : t("data.delete_activity_confirm_button")
+                }}
+              </button>
+            </div>
+          </div>
+        </div>
+      </Transition>
 
       <BottomNav active="pulse" />
     </template>
@@ -467,7 +642,7 @@ const friendsCount = ref(0);
 const totalPoints = ref(0);
 const totalCo2 = ref(0);
 const weeklyCo2 = ref(0);
-const dailyTargetKg = ref(20);
+const dailyTargetKg = ref(10);
 const activeDaysLast7 = ref(0);
 const clothingEntriesCount = ref(0);
 const clothingSecondHandCount = ref(0);
@@ -483,6 +658,13 @@ const co2ByCategory = ref({
   clothing: 0,
   consumption: 0,
 });
+const dataActivities = ref([]);
+const deletingActivityIds = ref([]);
+const isDeleteModalOpen = ref(false);
+const activityToDelete = ref(null);
+const isDeleteInProgress = computed(() =>
+  deletingActivityIds.value.includes(activityToDelete.value?.id),
+);
 
 // ─── JWT / API helpers ────────────────────────────────────────────────────
 const parseJwtPayload = (token) => {
@@ -676,7 +858,7 @@ const loadData = async ({ showLoader = false } = {}) => {
     );
     profileLevel.value = Number(summary?.level || 1);
     totalPoints.value = Number(summary?.xpTotal || 0);
-    dailyTargetKg.value = Number(summary?.targetCo2Kg || 20);
+    dailyTargetKg.value = Number(summary?.targetCo2Kg || 10);
 
     friendsCount.value = friendships.filter(
       (f) =>
@@ -699,8 +881,126 @@ const loadData = async ({ showLoader = false } = {}) => {
       return sum;
     };
 
+    const normalizeKey = (value = "") =>
+      value
+        .toLowerCase()
+        .normalize("NFD")
+        .replace(/[\u0300-\u036f]/g, "")
+        .replace(/[^a-z0-9]+/g, "_")
+        .replace(/^_+|_+$/g, "");
+
+    const translateActivityLabel = (label = "") => {
+      const key = `taxonomy.activities.${normalizeKey(label)}`;
+      return t(key) !== key ? t(key) : label;
+    };
+
+    const translateDietLabel = (label = "") => {
+      const key = `taxonomy.diets.${normalizeKey(label)}`;
+      return t(key) !== key ? t(key) : label;
+    };
+
+    const iconForActivity = (activityType, hasDiet) => {
+      if (hasDiet) return "mdi:silverware-fork-knife";
+      if (activityType?.icon) return activityType.icon;
+
+      const subCategory = (activityType?.subCategory || "").toLowerCase();
+      if (subCategory.includes("transport")) return "mdi:car";
+      if (subCategory.includes("energy")) return "mdi:flash";
+      if (subCategory.includes("shoe") || subCategory.includes("top")) {
+        return "tabler:shirt-filled";
+      }
+
+      return "mdi:leaf";
+    };
+
+    const toDataActivity = (entry) => {
+      const itemIris = Array.isArray(entry?.entryItems) ? entry.entryItems : [];
+      const item =
+        itemIris.length > 0 ? entryItemsByIri.get(itemIris[0]) : null;
+      const activityType = item
+        ? activityTypesByIri.get(item.activityType)
+        : null;
+      const hasDiet = typeof entry?.details?.diet === "string";
+      const isClothingEntry =
+        itemIris.some((iri) => {
+          const currentItem = entryItemsByIri.get(iri);
+          const currentType = activityTypesByIri.get(currentItem?.activityType);
+          return isClothingActivityType(currentType, categoriesByIri);
+        }) || typeof entry?.details?.purchaseType === "string";
+
+      const purchaseLabel = isClothingEntry
+        ? resolveClothingPurchaseLabel(entry?.details)
+        : "";
+
+      const defaultTitle =
+        (activityType?.name ? translateActivityLabel(activityType.name) : "") ||
+        (entry?.details?.transportMode
+          ? translateActivityLabel(entry.details.transportMode)
+          : "") ||
+        (entry?.details?.source
+          ? translateActivityLabel(entry.details.source)
+          : "") ||
+        (hasDiet ? translateDietLabel(entry.details.diet) : "") ||
+        t("dashboard.activity_fallback", { id: entry.id });
+
+      const clothingTitle = purchaseLabel
+        ? `${t("taxonomy.categories.clothing")} - ${purchaseLabel}`
+        : t("taxonomy.categories.clothing");
+      const foodTitle = hasDiet
+        ? translateDietLabel(entry.details.diet)
+        : t("taxonomy.categories.food");
+
+      const qty = Number(item?.quantity || 0);
+      const unit = activityType?.unitLabel || t("dashboard.unit");
+      const foodTotalQty = itemIris.reduce((total, iri) => {
+        const currentItem = entryItemsByIri.get(iri);
+        return total + Number(currentItem?.quantity || 0);
+      }, 0);
+      const co2 = calcCo2(entry);
+      const points = Math.max(0, Math.round(Number(entry?.value || 0)));
+
+      return {
+        id: entry.id,
+        entryIri: entry?.["@id"] || `/api/entries/${entry.id}`,
+        title: isClothingEntry
+          ? clothingTitle
+          : hasDiet
+            ? foodTitle
+            : defaultTitle,
+        icon: iconForActivity(activityType, hasDiet),
+        points: `+${points} n2e points`,
+        pointsClass: points > 0 ? "text-main" : "text-grey",
+        quantityLabel: hasDiet
+          ? foodTotalQty > 0
+            ? `${foodTotalQty.toFixed(2)} ${unit}`
+            : "-"
+          : qty > 0
+            ? `${qty.toFixed(2)} ${unit}`
+            : "-",
+        co2: `${co2 > 0 ? "+" : ""}${co2.toFixed(2)} kg CO2`,
+        co2Class: co2 > 2 ? "text-systeme" : "text-main",
+        dateLabel: entry?.createdAt
+          ? new Date(entry.createdAt).toLocaleString(
+              locale.value === "fr" ? "fr-FR" : "en-US",
+              {
+                day: "2-digit",
+                month: "2-digit",
+                year: "numeric",
+                hour: "2-digit",
+                minute: "2-digit",
+              },
+            )
+          : "-",
+      };
+    };
+
     totalCo2.value =
       Math.round(userEntries.reduce((s, e) => s + calcCo2(e), 0) * 10) / 10;
+
+    dataActivities.value = userEntries
+      .slice()
+      .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
+      .map((entry) => toDataActivity(entry));
 
     // Weekly CO2 (lundi → maintenant)
     const now = new Date();
@@ -911,6 +1211,54 @@ watch(locale, () => {
   loadData();
 });
 
+const requestDeleteActivity = (activity) => {
+  if (!activity?.id) return;
+  activityToDelete.value = activity;
+  isDeleteModalOpen.value = true;
+};
+
+const closeDeleteModal = (force = false) => {
+  if (!force && isDeleteInProgress.value) return;
+  isDeleteModalOpen.value = false;
+  activityToDelete.value = null;
+};
+
+const confirmDeleteActivity = async () => {
+  const activity = activityToDelete.value;
+  if (!activity?.entryIri || !activity?.id) return;
+
+  const token = normalizeToken(localStorage.getItem("jwt_token"));
+  if (!token) {
+    router.push("/login");
+    return;
+  }
+
+  deletingActivityIds.value = [...deletingActivityIds.value, activity.id];
+
+  try {
+    await axios.delete(`http://localhost:8000${activity.entryIri}`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    closeDeleteModal(true);
+    await loadData();
+  } catch (error) {
+    if (error?.response?.status === 401) {
+      localStorage.removeItem("jwt_token");
+      router.push("/login");
+      return;
+    }
+
+    console.error("Data activity delete error:", error);
+  } finally {
+    deletingActivityIds.value = deletingActivityIds.value.filter(
+      (id) => id !== activity.id,
+    );
+  }
+};
+
 // ─── Computed UI ──────────────────────────────────────────────────────────
 const totalPointsLabel = computed(() => `+${totalPoints.value} pts`);
 const weeklyCo2Label = computed(() => `+ ${weeklyCo2.value} kg`);
@@ -930,6 +1278,13 @@ const communityFriendsLabel = computed(() =>
 const currentData = computed(
   () => progressionByPeriod.value[activePeriod.value],
 );
+const hasProgressionData = computed(() =>
+  currentData.value.values.some((value) => Number(value) > 0),
+);
+const hasPieData = computed(() => {
+  const cat = co2ByCategory.value;
+  return cat.transport + cat.food + cat.clothing + cat.consumption > 0;
+});
 
 const getTitle = (id) => {
   const labels = {

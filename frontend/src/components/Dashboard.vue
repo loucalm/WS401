@@ -82,7 +82,7 @@
             ></div>
 
             <div
-              class="absolute inset-[26px] z-10 flex flex-col items-center justify-center text-center"
+              class="absolute inset-x-6.5 top-5.5 bottom-11 z-30 flex flex-col items-center justify-center text-center"
             >
               <img
                 :src="mascotSrc"
@@ -197,9 +197,6 @@
                       >
                         {{ friend.points }} pts
                       </p>
-                      <p class="text-[11px] text-grey sm:text-[12px]">
-                        {{ friend.co2 }}
-                      </p>
                     </div>
                   </li>
                 </ul>
@@ -216,9 +213,11 @@
 
         <div
           v-if="loading"
-          class="mt-4 rounded-2xl border border-grey/15 bg-white px-4 py-4 text-center text-[14px] text-grey shadow-[0_6px_16px_rgba(0,0,0,0.14)] sm:text-[15px]"
+          class="mt-4 rounded-2xl border border-grey/15 bg-white px-4 py-6 text-center text-[14px] text-grey shadow-[0_6px_16px_rgba(0,0,0,0.14)] sm:text-[15px]"
         >
-          {{ t("dashboard.loading_activities") }}
+          <div class="flex justify-center">
+            <Spinner :label="t('dashboard.loading_activities')" />
+          </div>
         </div>
 
         <div
@@ -253,11 +252,25 @@
                     {{ activity.points }}
                   </p>
                 </div>
-                <p
-                  class="shrink-0 font-ui text-[17px] font-medium text-black sm:text-[19px]"
-                >
-                  {{ activity.quantityLabel }}
-                </p>
+                <div class="shrink-0 text-right">
+                  <p
+                    class="font-ui text-[17px] font-medium text-black sm:text-[19px]"
+                  >
+                    {{ activity.quantityLabel }}
+                  </p>
+                  <button
+                    type="button"
+                    class="mt-1 text-body-12 font-semibold uppercase tracking-wide text-systeme disabled:cursor-not-allowed disabled:opacity-50"
+                    :disabled="deletingActivityIds.includes(activity.id)"
+                    @click="requestDeleteActivity(activity)"
+                  >
+                    {{
+                      deletingActivityIds.includes(activity.id)
+                        ? t("dashboard.deleting_activity")
+                        : t("dashboard.delete_activity")
+                    }}
+                  </button>
+                </div>
               </div>
 
               <p
@@ -301,6 +314,59 @@
       </div>
     </transition>
 
+    <transition name="delete-modal">
+      <div
+        v-if="isDeleteModalOpen"
+        class="fixed inset-0 z-130 flex items-end justify-center bg-black/45 p-4 backdrop-blur-sm sm:items-center"
+      >
+        <div
+          class="w-full max-w-sm rounded-3xl border border-white/60 bg-white p-5 shadow-[0_20px_44px_rgba(0,0,0,0.28)]"
+        >
+          <div class="flex items-start gap-3">
+            <div
+              class="mt-0.5 flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-systeme/12 text-systeme"
+            >
+              <Icon icon="ph:warning-circle-bold" class="h-6 w-6" />
+            </div>
+            <div class="min-w-0 flex-1">
+              <h3 class="font-title text-[24px] leading-none text-black">
+                {{ t("dashboard.delete_activity_title") }}
+              </h3>
+              <p class="mt-2 font-ui text-[14px] leading-5 text-grey">
+                {{ t("dashboard.delete_activity_confirm") }}
+              </p>
+              <p class="mt-2 font-ui text-[13px] font-semibold text-black">
+                {{ activityToDelete?.title || "" }}
+              </p>
+            </div>
+          </div>
+
+          <div class="mt-5 flex gap-3">
+            <button
+              type="button"
+              class="flex-1 rounded-2xl border border-grey/20 px-4 py-3 font-ui text-[14px] font-semibold text-grey transition active:scale-[0.99] disabled:opacity-50"
+              :disabled="isDeleteInProgress"
+              @click="closeDeleteModal"
+            >
+              {{ t("dashboard.delete_activity_cancel") }}
+            </button>
+            <button
+              type="button"
+              class="flex-1 rounded-2xl bg-systeme px-4 py-3 font-ui text-[14px] font-bold text-white shadow-[0_8px_18px_rgba(0,0,0,0.2)] transition active:scale-[0.99] disabled:opacity-50"
+              :disabled="isDeleteInProgress"
+              @click="confirmDeleteActivity"
+            >
+              {{
+                isDeleteInProgress
+                  ? t("dashboard.deleting_activity")
+                  : t("dashboard.delete_activity_confirm_button")
+              }}
+            </button>
+          </div>
+        </div>
+      </div>
+    </transition>
+
     <BottomNav active="home" />
   </div>
 </template>
@@ -313,6 +379,7 @@ import { useI18n } from "vue-i18n";
 import { useRouter } from "vue-router";
 import mascotSrc from "../assets/mascotte_neutre.svg";
 import BottomNav from "./BottomNav.vue";
+import Spinner from "./Spinner.vue";
 
 const API_BASE = "http://localhost:8000/api";
 const router = useRouter();
@@ -321,7 +388,7 @@ const { t, te, locale } = useI18n();
 const loading = ref(true);
 const dailyCo2 = ref(0);
 const animatedDailyCo2 = ref(0);
-const dailyTargetKg = ref(20);
+const dailyTargetKg = ref(10);
 const activities = ref([]);
 const leaderboard = ref([]);
 const currentUserPoints = ref(0);
@@ -330,6 +397,12 @@ const isNotifOpen = ref(false);
 const notifications = ref([]);
 const unreadNotifications = ref(0);
 const activeToast = ref(null);
+const deletingActivityIds = ref([]);
+const isDeleteModalOpen = ref(false);
+const activityToDelete = ref(null);
+const isDeleteInProgress = computed(() =>
+  deletingActivityIds.value.includes(activityToDelete.value?.id),
+);
 
 let animationFrameId = null;
 let refreshIntervalId = null;
@@ -578,10 +651,15 @@ const toDashboardActivity = (
   const purchaseLabel = isClothingEntry
     ? resolveClothingPurchaseLabel(entry?.details)
     : "";
+  const hasDiet = typeof entry?.details?.diet === "string";
 
   const co2 = entryCo2(entry, entryItemsByIri, activityTypesByIri);
   const qty = Number(item?.quantity || 0);
   const unit = activityType?.unitLabel || "unit";
+  const foodTotalQty = itemIris.reduce((total, itemIri) => {
+    const currentItem = entryItemsByIri.get(itemIri);
+    return total + Number(currentItem?.quantity || 0);
+  }, 0);
 
   const clothingCount = itemIris.length;
   const clothingUnit = unit === "pair" ? "pair" : "item";
@@ -606,18 +684,26 @@ const toDashboardActivity = (
   const clothingTitle = purchaseLabel
     ? `${t("taxonomy.categories.clothing")} - ${purchaseLabel}`
     : t("taxonomy.categories.clothing");
+  const foodTitle = hasDiet
+    ? translateDietLabel(entry.details.diet)
+    : t("taxonomy.categories.food");
 
   return {
     id: entry.id,
-    title: isClothingEntry ? clothingTitle : defaultTitle,
-    icon: iconForActivity(activityType),
+    entryIri: entry?.["@id"] || `/api/entries/${entry.id}`,
+    title: isClothingEntry ? clothingTitle : hasDiet ? foodTitle : defaultTitle,
+    icon: hasDiet ? "mdi:silverware-fork-knife" : iconForActivity(activityType),
     points: `+${points} n2e points`,
     pointsClass: points > 0 ? "text-main" : "text-grey",
     quantityLabel: isClothingEntry
       ? clothingQuantityLabel
-      : qty > 0
-        ? `${formatKg(qty)} ${unit}`
-        : "-",
+      : hasDiet
+        ? foodTotalQty > 0
+          ? `${formatKg(foodTotalQty)} ${unit}`
+          : "-"
+        : qty > 0
+          ? `${formatKg(qty)} ${unit}`
+          : "-",
     co2: `${co2 > 0 ? "+" : ""}${formatKg(co2)} kg CO2`,
     co2Class: co2 > 2 ? "text-systeme" : "text-main",
   };
@@ -772,6 +858,57 @@ const buildFriendOvertakeMessage = (
     points,
   });
 
+const requestDeleteActivity = (activity) => {
+  if (!activity?.id) return;
+  activityToDelete.value = activity;
+  isDeleteModalOpen.value = true;
+};
+
+const closeDeleteModal = (force = false) => {
+  if (!force && isDeleteInProgress.value) return;
+  isDeleteModalOpen.value = false;
+  activityToDelete.value = null;
+};
+
+const confirmDeleteActivity = async () => {
+  const activity = activityToDelete.value;
+  if (!activity?.entryIri || !activity?.id) return;
+
+  const token = normalizeToken(localStorage.getItem("jwt_token"));
+  if (!token) {
+    router.push("/login");
+    return;
+  }
+
+  deletingActivityIds.value = [...deletingActivityIds.value, activity.id];
+
+  try {
+    await axios.delete(`http://localhost:8000${activity.entryIri}`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    activities.value = activities.value.filter(
+      (item) => item.id !== activity.id,
+    );
+    closeDeleteModal(true);
+    await loadDashboardData({ silent: true });
+  } catch (error) {
+    if (error?.response?.status === 401) {
+      localStorage.removeItem("jwt_token");
+      router.push("/login");
+      return;
+    }
+
+    console.error("Dashboard activity delete error:", error);
+  } finally {
+    deletingActivityIds.value = deletingActivityIds.value.filter(
+      (id) => id !== activity.id,
+    );
+  }
+};
+
 const hideActiveToast = () => {
   activeToast.value = null;
   if (toastTimeoutId) {
@@ -853,7 +990,7 @@ const loadDashboardData = async ({ silent = false } = {}) => {
       return;
     }
 
-    dailyTargetKg.value = Number(summary?.targetCo2Kg || 20);
+    dailyTargetKg.value = Number(summary?.targetCo2Kg || 10);
     dailyCo2.value = Number(summary?.dailyCo2Kg || 0);
     currentUserPoints.value = Number(
       summary?.dailyPoints ?? summary?.dailyScore ?? 0,
@@ -1045,5 +1182,16 @@ onBeforeUnmount(() => {
   opacity: 1;
   transform: translateY(0);
   max-height: 320px;
+}
+
+.delete-modal-enter-active,
+.delete-modal-leave-active {
+  transition: all 0.24s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.delete-modal-enter-from,
+.delete-modal-leave-to {
+  opacity: 0;
+  transform: translateY(10px);
 }
 </style>

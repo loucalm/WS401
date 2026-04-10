@@ -1345,7 +1345,7 @@ export default {
 
       const summary = await fetchGamificationSummary(headers);
       const ownerIri = summary?.user?.["@id"] || null;
-      const targetCo2Kg = Number(summary?.targetCo2Kg || 20);
+      const targetCo2Kg = Number(summary?.targetCo2Kg || 10);
       if (!ownerIri) {
         alert(t("wizard.errors.user_not_found"));
         return;
